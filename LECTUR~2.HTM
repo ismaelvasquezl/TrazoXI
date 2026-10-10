@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Lectura de Nosotros · Coquimbo Unido · por TrazoXI</title>
+<link rel="stylesheet" href="trazoxi_fx.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="nosotros.js"></script>
 <script src="nosotros_partidos.js"></script>
@@ -158,7 +159,7 @@ const AXES={
 };
 function axVal(rec,key){ if(!rec)return 0; if(key==='perdInv')return Math.max(0,30-(rec.perd||0)); if(key==='gcInv')return Math.max(0,5-(rec.gc||0)); return +rec[key]||0; }
 
-function openPlayerPM(d){
+function openPlayerPM(d,srcEl){
   const p=N.players.find(x=>x.d===d); if(!p)return;
   const serie=PM.jug[String(d)]||[];
   pmState.d=d; pmState.off={}; pmState.metric='auto';
@@ -190,6 +191,7 @@ function openPlayerPM(d){
   renderPMcards(p,serie); renderVdef(p,serie);
   $('#pmClose').onclick=closeOv;
   $('#ov').classList.add('show');
+  if(window.TrazoFX)TrazoFX.growFrom(srcEl,box,$('#ov'));
   drawPM(); drawTrend();
 }
 function closeOv(){ $('#ov').classList.remove('show'); destroy('pm'); destroy('pmtrend'); }
@@ -340,7 +342,7 @@ function pitchSVG(layer){
     const col=n.aer<=35?'#ff5f5f':n.aer<=50?'#f5a623':'#38d98a';const r=n.aer<=35?15:n.aer<=50?12:10;
     net+=`<circle cx="${n.x}" cy="${n.y}" r="${r}" fill="${col}" fill-opacity=".30" stroke="${col}" stroke-width="2.5"/><text x="${n.x}" y="${n.y-r-3}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">${n.d}</text><text x="${n.x}" y="${n.y+3.5}" text-anchor="middle" font-size="9" fill="#fff" font-weight="800">${n.aer}%</text>`;});}
   const lines=`<rect x="${mx}" y="${my}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><line x1="${mx}" y1="${my+ph/2}" x2="${mx+pw}" y2="${my+ph/2}" stroke="rgba(255,255,255,.22)"/><circle cx="${W/2}" cy="${my+ph/2}" r="30" fill="none" stroke="rgba(255,255,255,.22)"/><rect x="${W/2-46}" y="${my}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/><rect x="${W/2-46}" y="${my+ph-52}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`;
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:290px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${cells}${lines}${net}<text x="${W-16}" y="20" font-size="9" fill="rgba(255,255,255,.65)" text-anchor="end">▲ ataque</text></svg>`;
+  return `<svg class="pitch fx-lens" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:290px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${cells}${lines}${net}<text x="${W-16}" y="20" font-size="9" fill="rgba(255,255,255,.65)" text-anchor="end">▲ ataque</text></svg>`;
 }
 function renderFases(){
   const f=N.fases,z=N.zonas,lay=id=>z.capas.find(c=>c.id===id);
@@ -368,7 +370,7 @@ function renderMapas(){
 ['GK','DEF','LAT','VOL','DEL'].forEach(renderGroup);
 renderResumen(); renderFases(); renderMapas();
 // click en tarjeta -> despliegue 5 partidos (delegación)
-document.addEventListener('click',e=>{const c=e.target.closest('.pc.clk');if(c&&c.dataset.pm)openPlayerPM(+c.dataset.pm);});
+document.addEventListener('click',e=>{const c=e.target.closest('.pc.clk');if(c&&c.dataset.pm)openPlayerPM(+c.dataset.pm,c);});
 $('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeOv();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
@@ -380,5 +382,6 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
 });
 })();
 </script>
+<script src="trazoxi_fx.js"></script>
 </body>
 </html>

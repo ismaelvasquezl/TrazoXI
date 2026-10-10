@@ -1,0 +1,41 @@
+/* TrazoXI FX — capa de técnicas visuales avanzadas, compartida por todas las páginas.
+   Progresiva y segura: si JS/soporte faltan, el contenido se ve normal. Respeta reduce-motion. */
+
+/* 1) BLUR-UP + CROSSFADE al revelar (scroll reveal) */
+.fx-reveal{opacity:0;transform:translateY(12px) scale(.985);filter:blur(7px);
+  transition:opacity .55s ease, transform .55s cubic-bezier(.2,.75,.2,1), filter .55s ease;will-change:opacity,transform,filter}
+.fx-reveal.fx-in{opacity:1;transform:none;filter:none}
+/* escalonado suave entre hermanos */
+.fx-reveal.fx-in{transition-delay:var(--fx-d,0ms)}
+
+/* 2) CROSSFADE entre vistas / pestañas */
+@keyframes fxCrossfade{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:blur(0)}}
+.fx-cf{animation:fxCrossfade .34s ease both}
+
+/* 3) MAGNIFICACIÓN (hover zoom en gráficos y mapas) */
+.fx-magnify{transition:transform .28s cubic-bezier(.2,.75,.2,1), box-shadow .28s ease, z-index 0s;position:relative;z-index:1}
+.fx-magnify:hover{transform:scale(1.035);z-index:5;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+/* lupa real sobre SVG de cancha */
+.fx-lens{cursor:zoom-in}
+
+/* 4) SHARED ELEMENT (tarjeta -> modal): la ficha "crece" desde la tarjeta */
+@keyframes fxGrow{from{opacity:.25;transform:translate(var(--fx-dx,0),var(--fx-dy,0)) scale(var(--fx-s,.35))}
+  to{opacity:1;transform:none}}
+.fx-grow{animation:fxGrow .36s cubic-bezier(.2,.75,.2,1) both;transform-origin:var(--fx-ox,50%) var(--fx-oy,50%)}
+@keyframes fxBackdrop{from{opacity:0}to{opacity:1}}
+.fx-backdrop{animation:fxBackdrop .25s ease both}
+
+/* 5) View Transitions API (crossfade nativo de página si el navegador lo soporta) */
+@media (prefers-reduced-motion:no-preference){
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.34s}
+}
+
+/* 6) Realce de foco/hover general en tarjetas interactivas */
+.fx-pop{transition:transform .2s ease, box-shadow .2s ease}
+.fx-pop:hover{transform:translateY(-3px)}
+
+@media (prefers-reduced-motion:reduce){
+  .fx-reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none}
+  .fx-cf,.fx-grow,.fx-backdrop{animation:none!important}
+  .fx-magnify:hover,.fx-pop:hover{transform:none;box-shadow:none}
+}
