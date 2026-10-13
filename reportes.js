@@ -10,36 +10,37 @@
    Estados válidos: "DATO" | "REQUIERE_VERIFICACION" | "HIPOTESIS"
    ========================================================================= */
 const REPORTES = {
-  actualizado: "2026-09-16",
+  actualizado: "2026-10-13",
 
   // ---- Perfil interpretativo de Coquimbo (2026) ----
   coquimbo: {
     titular: "Campeón vigente 2025 · reactivo, intenso y de ataque lateral",
     perfil: [
       "Equipo REACTIVO, no dominador: posesión ~50% y correlación posesión→goles negativa. Ante rivales que se cierran debe evitar la 'trampa del dominio': lo logró venciendo 1-0 a U. de Concepción con 60% de balón, tras insistir hasta el 85'.",
-      "Ataque muy LATERAL: 24,9 centros/partido (rango 11–47). Es su sello y su límite: si le cierran las bandas, se vuelve previsible.",
+      "Ataque muy LATERAL: 24,0 centros/partido (rango 10–47). Es su sello y su límite: si le cierran las bandas, se vuelve previsible. Contrapunto: ante Colo-Colo (5-2) ganó con solo 29% de balón y 10 centros, golpeando por dentro y en transición (6 big chances a 0, CFDB).",
       "Dos deudas de fondo agravadas: se le escapan los CIERRES (colapsó 1-2→4 vs U. de Chile en 8') y es un COLADOR de visita (1,83 GC/PJ frente a 0,78 de local).",
-      "Defensa global 1,38 GC/PJ; 19% de vallas invictas; concede volumen (11,5 tiros/PJ; corr tiros→goles +0,71).",
-      "Indisciplina doméstica: 8 rojas en 21 de Liga (0 en Libertadores)."
+      "Defensa global 1,42 GC/PJ (24 PJ); 17% de vallas invictas (4/24); concede volumen (11,8 tiros/PJ).",
+      "Indisciplina doméstica: 8 rojas en Liga 2026 (0 en Libertadores)."
     ],
-    defensa: [   // {k, v, nota}  — Liga 2026, 21 PJ
-      { k: "Goles en contra", v: "1,38 /PJ", nota: "Empeora (¡1,83 de visita!)" },
-      { k: "Tiros concedidos", v: "11,5 /PJ (SoT 35%)", nota: "Concede volumen" },
-      { k: "Atajadas · Save%", v: "2,6 /PJ · ~66%", nota: "Arco muy exigido" },
-      { k: "Clean sheets", v: "4/21 (19%)", nota: "Poca portería a cero" },
-      { k: "Entradas+intercepciones", v: "≈21,9 /PJ", nota: "Recuperación activa" }
+    defensa: [   // {k, v, nota}  — Liga 2026, 24 PJ (FBref/fixtures.js; 23 con detalle de tiros)
+      { k: "Goles en contra", v: "1,42 /PJ", nota: "1,00 de local vs ¡1,83 de visita!" },
+      { k: "Tiros concedidos", v: "11,8 /PJ (SoT 35%)", nota: "Concede volumen" },
+      { k: "Atajadas · Save%", v: "2,7 /PJ · ~66%", nota: "Arco muy exigido" },
+      { k: "Clean sheets", v: "4/24 (17%)", nota: "Poca portería a cero" },
+      { k: "Entradas+intercepciones", v: "≈21,6 /PJ", nota: "Recuperación activa" }
     ],
     intensidad: [
-      { k: "Centros", v: "24,3 /PJ (11–47)", nota: "Frecuencia de ataque lateral, muy alta" },
-      { k: "Faltas", v: "11,4 /PJ (6–18)", nota: "Intensidad de duelo media-alta" },
-      { k: "Tarjetas", v: "62A · 8R", nota: "Foco disciplinario" },
-      { k: "Posesión", v: "49,6%", nota: "Reactivo" }
+      { k: "Centros", v: "24,0 /PJ (10–47)", nota: "Frecuencia de ataque lateral, muy alta" },
+      { k: "Faltas", v: "11,2 /PJ (6–18)", nota: "Intensidad de duelo media-alta" },
+      { k: "Tarjetas", v: "65A · 8R", nota: "Foco disciplinario" },
+      { k: "Posesión", v: "49,3%", nota: "Reactivo (29% en el 5-2 a Colo-Colo)" }
     ],
     jugadores: [ // {n, rol, aporte, nota, tag}
-      { n: "Nicolás Johansen", rol: "Delantero", aporte: "6 goles", nota: "Máximo goleador (26% del total); de él depende el gol", tag: "clave" },
-      { n: "Cristián Zavala", rol: "Mediocampista", aporte: "2G · 3A", nota: "El más determinante por 90' (0,67 G+A/90)", tag: "forma" },
-      { n: "Juan Cornejo", rol: "Lateral izq.", aporte: "6 asistencias", nota: "Máximo creador desde banda y balón parado", tag: "clave" },
-      { n: "Guido Vadalá / A. Camargo", rol: "Medias puntas", aporte: "3G c/u", nota: "Segunda línea de llegada", tag: "" },
+      { n: "Nicolás Johansen", rol: "Delantero", aporte: "9 goles", nota: "Máximo goleador (25% del total), 7º de la liga (CFDB); doblete ante Colo-Colo", tag: "clave" },
+      { n: "Cristián Zavala", rol: "Mediocampista", aporte: "2G · 4A", nota: "Desequilibrio y asistencia (asist. a Vadalá vs Colo-Colo)", tag: "forma" },
+      { n: "Juan Cornejo", rol: "Lateral izq.", aporte: "7 asistencias", nota: "3º de la liga en asistencias (CFDB); máximo creador desde banda", tag: "clave" },
+      { n: "Guido Vadalá", rol: "Media punta", aporte: "4G · 2A", nota: "1G+2A ante Colo-Colo (rating CFDB 9,4): el enganche que faltaba", tag: "forma" },
+      { n: "Alejandro Camargo", rol: "Pivote", aporte: "4G", nota: "Segunda línea de llegada desde el doble pivote", tag: "" },
       { n: "Diego Sánchez", rol: "Arquero (39a)", aporte: "2,4 atajadas/PJ", nota: "Sostiene; Save% carrera 69,5%", tag: "" },
       { n: "M. Fernández / Gazzolo", rol: "Centrales", aporte: "Ejes titulares", nota: "Propensos a expulsión (Fernández 2R en 2026)", tag: "alerta" }
     ]
@@ -305,6 +306,7 @@ const REPORTES = {
 
   // ---- Bitácora de avances (AÑADIR líneas nuevas arriba) ----
   bitacora: [
+    { fecha: "2026-10-13", nota: "Cargado Coquimbo 5-2 Colo-Colo (MW24, local) con FBref completo + CFDB (fixture 109354): doblete de Johansen, Vadalá 1G+2A, Chandía 1G+1A, Pratto 1G. Ganó al líder con 29% de posesión y 70% de pase: 17 tiros (9 al arco) vs 22 (4), big chances 6-0. Liga: 9-5-10, 32 pts, GF 36/GC 34, 8º (CFDB). Completado el Huachipato 0-1 (jugado completo el 16-sep en La Cisterna; gol de S. Núñez 66'): minutos por jugador del export FBref completo, capitán Galani, público 3.500. Próximo: Ñublense (25-10, visita). Tabla y Monte Carlo recalculados (mediana 41 pts, top-8 64%). AVISO: las estadísticas avanzadas por jugador de CFDB (pases clave, duelos, etc.) siguen congeladas al corte de septiembre; solo avanzan partidos, minutos, goles, asistencias y tarjetas." },
     { fecha: "2026-09-16", nota: "Cargados 2 partidos de visita, ambos derrotas: U. de Chile 4-2 (MW22, iba GANANDO 1-2 al 82' y encajó 3 en 8' — colapso de cierre) y Cobresal 3-2 (MW23, dominó con 55% y 17 tiros y perdió). Liga actualizada a 8-5-8 (21 PJ) con los partidos que tengo. Alerta reforzada: de visita concede 1,83 GC/PJ (vs 0,78 de local). AVISOS: (1) el récord oficial marca 8-5-9 porque falta un partido de Liga reprogramado que no tengo cargado; (2) el suspendido vs Huachipato se completa hoy 16-sep en La Cisterna (pendiente). No se inventó ninguno de los dos." },
     { fecha: "2026-09-03", nota: "BARRIDO DE CIERRE: reconciliados todos los totales acumulados (Liga 8-5-6, 29 pts, GF 26/GC 22, DG +4; 19 PJ). Corregidos textos antiguos (reporte, 'cómo leer', tendencia y visita 1,50 GC/PJ); el reporte y el resumen de tendencia ahora se calculan en vivo desde fixtures.js para no volver a quedar viejos. Corregido el bug del mapa de calor de Coquimbo (clasificación de línea). Fecha del sitio: 2026-09-03." },
     { fecha: "2026-09-03", nota: "Informe 7Q, predicción y todas las secciones actualizadas al rival actual: U. de Chile (visita, Estadio Nacional). Mapa de calor y 'once por minutos' ahora son SELECCIONABLES por equipo (Coquimbo + 3 rivales), calculados con el reparto de minutos por línea + stats. Correcciones: DT U. de Chile = Fernando Gago; DT Coquimbo = Hernán Caputto." },

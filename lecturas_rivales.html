@@ -7,6 +7,9 @@
 <link rel="stylesheet" href="trazoxi_fx.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="wyscout.js"></script>
+<script src="wyscout_nublense.js"></script>
+<script src="wyscout_acumulado.js"></script>
+<script src="nosotros.js"></script>
 <script src="liga_wyscout.js"></script>
 <script src="rivales_prematch.js"></script>
 <script src="primera_equipos.js"></script>
@@ -93,6 +96,7 @@
   .fix .days{position:absolute;bottom:7px;right:9px;font-size:9px;font-weight:800;color:var(--teal);letter-spacing:.3px}
   .fix.next{border-color:var(--line-gold)}
   .fix .next-tag{position:absolute;top:8px;left:9px;font-size:8.5px;font-weight:800;color:var(--gold-ink);background:var(--teal);border-radius:4px;padding:1px 5px}
+  @media(max-width:600px){.insgrid{grid-template-columns:1fr!important}}
   @media print{
     header,.fixrow,#invTable,.foot,.btnrow,.no-print,.lbtn,.layerbtns,.filters{display:none!important}
     body{background:#fff!important;color:#111!important}
@@ -151,7 +155,7 @@
   <div class="hin">
     <button id="rivToggle" aria-label="Ver lista de rivales">☰ Rivales</button>
     <div class="brand"><span class="crest"></span>CENTRO DE LECTURAS DE RIVALES <span style="color:var(--mut);font-size:10px;font-weight:700;letter-spacing:1px;margin-left:4px">· COQUIMBO UNIDO · por TrazoXI</span></div>
-    <a class="back" href="index_conapi.html">← Volver al dashboard</a>
+    <a class="back" href="acumulado_wyscout.html">📚 Acumulado Hudl</a><a class="back" style="margin-left:14px" href="index_conapi.html">← Volver al dashboard</a>
   </div>
 </header>
 <div class="fixrow" id="fixrow"></div>
@@ -230,14 +234,19 @@ function ligaCard(opp){
 /* ---- barra de fixtures ---- */
 let current=null;
 function renderFixtures(){
-  const row=$('#fixrow'); const fx=(RIV.fixture||[]).filter(f=>f.comp==='LIG');
+  const row=$('#fixrow'); let fx=(RIV.fixture||[]).filter(f=>f.comp==='LIG');
+  // lecturas Hudl ya jugadas (archivo): clubes con informe Wyscout que ya no están en el calendario restante
+  if(typeof WYSCOUT!=='undefined'){ const FX=(typeof FIXTURES!=='undefined')?FIXTURES:[];
+    Object.keys(WYSCOUT.equipos).filter(k=>!fx.some(f=>sameTeam(f.opp,k))).forEach(k=>{
+      const last=FX.filter(m=>m.comp==='LIG'&&sameTeam(m.opp,k)).sort((a,b)=>a.date<b.date?1:-1)[0];
+      fx.push({opp:k,date:last?last.date:'—',ven:last?last.ven:'H',comp:'LIG',arch:true,res:last?`${last.gf}-${last.ga}`:''}); }); }
   const today=new Date(); today.setHours(0,0,0,0);
-  const future=fx.map((f,i)=>({i,dd:Math.round((new Date(f.date)-today)/864e5)})).filter(x=>x.dd>=0).sort((a,b)=>a.dd-b.dd);
+  const future=fx.map((f,i)=>({i,dd:Math.round((new Date(f.date)-today)/864e5),a:f.arch})).filter(x=>x.dd>=0&&!x.a).sort((a,b)=>a.dd-b.dd);
   const nextIdx=future.length?future[0].i:0;
   row.innerHTML='<div class="railttl"><span class="rdot">⚔</span><span class="rlbl">Rivales</span></div>'+fx.map((f,i)=>{
     const hud=hasHudl(f.opp);
     const dd=Math.round((new Date(f.date)-today)/864e5);
-    const dlabel=dd>0?('en '+dd+'d'):dd===0?'HOY':'jugado';
+    const dlabel=f.arch?('archivo · '+(f.res||'')):dd>0?('en '+dd+'d'):dd===0?'HOY':'jugado';
     const vcol=f.ven==='H'?'var(--green)':'var(--amber)';
     return `<div class="fix${i===nextIdx?' next':''}" data-i="${i}" title="${esc(f.opp)} · ${f.ven==='H'?'Local':'Visita'} · ${esc(f.date)}">`+
       `<div class="ic">${ini(f.opp)}<span class="vdot" style="background:${vcol}"></span></div>`+
@@ -269,7 +278,7 @@ function renderHudl(f){
   const avg=(a,k)=>a.length?(a.reduce((s,p)=>s+p[k],0)/a.length):0;
   box.innerHTML=
     `<div class="card"><div class="hero">
-       <div><div class="sub">Próximo · ${esc(f.date)} · ${f.ven==='H'?'Coquimbo LOCAL':'Coquimbo VISITA'}</div>
+       <div><div class="sub">${f.arch?'Lectura archivada · último duelo '+esc(f.res||''):'Próximo'} · ${esc(f.date)} · ${f.ven==='H'?'Coquimbo LOCAL':'Coquimbo VISITA'}</div>
        <div class="vs">Coquimbo Unido <span style="color:var(--mut)">vs</span> ${esc(f.opp)}</div>
        <div><span class="badge b-hudl">HUDL WYSCOUT</span> <span class="badge b-dato">DATO DE EVENTO</span> · ${w.nPartidos} partidos · DT ${esc(w.dt)} · ${esc(w.formacionBase)}</div></div>
      </div>
@@ -277,18 +286,19 @@ function renderHudl(f){
      <div class="btnrow no-print" style="margin-top:10px"><button class="btn primary" id="genReport">📄 Generar informe automático</button><button class="btn" id="printReading">🖨 Imprimir / PDF</button>${sameTeam(f.opp,'Colo-Colo')?'<a class="btn" href="onepager_balon_parado_colocolo.html" target="_blank" style="text-decoration:none">⚑ One-pager balón parado</a>':''}</div></div>`+
     ligaCard(f.opp)+
 
-    `<div class="card"><h3>Los 5 partidos (análisis longitudinal)</h3>
+    hudlExtra(w,f)+
+    `<div class="card"><h3>Los ${w.partidos.length} partidos (análisis longitudinal)</h3>
        <div class="scroll-x"><table><thead><tr><th>J</th><th>Rival</th><th>L/V</th><th>Res</th><th>XI</th><th>xG</th><th>xG riv</th><th>Pos%</th><th>PPDA</th><th>Duelos</th></tr></thead><tbody>`+
        w.partidos.map(p=>`<tr><td>${p.j}</td><td>${esc(p.rival)}</td><td>${p.loc}</td>
-         <td><b>${p.gf}-${p.ga}</b></td><td><span class="chip ${p.xi==='Titular'?'tit':p.xi==='Rotado'?'rot':'mix'}">${p.xi}</span></td>
+         <td><b>${p.gf}-${p.ga}</b></td><td>${p.xi?`<span class="chip ${p.xi==='Titular'?'tit':p.xi==='Rotado'?'rot':'mix'}">${p.xi}</span>`:'—'}</td>
          <td class="num">${p.xg}</td><td class="num">${p.xgRival}</td><td class="num">${p.pos}</td><td class="num">${p.ppda}</td><td class="num">${p.duelos}%</td></tr>`).join('')+
        `</tbody></table></div>
-       <div class="callout warn"><b>Hallazgo clave (efecto rotación):</b> con titulares (${tit.map(p=>p.rival).join(', ')}) promedia ${avg(tit,'xg').toFixed(2)} xG y ganó los dos. Rotando/mixto promedia ${avg(rot,'xg').toFixed(2)} xG y <b>no ganó ninguno</b> pese a dominar el balón. <b>Primero hay que anticipar qué once presenta.</b></div></div>`+
+       ${w.hallazgoClave?`<div class="callout warn"><b>Hallazgo clave:</b> ${esc(w.hallazgoClave)}</div>`:`<div class="callout warn"><b>Hallazgo clave (efecto rotación):</b> con titulares (${tit.map(p=>p.rival).join(', ')}) promedia ${avg(tit,'xg').toFixed(2)} xG y ganó los dos. Rotando/mixto promedia ${avg(rot,'xg').toFixed(2)} xG y <b>no ganó ninguno</b> pese a dominar el balón. <b>Primero hay que anticipar qué once presenta.</b></div>`}</div>`+
 
     `<div class="grid g2">
-       <div class="card"><h3>xG por partido · Colo-Colo vs rival</h3><div class="chart-wrap"><canvas id="chXg"></canvas></div></div>
-       <div class="card"><h3>Centralidad de pases (vs Audax) — quién conecta el juego</h3><div class="chart-wrap"><canvas id="chHub"></canvas></div>
-         <div class="sub" style="margin-top:8px">Construcción por carriles: <b>${w.redPases.carriles.izq}%</b> izq · <b>${w.redPases.carriles.centro}%</b> centro · <b>${w.redPases.carriles.der}%</b> der.</div>
+       <div class="card"><h3>xG por partido · ${esc(f.opp)} vs rival</h3><div class="chart-wrap"><canvas id="chXg"></canvas></div></div>
+       <div class="card"><h3>Centralidad de pases — quién conecta el juego</h3>${w.redPases.centralidadNota?`<div class="sub">${esc(w.redPases.centralidadNota)}</div>`:''}<div class="chart-wrap"><canvas id="chHub"></canvas></div>
+         <div class="sub" style="margin-top:8px">${w.redPases.carrilesNota?esc(w.redPases.carrilesNota)+':':'Construcción por carriles:'} <b>${w.redPases.carriles.izq}%</b> izq · <b>${w.redPases.carriles.centro}%</b> centro · <b>${w.redPases.carriles.der}%</b> der.</div>
          <div class="thirds"><div style="width:${w.redPases.carriles.izq}%;background:#6b7a88">${w.redPases.carriles.izq}%</div><div style="width:${w.redPases.carriles.centro}%;background:var(--gold)">${w.redPases.carriles.centro}%</div><div style="width:${w.redPases.carriles.der}%;background:#6b7a88">${w.redPases.carriles.der}%</div></div>
          <div class="sub" style="margin-top:6px">Enlace más usado: <b>${esc(w.redPases.enlaceTop)}</b>.</div></div>
      </div>`+
@@ -347,6 +357,7 @@ function renderHudl(f){
        <div class="card"><h3>Vulnerabilidades explotables</h3><ul class="clean warn">${w.vulnerabilidades.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
      </div>`+
 
+    hudlCruce(w,f)+
     `<div class="card"><h3>Plan para Coquimbo</h3><ul class="clean rec">${w.recomendaciones.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`+
 
     `<div class="card"><h3>Validación cruzada de fuentes</h3>
@@ -354,7 +365,7 @@ function renderHudl(f){
          <div class="kpi"><div class="v num">${w.cross.wyscout.xgProm}</div><div class="l">xG/PJ · Wyscout</div></div>
          <div class="kpi"><div class="v num">${w.cross.cfdb.gfpg}</div><div class="l">Goles/PJ · CFDB</div></div>
          <div class="kpi"><div class="v num">${w.cross.wyscout.posProm}%</div><div class="l">Posesión · Wyscout</div></div>
-         <div class="kpi"><div class="v num">${w.cross.datalabs2025.posesion}%</div><div class="l">Posesión · datalabs '25</div></div>
+         ${w.cross.datalabs2025.posesion!=null?`<div class="kpi"><div class="v num">${w.cross.datalabs2025.posesion}%</div><div class="l">Posesión · datalabs '25</div></div>`:(w.cross.ligaWy?`<div class="kpi"><div class="v num">${(w.cross.ligaWy.xga/w.cross.ligaWy.pj).toFixed(2)}</div><div class="l">xGA/PJ temporada · Wyscout liga</div></div>`:'')}
          <div class="kpi"><div class="v num">${w.cross.wyscout.duelosProm}%</div><div class="l">Duelos · Wyscout</div></div>
        </div>
        <div class="callout info">${esc(w.cross.veredicto)}</div></div>`+
@@ -368,7 +379,7 @@ function renderHudl(f){
   const gc='rgba(255,255,255,.07)',tk='#aab8c4';
   destroy('xg');
   charts.xg=new Chart($('#chXg'),{type:'bar',data:{labels:w.partidos.map(p=>p.rival),
-    datasets:[{label:'xG Colo-Colo',data:w.partidos.map(p=>p.xg),backgroundColor:'#ffd21f'},
+    datasets:[{label:'xG '+f.opp,data:w.partidos.map(p=>p.xg),backgroundColor:'#ffd21f'},
       {label:'xG rival',data:w.partidos.map(p=>p.xgRival),backgroundColor:'#4a90ff'}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tk}}},
       scales:{x:{ticks:{color:tk,font:{size:10}},grid:{color:gc}},y:{beginAtZero:true,ticks:{color:tk},grid:{color:gc}}}}});
@@ -380,6 +391,121 @@ function renderHudl(f){
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
       scales:{x:{beginAtZero:true,ticks:{color:tk},grid:{color:gc}},y:{ticks:{color:tk,font:{size:11}},grid:{display:false}}}}});
   if(w.zonas){curLayer=w.zonas.capas[0].id;renderIllus(w);}
+  hudlExtraCharts(w,f);
+}
+
+/* ===== Extensiones Hudl «Informe del equipo» (insights, estructuras, mapas reales 3×3, cruce) ===== */
+function nivelBadge(n){return `<span class="badge ${n==='ALTA'?'b-dato':n==='MEDIA'?'b-inf':'b-pend'}">EVIDENCIA ${esc(n)}</span>`;}
+function goLayer(id){ const w=window.__curW; if(!w||!w.zonas)return; curLayer=id; renderIllus(w);
+  const el=document.getElementById('pitchBox'); if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',block:'center'}); }
+function miniPitch(w,capaId){ const L=(w.zonas&&w.zonas.capas||[]).find(c=>c.id===capaId); if(!L)return '';
+  return pitchSVG(w,L).replace('max-width:320px','max-width:150px'); }
+function hudlExtra(w,f){
+  window.__curW=w; if(!w.insights) return '';
+  let h=`<div class="card" id="insightsCard"><h3>Insights priorizados · debilidades de ${esc(f.opp)} (ordenados por impacto)</h3>
+    <div class="sub">Cada hallazgo separa <b>evidencia</b> (dato), <b>interpretación</b> (lectura táctica), <b>riesgo/oportunidad</b> y <b>respuesta</b> para el plan. Toca el mapa para verlo en grande.</div>`;
+  w.insights.forEach((x,i)=>{ h+=`<div class="card" style="margin-top:10px;background:var(--bg1)">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:12px;align-items:start" class="insgrid">
+      <div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="disp" style="font-size:22px;font-weight:800;color:var(--gold)">${i+1}</span>
+        <b style="font-size:15px;color:var(--white)">${esc(x.t)}</b> ${nivelBadge(x.nivel)}</div>
+        <div class="sub" style="margin-top:6px"><b style="color:var(--green)">Evidencia ·</b> ${esc(x.evidencia)}</div>
+        <div class="sub" style="margin-top:4px"><b style="color:var(--blue)">Interpretación ·</b> ${esc(x.interpretacion)}</div>
+        <div class="sub" style="margin-top:4px"><b style="color:var(--amber)">Riesgo / oportunidad ·</b> ${esc(x.riesgo)}</div>
+        <div class="callout" style="margin:8px 0 0"><b>Respuesta ·</b> ${esc(x.respuesta)}</div></div>
+      <div style="text-align:center;cursor:pointer" onclick="goLayer('${x.capa}')" title="Ver en grande">${miniPitch(w,x.capa)}<div class="sub" style="font-size:11px">🔍 ver mapa</div></div>
+      </div></div>`; });
+  h+=`</div>`;
+  // estructuras
+  const F=w.formaciones;
+  if(F){ h+=`<div class="card"><h3>Validación · ¿pierde el orden al atacar? Rendimiento por estructura</h3>
+     <div class="kpis">
+       <div class="kpi"><div class="v num" style="color:var(--red)">${F.porLinea.tres.xga90}</div><div class="l">xGA/90 con línea de 3 (${F.porLinea.tres.min}')</div></div>
+       <div class="kpi"><div class="v num">${F.porLinea.tres.xg90}</div><div class="l">xG/90 con línea de 3</div></div>
+       <div class="kpi"><div class="v num" style="color:var(--amber)">${F.porLinea.cuatro.xga90}</div><div class="l">xGA/90 con línea de 4 (${F.porLinea.cuatro.min}')</div></div>
+       <div class="kpi"><div class="v num" style="color:var(--green)">${F.porLinea.cuatro.xg90}</div><div class="l">xG/90 con línea de 4</div></div>
+     </div>
+     <div class="grid g2" style="margin-top:10px;align-items:start">
+       <div class="chart-wrap"><canvas id="chForm"></canvas></div>
+       <div class="scroll-x"><table><thead><tr><th>Estructura</th><th>% tiempo</th><th>GF-GC</th><th>xG</th><th>xG rival</th><th>Pos%</th><th>PPDA</th></tr></thead><tbody>`+
+       F.agregado.map(s=>`<tr><td><b>${esc(s.form)}</b></td><td class="num">${s.pct}%</td><td class="num">${s.gf}-${s.ga}</td><td class="num">${s.xg}</td><td class="num" style="color:${s.xga>2?'var(--red)':'inherit'}">${s.xga}</td><td class="num">${s.pos??'—'}</td><td class="num">${s.ppda??'—'}</td></tr>`).join('')+
+       `</tbody></table></div></div>
+     <div class="callout warn">${esc(w.hallazgoClave||'')}</div><div class="sub">${esc(F.nota)} ${F.sinCubrir?esc(F.sinCubrir.nota):''}</div></div>`; }
+  // mapas reales 3x3
+  if(w.grids){ const capas=(w.zonas.capas||[]).filter(c=>c.tipo==='g3');
+    h+=`<div class="card"><h3>Mapas Wyscout reales · tercio × carril (agregado ${w.nPartidos} partidos)</h3>
+      <div class="sub">Ataque ↑. % del total de cada acción. Izquierda/derecha = carriles de ${esc(f.opp)}.</div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:8px">`+
+      capas.map(c=>{const g=w.grids[c.src];return `<div style="text-align:center"><h4 style="margin:4px 0;color:${c.color==='red'?'var(--red)':'var(--gold)'}">${esc(c.label.replace(' (real 3×3)',''))}</h4>
+        ${pitchSVG(w,c).replace('max-width:320px','max-width:240px')}
+        <div class="sub" style="font-size:12px">${g.total} acciones (${g.porPartido}/partido) · tercios ${g.tercios.join(' / ')}%</div></div>`;}).join('')+
+      `</div><div class="callout info"><b>Lectura:</b> pierde arriba (42,3% de sus pérdidas en el último tercio) y casi no recupera arriba (17,6%). Esa diferencia mide la falta de contrapresión: el balón perdido arriba no lo recupera ahí y el rival sale.</div></div>`; }
+  // forma del bloque + cuándo
+  if(w.partidos.some(p=>p.ancho)){
+    const C=(typeof WY_ACUM!=='undefined')?WY_ACUM.equipos['Coquimbo Unido']:null; const cc=C?C.partidos.find(p=>p.ancho):null;
+    h+=`<div class="grid g2"><div class="card"><h3>Forma del bloque (ancho × largo, posición media)</h3>
+      <div class="scroll-x"><table><thead><tr><th>Partido</th><th>Ancho</th><th>Largo</th><th>Estructuras</th></tr></thead><tbody>`+
+      w.partidos.map(p=>`<tr><td>${esc(p.rival)} (${p.loc}) ${p.gf}-${p.ga}</td><td class="num">${p.ancho} m</td><td class="num">${p.largo} m</td><td class="sub">${(WY_ACUM&&WY_ACUM.equipos[f.opp]?(WY_ACUM.equipos[f.opp].partidos.find(q=>q.fecha===p.fecha)||{}).formaciones||[]:[]).join(' · ')}</td></tr>`).join('')+
+      (cc?`<tr style="background:rgba(255,210,0,.06)"><td><b>Coquimbo</b> vs Colo-Colo 5-2</td><td class="num"><b>${cc.ancho} m</b></td><td class="num"><b>${cc.largo} m</b></td><td class="sub">referencia propia</td></tr>`:'')+
+      `</tbody></table></div><div class="sub" style="margin-top:6px">${esc(f.opp)} juega ancho (≈49 m) y corto (≈41 m): mucha distancia lateral entre líneas → espacio entre carrilero y central. Coquimbo ganó a Colo-Colo con un bloque estrecho (42 m) y largo (57 m): compacto atrás y con salida vertical.</div></div>
+      <div class="card"><h3>Cuándo remata y cuándo encaja</h3><div class="chart-wrap" style="height:200px"><canvas id="chTramo"></canvas></div>
+      <div class="sub">Goles en contra (CFDB): ${w.partidos.map(p=>`<b>${esc(p.rival)}</b> ${p.golesContra.join(', ')}`).join(' · ')}</div></div></div>`; }
+  return h;
+}
+function hudlCruce(w,f){
+  if(!w.cruce) return '';
+  const X=w.cruce;
+  const bd=v=>`<span class="badge ${v==='ALTA'||v==='ALTO'?'b-dato':'b-inf'}">${esc(v)}</span>`;
+  return `<div class="card" id="cruceCard"><h3>Cruce · nuestras virtudes sobre sus defectos</h3>
+     <div class="grid g2" style="align-items:start"><div>${clashSVG(w,'ataque')}</div>
+     <div>${X.nuestrasVirtudesVsSusDefectos.map(r=>`<div class="card" style="margin-top:8px;background:var(--bg1)">${bd(r.fuerza)}
+       <div class="sub" style="margin-top:6px"><b style="color:var(--gold)">Coquimbo ·</b> ${esc(r.nuestra)}</div>
+       <div class="sub" style="margin-top:4px"><b style="color:var(--red)">${esc(f.opp)} ·</b> ${esc(r.suya)}</div>
+       <div class="callout" style="margin:8px 0 0"><b>Palanca ·</b> ${esc(r.palanca)}</div></div>`).join('')}</div></div></div>
+   <div class="card"><h3>Cruce · nuestros defectos frente a sus virtudes</h3>
+     <div class="grid g2" style="align-items:start"><div>${clashSVG(w,'defensa')}</div>
+     <div>${X.nuestrosDefectosVsSusVirtudes.map(r=>`<div class="card" style="margin-top:8px;background:var(--bg1)">${bd(r.riesgo==='ALTO'?'ALTO':'MEDIO')} <span class="sub">riesgo</span>
+       <div class="sub" style="margin-top:6px"><b style="color:var(--amber)">Coquimbo ·</b> ${esc(r.nuestro)}</div>
+       <div class="sub" style="margin-top:4px"><b style="color:var(--teal)">${esc(f.opp)} ·</b> ${esc(r.suya)}</div>
+       <div class="callout warn" style="margin:8px 0 0"><b>Mitigación ·</b> ${esc(r.mitigacion)}</div></div>`).join('')}</div></div></div>`;
+}
+/* Mapa de choque: perspectiva Coquimbo (ataque ↑). ataque: sus zonas libres (rojo) + nuestras rutas (oro).
+   defensa: su zona de finalización (rojo) sobre nuestro campo + nuestros defensores flojos por arriba. */
+function clashSVG(w,modo){
+  const W=300,H=460,mx=12,my=12,pw=W-2*mx,ph=H-2*my,cw=pw/3,bh=ph/6; let cells='',over='';
+  const capa=(id)=>(w.zonas.capas||[]).find(c=>c.id===id);
+  const flip=g=>g.map((r,b)=>g[5-b].slice().reverse());
+  if(modo==='ataque'){
+    const g=flip(capa('desprotegidas').grid);
+    for(let b=0;b<6;b++)for(let c=0;c<3;c++){const v=g[b][c],x=mx+c*cw,y=my+(5-b)*bh;
+      cells+=`<rect x="${x}" y="${y}" width="${cw}" height="${bh}" fill="rgba(255,95,95,${(v*0.7).toFixed(2)})"/>`;}
+    const A=(x1,y1,x2,y2,lab)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ffd21f" stroke-width="4" marker-end="url(#arG)" opacity=".95"/>`+(lab?`<text x="${x2}" y="${y2-8}" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="800">${lab}</text>`:'');
+    over+=`<circle cx="150" cy="300" r="26" fill="rgba(255,210,31,.18)" stroke="#ffd21f" stroke-dasharray="4 3"/><text x="150" y="304" text-anchor="middle" font-size="9" fill="#ffd21f" font-weight="800">ROBO</text>`;
+    over+=A(140,280,62,140,'espalda carrilero')+A(160,280,238,140,'espalda carrilero')+A(150,275,150,110,'Z14 / Johansen');
+    over+=`<text x="${W/2}" y="${H-30}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">rojo = zonas que el rival deja libres al atacar</text><text x="${W/2}" y="${H-18}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">oro = nuestras rutas tras el robo</text>`;
+  } else {
+    const g=flip(capa('ataque').grid);
+    for(let b=0;b<6;b++)for(let c=0;c<3;c++){const v=g[b][c],x=mx+c*cw,y=my+(5-b)*bh;
+      cells+=`<rect x="${x}" y="${y}" width="${cw}" height="${bh}" fill="rgba(255,95,95,${(v*0.7).toFixed(2)})"/>`;}
+    const D=(typeof NOSOTROS!=='undefined'&&NOSOTROS.zonas)?NOSOTROS.zonas.defensores:[];
+    D.forEach(n=>{ if(n.aer==null)return; const col=n.aer<=30?'#ff5f5f':n.aer<=50?'#f5a623':'#38d98a'; const r=n.aer<=30?15:n.aer<=50?12:10;
+      over+=`<circle cx="${n.x}" cy="${n.y}" r="${r}" fill="${col}" fill-opacity=".3" stroke="${col}" stroke-width="2.5"/><text x="${n.x}" y="${n.y-r-3}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">${esc(n.n)}</text><text x="${n.x}" y="${n.y+3.5}" text-anchor="middle" font-size="9" fill="#fff" font-weight="800">${n.aer}%</text>`;});
+    over+=`<path d="M 250 250 Q 230 360 120 395" fill="none" stroke="#ff5f5f" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="248" y="244" text-anchor="end" font-size="9" fill="#ff9a9a" font-weight="800">centro Sanhueza/Campos</text>`;
+    over+=`<text x="${W/2}" y="80" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">rojo = su zona de llegada y remate</text><text x="${W/2}" y="92" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">círculos = nuestro % de duelos aéreos</text>`;
+  }
+  const lines=`<rect x="${mx}" y="${my}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><line x1="${mx}" y1="${my+ph/2}" x2="${mx+pw}" y2="${my+ph/2}" stroke="rgba(255,255,255,.22)"/><circle cx="${W/2}" cy="${my+ph/2}" r="30" fill="none" stroke="rgba(255,255,255,.22)"/><rect x="${W/2-46}" y="${my}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/><rect x="${W/2-46}" y="${my+ph-52}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`;
+  const defs=`<defs><marker id="arG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd21f"/></marker><marker id="arR" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff5f5f"/></marker></defs>`;
+  return `<div style="text-align:center"><div class="sub" style="margin-bottom:4px">${modo==='ataque'?'Coquimbo ataca ↑ · campo de '+esc('Ñublense')+' arriba':'Coquimbo defiende ↓ · nuestro arco abajo'}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${defs}${cells}${lines}${over}</svg></div>`;
+}
+function hudlExtraCharts(w,f){
+  if(!window.Chart) return; const gc='rgba(255,255,255,.07)',tk='#aab8c4';
+  if(w.formaciones&&document.getElementById('chForm')){ const F=w.formaciones.porLinea; destroy('form');
+    charts.form=new Chart(document.getElementById('chForm'),{type:'bar',data:{labels:['Línea de 3 (3-4-3 / 3-5-2)','Línea de 4'],
+      datasets:[{label:'xG/90 propio',data:[F.tres.xg90,F.cuatro.xg90],backgroundColor:'#ffd21f'},{label:'xG/90 en contra',data:[F.tres.xga90,F.cuatro.xga90],backgroundColor:'#ff5f5f'}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tk}}},scales:{x:{ticks:{color:tk},grid:{color:gc}},y:{beginAtZero:true,ticks:{color:tk},grid:{color:gc}}}}}); }
+  if(w.finalizacion&&document.getElementById('chTramo')){ destroy('tramo');
+    charts.tramo=new Chart(document.getElementById('chTramo'),{type:'bar',data:{labels:w.finalizacion.tramos,
+      datasets:[{label:'Tiros de '+f.opp,data:w.finalizacion.porTramo,backgroundColor:w.finalizacion.porTramo.map((v,i)=>i===5?'#ff5f5f':'#3fd0c4')}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tk}}},scales:{x:{ticks:{color:tk},grid:{color:gc}},y:{beginAtZero:true,ticks:{color:tk},grid:{color:gc}}}}}); }
 }
 
 /* ---- ilustraciones por zonas (cancha SVG reutilizable, mejorable) ---- */
@@ -394,6 +520,13 @@ function pitchSVG(w,layer){
       cells+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${cw.toFixed(1)}" height="${bh.toFixed(1)}" fill="rgba(${base[0]},${base[1]},${base[2]},${a})"/>`;
       if(v>=0.5)cells+=`<text x="${(x+cw/2).toFixed(1)}" y="${(y+bh/2+4).toFixed(1)}" text-anchor="middle" font-size="11" fill="#06131f" font-weight="800">${Math.round(v*100)}</text>`;
     }
+  }
+  if(layer.tipo==='g3'&&w.grids&&w.grids[layer.src]){
+    const G=w.grids[layer.src], mxv=Math.max(...G.celdas.flat()), red=layer.color==='red', base=red?[255,95,95]:[255,210,31], th=ph/3;
+    for(let t=0;t<3;t++)for(let c=0;c<3;c++){ const v=G.celdas[c][t], x=mx+c*cw, y=my+(2-t)*th, a=(0.12+0.78*v/mxv).toFixed(2);
+      cells+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${cw.toFixed(1)}" height="${th.toFixed(1)}" fill="rgba(${base[0]},${base[1]},${base[2]},${a})" stroke="rgba(0,0,0,.25)"/>`+
+        `<text x="${(x+cw/2).toFixed(1)}" y="${(y+th/2+6).toFixed(1)}" text-anchor="middle" font-size="17" fill="${v/mxv>0.55?'#06131f':'#fff'}" font-weight="800">${v}%</text>`; }
+    for(let c=0;c<3;c++) cells+=`<text x="${(mx+c*cw+cw/2).toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="8.5" fill="rgba(255,255,255,.7)">${['izq','centro','der'][c]} ${G.carriles[c]}%</text>`;
   }
   let net='';
   if(layer.tipo==='net'&&w.zonas.nodos){
@@ -451,6 +584,8 @@ function genReport(w,f){
     '<h3 style="color:var(--gold)">INFORME DE OPOSICIÓN · '+esc(f.opp).toUpperCase()+'</h3>'+
     '<div class="sub">Coquimbo Unido vs '+esc(f.opp)+' · '+esc(f.date)+' · '+(f.ven==='H'?'Coquimbo LOCAL':'Coquimbo VISITA')+' · Fuente: Hudl Wyscout ('+w.nPartidos+' partidos) · DT '+esc(w.dt)+' · '+esc(w.formacionBase)+' · Generado '+new Date().toLocaleString('es-CL')+'</div>'+
     '<h4 style="color:var(--gold)">1 · Resumen</h4><div class="sub">'+esc(w.resumen)+'</div>'+
+    (w.insights?'<h4 style="color:var(--gold)">Insights priorizados</h4><ol class="sub">'+w.insights.map(x=>'<li style="margin-bottom:6px"><b>'+esc(x.t)+'</b> ['+esc(x.nivel)+'] — '+esc(x.evidencia)+' <i>Respuesta:</i> '+esc(x.respuesta)+'</li>').join('')+'</ol>':'')+
+    (w.cruce?'<h4 style="color:var(--gold)">Cruce Coquimbo ↔ '+esc(f.opp)+'</h4><div class="sub"><b>Nuestras virtudes vs sus defectos:</b></div>'+li(w.cruce.nuestrasVirtudesVsSusDefectos.map(r=>r.palanca))+'<div class="sub"><b>Nuestros defectos vs sus virtudes:</b></div>'+li(w.cruce.nuestrosDefectosVsSusVirtudes.map(r=>r.mitigacion)):'')+
     '<h4 style="color:var(--gold)">2 · Fortalezas</h4>'+li(w.fortalezas)+
     '<h4 style="color:var(--gold)">3 · Vulnerabilidades</h4>'+li(w.vulnerabilidades)+
     (w.pasesClave?'<h4 style="color:var(--gold)">4 · Creación (pases clave)</h4><div class="sub">'+esc(w.pasesClave.interp)+'</div>':'')+
@@ -467,7 +602,7 @@ function genReport(w,f){
 function renderProxy(f){
   const box=$('#reading'); const r=rivProxy(f.opp); const e=estilo(f.opp); const mine=miResultado(f.opp);
   let html=`<div class="card"><div class="hero"><div>
-      <div class="sub">Próximo · ${esc(f.date)} · ${f.ven==='H'?'Coquimbo LOCAL':'Coquimbo VISITA'}</div>
+      <div class="sub">${f.arch?'Lectura archivada · último duelo '+esc(f.res||''):'Próximo'} · ${esc(f.date)} · ${f.ven==='H'?'Coquimbo LOCAL':'Coquimbo VISITA'}</div>
       <div class="vs">Coquimbo Unido <span style="color:var(--mut)">vs</span> ${esc(f.opp)}</div>
       <div><span class="badge b-hudl">HUDL WYSCOUT (LIGA)</span> <span class="badge b-dato">CFDB</span> <span class="badge b-inf">INFERENCIA</span></div></div></div>
       <div class="callout info">Ahora hay <b>dato de evento de LIGA</b> para este rival (xG, xGA, xPoints, líderes). Falta su <b>informe de partido</b> Wyscout para las láminas por zonas, el arquero y la debilidad aérea por jugador — cuando lo subas, esta página se eleva al nivel de Colo-Colo.</div></div>`+
@@ -508,7 +643,7 @@ function renderProxy(f){
 function renderInventory(){
   const fx=(RIV.fixture||[]).filter(f=>f.comp==='LIG');
   const rows=fx.map(f=>{
-    const h=hasHudl(f.opp)?'<span class="badge b-dato">✓ partido (5)</span>':(ligaWy(f.opp)?'<span class="badge b-dato">✓ liga</span>':'<span class="badge b-pend">—</span>');
+    const h=hasHudl(f.opp)?'<span class="badge b-dato">✓ partido ('+hudl(f.opp).nPartidos+')</span>':(ligaWy(f.opp)?'<span class="badge b-dato">✓ liga</span>':'<span class="badge b-pend">—</span>');
     const c=rivProxy(f.opp)?'<span class="badge b-dato">✓</span>':'—';
     const d=estilo(f.opp)?'<span class="badge b-dato">✓ 2025</span>':'—';
     const m=miResultado(f.opp)?'<span class="badge b-dato">✓</span>':'—';
