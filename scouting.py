@@ -12,7 +12,7 @@ partido a partido (mejora futura). Se reejecuta al re-extraer líderes -> el sco
 """
 import json
 from pathlib import Path
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 
 # candidatos: (n, team, min, mp, g, a, rating, pass, kp, sh, sot, bc, tk, intc, du, dr, fl, yc, rc)
 K=["n","team","min","mp","g","a","rating","pass","kp","sh","sot","bc","tk","intc","du","dr","fl","yc","rc"]

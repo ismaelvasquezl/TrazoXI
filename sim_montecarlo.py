@@ -9,27 +9,27 @@ Motor de proyección + pre-match — Coquimbo Unido 2026.
 Fuentes: CFDB league_standings / team_form / team_h2h / player_top_scorers (DATO). Etiquetas INFERENCIA donde toca.
 Salidas: sim_tabla.js (const SIMTABLA) + rivales_prematch.js (const RIVALES).
 LÍMITES: la liga chilena no publica xG/tracking -> fuerzas derivadas de goles reales. CFDB no expone el
-calendario exacto de los otros 15 equipos -> su resto se aproxima. Coquimbo juega su calendario real (7 fechas).
+calendario exacto de los otros 15 equipos -> su resto se aproxima. Coquimbo juega su calendario real (6 fechas restantes).
 """
 import json, random, math
 from collections import defaultdict
 from pathlib import Path
 
 random.seed(42)
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 N_SIM = 20000
 TOTAL_FECHAS = 30
 HFA = 1.20
 RELEGA = 2; COPA_LIB = 4; COPA_TOT = 8
 
 # ---- Tabla actual CFDB (DATO): nombre, PJ, pts, GF, GA ----
-TB = [
- ("Colo-Colo",23,54,48,22),("U. Católica",23,42,50,33),("U. de Chile",23,42,35,19),
- ("Everton",23,36,37,25),("Palestino",23,36,36,33),("D. Limache",23,33,43,35),
- ("Ñublense",23,32,28,31),("D. Concepción",23,31,25,26),("La Serena",23,30,34,38),
- ("Coquimbo Unido",23,29,31,32),("Audax Italiano",23,28,26,31),("O'Higgins",23,27,28,36),
- ("Huachipato",22,28,30,39),("Cobresal",23,24,34,44),("U. de Concepción",22,22,17,37),
- ("U. La Calera",23,17,19,40),
+TB = [  # CFDB league_standings 13-10-2026
+ ("Colo-Colo",24,54,50,27),("U. de Chile",24,45,41,19),("U. Católica",23,42,50,33),
+ ("Everton",24,39,40,27),("Palestino",24,37,38,35),("D. Limache",24,34,45,37),
+ ("Huachipato",24,34,34,39),("Coquimbo Unido",24,32,36,34),("D. Concepción",24,32,26,27),
+ ("Ñublense",24,32,28,37),("La Serena",24,30,36,41),("Audax Italiano",23,28,26,31),
+ ("O'Higgins",24,27,28,38),("Cobresal",24,25,35,45),("U. de Concepción",24,23,18,40),
+ ("U. La Calera",24,18,20,41),
 ]
 teams=[t[0] for t in TB]
 pj={t[0]:t[1] for t in TB}; pts0={t[0]:t[2] for t in TB}
@@ -45,9 +45,8 @@ def lam(team,opp,is_home):
 # ---- Fixture REAL de Coquimbo (calendario oficial; H=local, A=visita) ----
 COQ="Coquimbo Unido"
 COQ_FIX=[
- dict(date="2026-10-11", opp="Colo-Colo",      ven="H", comp="LIG"),
  dict(date="2026-10-25", opp="Ñublense",       ven="A", comp="LIG"),
- dict(date="2026-11-01", opp="U. La Calera",   ven="H", comp="LIG"),
+ dict(date="2026-10-31", opp="U. La Calera",   ven="H", comp="LIG"),  # fecha/hora CFDB fixture 245929 (21:00)
  dict(date="2026-11-08", opp="Audax Italiano", ven="A", comp="LIG"),
  dict(date="2026-11-22", opp="Everton",        ven="H", comp="LIG"),
  dict(date="2026-11-29", opp="D. Limache",     ven="H", comp="LIG"),
@@ -96,7 +95,7 @@ champ=defaultdict(int); top4=defaultdict(int); top8=defaultdict(int); releg=defa
 rem_solo={}
 for t in teams:
     r=TOTAL_FECHAS-pj[t]
-    if t==COQ: r=0                       # sus 7 partidos van explícitos
+    if t==COQ: r=0                       # sus 6 partidos restantes van explícitos
     elif t in coq_opps: r=r-1            # su partido vs Coquimbo va explícito
     rem_solo[t]=max(0,r)
 
@@ -144,12 +143,12 @@ COQROW=next(r for r in rows if r["team"]==COQ)
 
 SIM=dict(meta=dict(
     modelo="Monte Carlo (%d sim) · Poisson Dixon-Coles-lite · HFA=%.2f"%(N_SIM,HFA),
-    fuente="Tabla y goles: CFDB league_standings (DATO). Coquimbo con calendario oficial real (7 fechas).",
+    fuente="Tabla y goles: CFDB league_standings (DATO). Coquimbo con calendario oficial real (6 fechas restantes).",
     limite=("La liga no publica xG/tracking: fuerzas derivadas de goles reales. El calendario exacto de los "
             "otros 15 equipos no está en CFDB: su resto se aproxima por fuerzas (juego independiente). "
-            "Coquimbo lleva 23 fechas jugadas (reconciliado con CFDB, incluidos U. Católica 1-2 y Huachipato 0-1) "
-            "y le restan sus 7 partidos reales de calendario para cerrar en 30."),
-    league_avg=round(league_avg,3),fecha="2026-09-16",
+            "Coquimbo lleva 24 fechas jugadas (reconciliado con CFDB al 13-10, incluido Colo-Colo 5-2) "
+            "y le restan sus 6 partidos reales de calendario para cerrar en 30."),
+    league_avg=round(league_avg,3),fecha="2026-10-13",
     zonas="Descenso = 2 últimos. Top-4 ≈ Libertadores, Top-8 ≈ zona internacional (aprox)."),
     tabla=rows, coquimbo=COQROW)
 (BASE/"sim_tabla.js").write_text("// Monte Carlo tabla — sim_montecarlo.py (CFDB + calendario real). NO editar a mano.\nconst SIMTABLA="+json.dumps(SIM,ensure_ascii=False)+";\n",encoding="utf-8")
@@ -158,14 +157,13 @@ SIM=dict(meta=dict(
 # Datos CFDB embebidos (DATO): standing, forma L5 (más reciente primero), H2H, goleador destacado.
 STAND={r["team"]:r for r in [dict(team=t[0],pos=i+1,pj=t[1],pts=t[2],gf=t[3],ga=t[4]) for i,t in enumerate(TB)]}
 # forma L5: lista de (res,gf,ga,ven) reciente->antiguo
-FORM={
- "Colo-Colo":[("D",1,1,"H"),("D",0,0,"A"),("W",5,1,"H"),("W",2,1,"A"),("D",2,2,"H")],
- "Ñublense":[("L",1,3,"H"),("L",1,2,"A"),("L",0,2,"A"),("L",0,1,"H"),("W",2,1,"A")],
- "U. La Calera":[("W",1,0,"H"),("L",1,2,"A"),("L",0,1,"H"),("D",0,0,"A"),("L",1,2,"A")],
+FORM={  # CFDB team_form (Primera División) al 13-10-2026, reciente->antiguo
+ "Ñublense":[("L",0,6,"A"),("L",1,3,"H"),("L",1,2,"A"),("L",0,2,"A"),("L",0,1,"H")],
+ "U. La Calera":[("D",1,1,"A"),("W",1,0,"H"),("L",1,2,"A"),("L",0,1,"H"),("D",0,0,"A")],
  "Audax Italiano":[("W",1,0,"H"),("W",1,0,"A"),("L",1,5,"A"),("D",0,0,"H"),("D",1,1,"A")],
- "Everton":[("W",3,1,"A"),("L",0,1,"H"),("W",3,0,"A"),("W",3,1,"H"),("D",1,1,"H")],
- "D. Limache":[("L",0,1,"A"),("W",3,0,"H"),("W",2,0,"H"),("L",0,3,"H"),("W",3,1,"A")],
- "O'Higgins":[("L",0,1,"A"),("W",2,1,"H"),("L",2,3,"A"),("L",0,1,"H"),("D",2,2,"A")],
+ "Everton":[("W",3,2,"H"),("W",3,1,"A"),("L",0,1,"H"),("W",3,0,"A"),("W",3,1,"H")],
+ "D. Limache":[("D",2,2,"H"),("L",0,1,"A"),("W",3,0,"H"),("W",2,0,"H"),("L",0,3,"H")],
+ "O'Higgins":[("L",0,2,"A"),("L",0,1,"A"),("W",2,1,"H"),("L",2,3,"A"),("L",0,1,"H")],
 }
 # H2H all-time (Coquimbo persp): W-D-L y últimos 5 (concis)
 H2H={
@@ -177,8 +175,8 @@ H2H={
  "D. Limache":dict(w=4,d=2,l=2,tot=8,ult="1-1,1-1,3-2,3-2,2-1",nota="Rival nuevo; Coquimbo ganó los dos de liga (3-2, 2-1)."),
  "O'Higgins":dict(w=20,d=11,l=21,tot=52,ult="0-0,1-0,2-0,1-1,2-0",nota="Todo igualado histórico; Coquimbo invicto en los últimos 5."),
 }
-GOLEADOR={"Colo-Colo":"M. Correa (12) y M. Romero (8)","D. Limache":"D. Castro (13, 2º de la liga)",
- "Everton":"A. Medina (11)","U. La Calera":"J. Sáez (9)","Ñublense":"—","Audax Italiano":"—","O'Higgins":"—"}
+GOLEADOR={"Colo-Colo":"M. Correa (12) y M. Romero (8)","D. Limache":"D. Castro (13, 3º de la liga) y G. Sosa (8)",
+ "Everton":"A. Medina (12)","U. La Calera":"J. Sáez (9)","Ñublense":"—","Audax Italiano":"—","O'Higgins":"—"}
 
 def forma_pts(f): return sum(3 if x[0]=="W" else 1 if x[0]=="D" else 0 for x in f)
 def lectura(opp,ven,pred):
@@ -238,7 +236,7 @@ for f in COQ_FIX:
         h2h=H2H[opp], goleador=GOLEADOR[opp], pred=pred, lectura=lectura(opp,f["ven"],pred)))
 RIV=dict(meta=dict(fuente="CFDB league_standings/team_form/team_h2h/player_top_scorers (DATO) + predicción Poisson Dixon-Coles-lite.",
                    limite="Sin xG/tracking públicos: fuerzas por goles reales. Lecturas tácticas = INFERENCIA sobre datos, no observación de video.",
-                   actualizado="2026-09-16"),
+                   actualizado="2026-10-13"),
          fixture=COQ_FIX+COPA, rivales=rivales)
 (BASE/"rivales_prematch.js").write_text("// Pre-match rivales — sim_montecarlo.py (CFDB). NO editar a mano.\nconst RIVALES="+json.dumps(RIV,ensure_ascii=False)+";\n",encoding="utf-8")
 

@@ -1,45 +1,45 @@
 // Generado por analisis_cfdb.py — fuentes CFDB + FBref. NO editar a mano.
 const ANALISIS = {
- "actualizado": "2026-09-16",
+ "actualizado": "2026-10-13",
  "fuentes": "CFDB (totales, historico, contexto liga) + FBref (detalle partido-a-partido). Etiquetas: DATO/INFERENCIA/HIPOTESIS.",
  "totales_cfdb": {
-  "pos": 10,
-  "pj": 23,
-  "w": 8,
+  "pos": 8,
+  "pj": 24,
+  "w": 9,
   "d": 5,
   "l": 10,
-  "gf": 31,
-  "ga": 32,
-  "gd": -1,
-  "pts": 29,
-  "fuente": "CFDB team_standing"
+  "gf": 36,
+  "ga": 34,
+  "gd": 2,
+  "pts": 32,
+  "fuente": "CFDB team_standing (13-10-2026)"
  },
  "totales_detalle": {
-  "pj": 23,
-  "w": 8,
+  "pj": 24,
+  "w": 9,
   "d": 5,
   "l": 10,
-  "gf": 31,
-  "ga": 32,
-  "gd": -1,
-  "pts": 29,
-  "ppg": 1.261,
-  "gf_pg": 1.35,
-  "ga_pg": 1.39
+  "gf": 36,
+  "ga": 34,
+  "gd": 2,
+  "pts": 32,
+  "ppg": 1.333,
+  "gf_pg": 1.5,
+  "ga_pg": 1.42
  },
  "split": {
   "local": {
-   "pj": 11,
-   "w": 4,
+   "pj": 12,
+   "w": 5,
    "d": 3,
    "l": 4,
-   "gf": 13,
-   "ga": 10,
-   "gd": 3,
-   "pts": 15,
-   "ppg": 1.364,
-   "gf_pg": 1.18,
-   "ga_pg": 0.91
+   "gf": 18,
+   "ga": 12,
+   "gd": 6,
+   "pts": 18,
+   "ppg": 1.5,
+   "gf_pg": 1.5,
+   "ga_pg": 1.0
   },
   "visita": {
    "pj": 12,
@@ -57,20 +57,20 @@ const ANALISIS = {
  },
  "reconciliacion": {
   "fbref": {
-   "pj": 23,
-   "record": "8-5-10",
-   "gf": 31,
-   "ga": 32,
-   "pts": 29
+   "pj": 24,
+   "record": "9-5-10",
+   "gf": 36,
+   "ga": 34,
+   "pts": 32
   },
   "cfdb": {
-   "pj": 23,
-   "record": "8-5-10",
-   "gf": 31,
-   "ga": 32,
-   "pts": 29
+   "pj": 24,
+   "record": "9-5-10",
+   "gf": 36,
+   "ga": 34,
+   "pts": 32
   },
-  "veredicto": "Reconciliacion COMPLETA tras cargar el partido faltante (U. Catolica 1-2, 26-ago) y el Huachipato 0-1: el detalle FBref coincide EXACTO con CFDB en PJ (23), record (8-5-10), goles (31-32), diferencia (-1), puntos (29) y posicion (10). Cero desfase. Se mantiene CFDB como fuente oficial y FBref para el detalle partido-a-partido."
+  "veredicto": "Reconciliacion COMPLETA tras cargar el partido faltante (U. Catolica 1-2, 26-ago) y el Huachipato 0-1; 13-10 se suma Colo-Colo 5-2 (CFDB fixture 109354). El detalle coincide con CFDB en PJ (24), record (9-5-10), goles (36-34), diferencia (+2), puntos (32) y posicion (8). Cero desfase. Se mantiene CFDB como fuente oficial y FBref para el detalle partido-a-partido."
  },
  "regresion": {
   "titulo": "De campeon invicto-casi a media tabla",
@@ -87,23 +87,23 @@ const ANALISIS = {
    "fuente": "CFDB historical_standings 2025 (CAMPEON)"
   },
   "y2026": {
-   "pos": 10,
-   "pj": 23,
-   "w": 8,
+   "pos": 8,
+   "pj": 24,
+   "w": 9,
    "d": 5,
    "l": 10,
-   "gf": 31,
-   "ga": 32,
-   "gd": -1,
-   "pts": 29,
-   "fuente": "CFDB team_standing"
+   "gf": 36,
+   "ga": 34,
+   "gd": 2,
+   "pts": 32,
+   "fuente": "CFDB team_standing (13-10-2026)"
   },
   "proyeccion_30": {
-   "pts": 37.8,
-   "gf": 40.4,
-   "ga": 41.7
+   "pts": 40.0,
+   "gf": 45.0,
+   "ga": 42.5
   },
-  "lectura": "Campeon 2025 con 75 pts y la mejor defensa de la liga (17 GC en 30 = 0.57/PJ). En 2026 concede 1.39/PJ (ritmo 41.7 en 30), mas del doble. El ataque se sostiene mejor (1.63 -> 1.35 GF/PJ). El colapso es DEFENSIVO."
+  "lectura": "Campeon 2025 con 75 pts y la mejor defensa de la liga (17 GC en 30 = 0.57/PJ). En 2026 concede 1.42/PJ (ritmo 42.5 en 30), mas del doble. El ataque se sostiene mejor (1.63 -> 1.5 GF/PJ). El colapso es DEFENSIVO."
  },
  "tendencia": {
   "fecha": [
@@ -129,7 +129,8 @@ const ANALISIS = {
    "F 21",
    "F 16",
    "F 22",
-   "F 23"
+   "F 23",
+   "F 24"
   ],
   "etiqueta": [
    "@Vis U Concepción",
@@ -154,7 +155,8 @@ const ANALISIS = {
    "vLoc Huachipato",
    "vLoc U. de Concepción",
    "@Vis Universidad de Chile",
-   "@Vis Cobresal"
+   "@Vis Cobresal",
+   "vLoc Colo-Colo"
   ],
   "gf": [
    0,
@@ -179,7 +181,8 @@ const ANALISIS = {
    0,
    1,
    2,
-   2
+   2,
+   5
   ],
   "ga": [
    1,
@@ -204,7 +207,8 @@ const ANALISIS = {
    1,
    0,
    4,
-   3
+   3,
+   2
   ],
   "gf_ma5": [
    0,
@@ -229,7 +233,8 @@ const ANALISIS = {
    0.8,
    0.8,
    1,
-   1.2
+   1.2,
+   2
   ],
   "ga_ma5": [
    1,
@@ -254,6 +259,7 @@ const ANALISIS = {
    1.4,
    1,
    1.6,
+   2,
    2
   ],
   "ppg_ma5": [
@@ -279,37 +285,38 @@ const ANALISIS = {
    0.4,
    1,
    0.8,
-   0.6
+   0.6,
+   1.2
   ],
-  "ult5_pts": 3,
-  "ult5_gf": 6,
+  "ult5_pts": 6,
+  "ult5_gf": 10,
   "ult5_ga": 10
  },
  "trend_reg": {
-  "ga_slope": 0.04,
-  "gf_slope": -0.005,
-  "lectura": "Pendiente GC por fecha = +0.040 (GC en alza); pendiente GF = -0.005. n=23, tendencia indicativa no causal."
+  "ga_slope": 0.041,
+  "gf_slope": 0.032,
+  "lectura": "Pendiente GC por fecha = +0.041 (GC en alza); pendiente GF = +0.032. n=24, tendencia indicativa no causal."
  },
  "proyeccion": {
   "metodo": "Bootstrap Monte Carlo (20.000 sim); remuestreo de resultados reales local/visita",
-  "base_pts": 29,
-  "rem_local": 4,
+  "base_pts": 32,
+  "rem_local": 3,
   "rem_visita": 3,
-  "home_ppg": 1.364,
+  "home_ppg": 1.5,
   "away_ppg": 1.167,
-  "media": 38.0,
-  "p10": 34,
-  "p50": 38,
-  "p90": 42,
-  "lectura": "Proyeccion fin de temporada ~38 pts (IC80% 34-42). Zona de media tabla: sin lucha por titulo ni riesgo real de descenso con este ritmo. Muestra n=23, proyeccion sensible al calendario restante."
+  "media": 40.0,
+  "p10": 36,
+  "p50": 40,
+  "p90": 44,
+  "lectura": "Proyeccion fin de temporada ~40 pts (IC80% 36-44). Zona de media tabla: sin lucha por titulo ni riesgo real de descenso con este ritmo. Muestra n=24, proyeccion sensible al calendario restante."
  },
  "poisson": {
   "local": {
-   "gf": 1.18,
-   "ga": 0.91,
-   "pW": 0.422,
-   "pD": 0.297,
-   "pL": 0.282
+   "gf": 1.5,
+   "ga": 1.0,
+   "pW": 0.488,
+   "pD": 0.26,
+   "pL": 0.252
   },
   "visita": {
    "gf": 1.5,
@@ -320,9 +327,9 @@ const ANALISIS = {
   },
   "validacion": {
    "local": {
-    "n": 11,
-    "acierto": 0.364,
-    "logloss": 1.189
+    "n": 12,
+    "acierto": 0.417,
+    "logloss": 1.168
    },
    "visita": {
     "n": 12,
@@ -331,7 +338,7 @@ const ANALISIS = {
    },
    "nota": "Validacion leave-one-out (cada partido predicho con las tasas de los otros). Acierto de clase modesto (empate es la clase dificil); el valor esta en la probabilidad, no en el marcador exacto. n bajo: usar como guia, no certeza."
   },
-  "lectura": "En casa el modelo favorece a Coquimbo (pW~42%) con 1.2 GF y solo 0.9 GC esperados. De visita se invierte: mas probable no ganar (pL~46%) por 1.8 GC esperados. El plan debe ser distinto segun localia."
+  "lectura": "En casa el modelo favorece a Coquimbo (pW~49%) con 1.5 GF y solo 1.0 GC esperados. De visita se invierte: mas probable no ganar (pL~46%) por 1.8 GC esperados. El plan debe ser distinto segun localia."
  },
  "liga": {
   "posesion": {
@@ -436,24 +443,24 @@ const ANALISIS = {
    },
    {
     "season": "2026",
-    "pos": 10,
-    "pj": 23,
-    "pts": 29,
-    "gf": 31,
-    "ga": 32,
+    "pos": 8,
+    "pj": 24,
+    "pts": 32,
+    "gf": 36,
+    "ga": 34,
     "encurso": true,
-    "gapg": 1.39,
-    "gfpg": 1.35,
-    "ppg": 1.26
+    "gapg": 1.42,
+    "gfpg": 1.5,
+    "ppg": 1.33
    }
   ],
-  "lectura": "Trayectoria en Primera: 5º (2019) → descenso/ascenso → 14º al volver (2022) → 5º (2023) → 8º (2024) → CAMPEÓN (2025) → 10º (2026, en curso). El título fue un pico sostenido sobre una base de media tabla; la caída de 2026 es una regresión a la media agravada por el desplome defensivo (GC/PJ: 0,57 campeón → 1,41 hoy)."
+  "lectura": "Trayectoria en Primera: 5º (2019) → descenso/ascenso → 14º al volver (2022) → 5º (2023) → 8º (2024) → CAMPEÓN (2025) → 8º (2026, en curso). El título fue un pico sostenido sobre una base de media tabla; la caída de 2026 es una regresión a la media agravada por el desplome defensivo (GC/PJ: 0,57 campeón → 1,42 hoy)."
  },
  "insights": [
   {
    "prioridad": 1,
    "area": "Defensa de visita",
-   "evidencia": "22 GC en 12 de visita = 1.83/PJ (vs 0.91 en casa)",
+   "evidencia": "22 GC en 12 de visita = 1.83/PJ (vs 1.0 en casa)",
    "interpretacion": "El desplome respecto a 2025 es casi todo fuera de casa: la estructura defensiva no aguanta lejos del Sanchez Rumoroso.",
    "accion": "Plan de visita conservador: bloque medio-bajo, no exponer a los laterales, priorizar no encajar primero. Revisar transiciones defensivas (goles tardios: ver U. de Chile 82'-90')."
   },
@@ -467,7 +474,7 @@ const ANALISIS = {
   {
    "prioridad": 3,
    "area": "Dependencia de localia",
-   "evidencia": "Local 4-3-4 (1.364 ppg) vs Visita 4-2-6 (1.167 ppg)",
+   "evidencia": "Local 5-3-4 (1.5 ppg) vs Visita 4-2-6 (1.167 ppg)",
    "interpretacion": "El equipo es competitivo en casa y fragil fuera. Sumar de visita es la palanca de la temporada.",
    "accion": "Objetivo realista: convertir 2-3 de las 3 visitas restantes en al menos empates. En casa (5 restantes) exigir >=10 pts."
   },

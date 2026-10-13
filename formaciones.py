@@ -8,7 +8,7 @@ Salida: formaciones.js (const FORMACIONES={coquimbo, rivales{...}, meta}).
 """
 import json
 from pathlib import Path
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 
 # XI por posición real (CFDB). pos ∈ GK,CB,LB,RB,DM,CM,AM,SS,LW,RW,CF
 XI = {

@@ -11,7 +11,7 @@ LÍMITE: O'Higgins quedó incompleto por el tope diario de CFDB (se completa al 
 """
 import json
 from pathlib import Path
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 
 C=["team","n","pos","min","mp","g","a","rating","passpct","kp","sh","sot","bc","tk","intc","du","dr","fl","yc","rc"]
 def R(*v): return dict(zip(C,v))

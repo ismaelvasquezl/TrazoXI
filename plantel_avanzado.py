@@ -10,7 +10,7 @@ duelos, intercepciones) por 90'. Percentiles = ranking DENTRO del plantel, no vs
 """
 import json, statistics
 from pathlib import Path
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 
 # CFDB player_season_stats (Primera 2026). min=minutos; duels=duelos ganados (totales).
 # campos: short,pos,line,MP,min,G,A,rating,passpct,KP,shots,SoT,bigch,tk,intc,duels,drib,fouls,yc,rc

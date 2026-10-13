@@ -10,7 +10,7 @@ import json, re, statistics, random, math
 from pathlib import Path
 
 random.seed(42)
-BASE = Path("/sessions/zealous-ecstatic-hamilton/mnt/outputs")
+BASE = Path(__file__).resolve().parent  # ruta relativa al script (blindaje de ruta)
 
 # ---------- 1. Cargar fixtures (FBref) ----------
 raw = (BASE / "fixtures.js").read_text(encoding="utf-8")
@@ -38,7 +38,7 @@ away = [g for g in LIG if g["ven"] == "A"]
 T_total, T_home, T_away = tally(LIG), tally(home), tally(away)
 
 # ---------- 3. Totales autoritativos CFDB ----------
-CFDB_2026 = dict(pos=10, pj=23, w=8, d=5, l=10, gf=31, ga=32, gd=-1, pts=29, fuente="CFDB team_standing")
+CFDB_2026 = dict(pos=8, pj=24, w=9, d=5, l=10, gf=36, ga=34, gd=2, pts=32, fuente="CFDB team_standing (13-10-2026)")
 CFDB_2025 = dict(pos=1, pj=30, w=23, d=6, l=1, gf=49, ga=17, gd=32, pts=75, fuente="CFDB historical_standings 2025 (CAMPEON)")
 
 # Nota de reconciliacion FBref<->CFDB
@@ -48,8 +48,8 @@ recon = dict(
     cfdb=dict(pj=CFDB_2026["pj"], record=f'{CFDB_2026["w"]}-{CFDB_2026["d"]}-{CFDB_2026["l"]}',
               gf=CFDB_2026["gf"], ga=CFDB_2026["ga"], pts=CFDB_2026["pts"]),
     veredicto=("Reconciliacion COMPLETA tras cargar el partido faltante (U. Catolica 1-2, 26-ago) y "
-               "el Huachipato 0-1: el detalle FBref coincide EXACTO con CFDB en PJ (23), record (8-5-10), "
-               "goles (31-32), diferencia (-1), puntos (29) y posicion (10). Cero desfase. Se mantiene CFDB "
+               "el Huachipato 0-1; 13-10 se suma Colo-Colo 5-2 (CFDB fixture 109354). El detalle coincide con CFDB en PJ (24), record (9-5-10), "
+               "goles (36-34), diferencia (+2), puntos (32) y posicion (8). Cero desfase. Se mantiene CFDB "
                "como fuente oficial y FBref para el detalle partido-a-partido.")
 )
 
@@ -101,11 +101,11 @@ a_ga,b_ga = linreg([g["ga"] for g in LIG])
 a_gf,b_gf = linreg([g["gf"] for g in LIG])
 trend_reg = dict(ga_slope=b_ga, gf_slope=b_gf,
     lectura=(f'Pendiente GC por fecha = {b_ga:+.3f} (GC { "en alza" if b_ga>0 else "estable/baja"}); '
-             f'pendiente GF = {b_gf:+.3f}. n=23, tendencia indicativa no causal.'))
+             f'pendiente GF = {b_gf:+.3f}. n=24, tendencia indicativa no causal.'))
 
 # ---------- 7. Proyeccion de puntos (bootstrap Monte Carlo) ----------
-# Temporada 30 fechas -> restan 30-23 = 7 (4 local + 3 visita, dado 11L/12V jugadas)
-REM_H, REM_A = 4, 3
+# Temporada 30 fechas -> restan 30-24 = 6 (3 local: La Calera, Everton, Limache; 3 visita: Ñublense, Audax, O'Higgins)
+REM_H, REM_A = 3, 3
 home_pts = [ (3 if g["res"]=="W" else 1 if g["res"]=="D" else 0) for g in home ]
 away_pts = [ (3 if g["res"]=="W" else 1 if g["res"]=="D" else 0) for g in away ]
 sims=[]
@@ -123,7 +123,7 @@ proj = dict(
     p10=sims[int(0.10*len(sims))], p50=sims[int(0.50*len(sims))], p90=sims[int(0.90*len(sims))],
     lectura=("Proyeccion fin de temporada ~{:.0f} pts (IC80% {}-{}). Zona de media tabla: "
              "sin lucha por titulo ni riesgo real de descenso con este ritmo. "
-             "Muestra n=23, proyeccion sensible al calendario restante.").format(
+             "Muestra n=24, proyeccion sensible al calendario restante.").format(
                  statistics.mean(sims), sims[int(0.10*len(sims))], sims[int(0.90*len(sims))])
 )
 
@@ -213,7 +213,7 @@ HIST_ROWS = [
     dict(season="2023", pos=5,  pj=30, pts=47, gf=43, ga=42),
     dict(season="2024", pos=8,  pj=30, pts=45, gf=37, ga=34),
     dict(season="2025", pos=1,  pj=30, pts=75, gf=49, ga=17),
-    dict(season="2026", pos=10, pj=23, pts=29, gf=31, ga=32, encurso=True),
+    dict(season="2026", pos=8, pj=24, pts=32, gf=36, ga=34, encurso=True),
 ]
 # GC por partido para la lectura defensiva a lo largo del tiempo
 for r in HIST_ROWS:
@@ -225,14 +225,14 @@ historia = dict(
     fuente="CFDB historical_standings (tablas finales de Primera). 2020 sin dato; 2021 fuera de Primera.",
     filas=HIST_ROWS,
     lectura=("Trayectoria en Primera: 5º (2019) → descenso/ascenso → 14º al volver (2022) → "
-             "5º (2023) → 8º (2024) → CAMPEÓN (2025) → 10º (2026, en curso). El título fue un "
+             "5º (2023) → 8º (2024) → CAMPEÓN (2025) → 8º (2026, en curso). El título fue un "
              "pico sostenido sobre una base de media tabla; la caída de 2026 es una regresión a "
-             "la media agravada por el desplome defensivo (GC/PJ: 0,57 campeón → 1,41 hoy).")
+             "la media agravada por el desplome defensivo (GC/PJ: 0,57 campeón → 1,42 hoy).")
 )
 
 # ---------- Ensamblar ----------
 ANALISIS = dict(
-    actualizado="2026-09-16",
+    actualizado="2026-10-13",
     fuentes="CFDB (totales, historico, contexto liga) + FBref (detalle partido-a-partido). Etiquetas: DATO/INFERENCIA/HIPOTESIS.",
     totales_cfdb=CFDB_2026, totales_detalle=T_total,
     split=dict(local=T_home, visita=T_away),
@@ -255,7 +255,7 @@ print("Visita:", T_away)
 print()
 print("== REGRESION 2025->2026 (CFDB) ==")
 print("2025 CAMPEON:", CFDB_2025["pts"],"pts", f'{CFDB_2025["w"]}-{CFDB_2025["d"]}-{CFDB_2025["l"]}', "GC/PJ", round(CFDB_2025["ga"]/30,2))
-print("2026 10º    :", CFDB_2026["pts"],"pts", f'{CFDB_2026["w"]}-{CFDB_2026["d"]}-{CFDB_2026["l"]}', "GC/PJ", round(CFDB_2026["ga"]/CFDB_2026["pj"],2), "| ritmo30:", proy30)
+print("2026 %dº     :" % CFDB_2026["pos"], CFDB_2026["pts"],"pts", f'{CFDB_2026["w"]}-{CFDB_2026["d"]}-{CFDB_2026["l"]}', "GC/PJ", round(CFDB_2026["ga"]/CFDB_2026["pj"],2), "| ritmo30:", proy30)
 print()
 print("== PROYECCION PUNTOS ==", proj["media"], "pts  IC80%:", proj["p10"],"-",proj["p90"])
 print()
