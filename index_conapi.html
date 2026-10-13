@@ -862,7 +862,8 @@ R.rivales.forEach((r,i)=>{ if(!r.charts)return; const rd=r.charts;
   if(susp) head+=`<div class="callout danger"><b>⚠ Partido suspendido — resultado NO oficial.</b> ${ULT.motivo||''} <br><b>Sanción en riesgo:</b> ${ULT.sancion||''}</div>`;
   head+='<b>Goles:</b> '+(ULT.goles&&ULT.goles.length?ULT.goles.map(g=>`<span class="badge ${g.eq==='COQ'?'b-clave':'b-alerta'}">${g.min}</span> ${g.jug} (${g.eq}) — ${g.nota}`).join(' &nbsp;·&nbsp; '):'sin goles');
   if(ULT.teamStats){const c=ULT.teamStats.coq,r=ULT.teamStats.riv;
-    head+=`<div class="callout" style="margin-top:8px"><b>Estadísticas (parciales):</b> Posesión <b>${c.poss}%</b>-${r.poss}% · Tiros ${c.sh}(${c.sot} al arco)-${r.sh}(${r.sot}) · Centros <b>${c.crs}</b>-${r.crs} · Faltas ${c.fls}-${r.fls} · Intercepciones ${c.intc}-${r.intc}</div>`;}
+    head+=`<div class="callout" style="margin-top:8px"><b>Estadísticas${susp?' (parciales)':''}:</b> Posesión <b>${c.poss}%</b>-${r.poss}% · Tiros ${c.sh}(${c.sot} al arco)-${r.sh}(${r.sot}) · Centros <b>${c.crs}</b>-${r.crs} · Faltas ${c.fls}-${r.fls} · Intercepciones ${c.intc}-${r.intc}${c.passpct!=null?` · % pase ${c.passpct}-${r.passpct}`:''}${c.bc!=null?` · Big chances <b>${c.bc}</b>-${r.bc}`:''}${c.corners!=null?` · Córners ${c.corners}-${r.corners}`:''}</div>`;
+    if(ULT.arqueros){const a=ULT.arqueros;head+=`<div class="callout" style="margin-top:6px"><b>Arqueros:</b> ${a.coq.n} ${a.coq.saves}/${a.coq.sota} atajadas (${a.coq.savepct}%) · ${a.riv.n} ${a.riv.saves}/${a.riv.sota} (${a.riv.savepct}%)${ULT.publico?` · Público ${ULT.publico.toLocaleString('es-CL')}`:''}</div>`;}}
   $('#ultGoles').innerHTML=head;
   const showMin=ULT.coq.some(p=>p.min>0);
   $('#ultCoq').innerHTML='<tr><th>Jugador</th><th>Pos</th>'+(showMin?'<th>Min</th>':'')+'<th>Tiros</th><th>AP</th><th>G</th><th>Centr</th><th>TklW</th><th>Int</th><th>Faltas</th><th>Tarj</th></tr>'+
@@ -874,7 +875,11 @@ R.rivales.forEach((r,i)=>{ if(!r.charts)return; const rd=r.charts;
   const shR=topN(ULT.dco,'sh',1)[0], scorer=ULT.dco.find(p=>p.g>0)||ULT.coq.find(p=>p.g>0);
   const yc=ULT.coq.filter(p=>p.cy).map(p=>p.n.split(' ').slice(-1)[0]);
   const li=[];
-  if(scorer) li.push(`<li><b>${scorer.n}</b> — autor del gol del partido.</li>`);
+  const gC=ULT.coq.filter(p=>p.g>0).sort((a,b)=>b.g-a.g), totG=[...ULT.coq,...ULT.dco].reduce((s,p)=>s+(p.g||0),0);
+  if(gC.length>1) li.push(`<li><b>Goles COQ:</b> ${gC.map(p=>`${p.n}${p.g>1?` (${p.g})`:''}`).join(', ')}.</li>`);
+  else if(scorer) li.push(`<li><b>${scorer.n}</b> — ${totG===1?'autor del gol del partido':'anotó'}.</li>`);
+  const aC=ULT.coq.filter(p=>p.a>0).sort((a,b)=>b.a-a.a); if(aC.length) li.push(`<li><b>Asistencias COQ:</b> ${aC.map(p=>`${p.n}${p.a>1?` (${p.a})`:''}`).join(', ')}.</li>`);
+  const best=[...ULT.coq].filter(p=>p.rating).sort((a,b)=>b.rating-a.rating)[0]; if(best) li.push(`<li><b>${best.n}</b> — mejor rating CFDB del partido (${best.rating}).</li>`);
   if(crC) li.push(`<li><b>${crC.n} (COQ)</b> — ${crC.crs} centros: refleja el ataque lateral (Coquimbo llegó a ${ULT.teamStats?ULT.teamStats.coq.crs:''} centros).</li>`);
   if(defC) li.push(`<li><b>${defC.n} (COQ)</b> — el más activo en recuperación (${defC.tklw} entradas + ${defC.intc} intercepciones).</li>`);
   if(shR) li.push(`<li><b>${shR.n} (${ULT.rival})</b> — ${shR.sh} remates, el más incisivo del rival.</li>`);
