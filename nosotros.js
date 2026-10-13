@@ -5,9 +5,9 @@ const NOSOTROS = {
   fuente: "Hudl Wyscout — Informe de Equipo (últimos 5) + Resumen de liga 2026",
   actualizado: "2026-10-08",
   ult5: { pj:6, w:2, d:2, l:2, gf:11, ga:10, nota:"2-2-2 en los últimos 6, con la GOLEADA 5-2 a Colo-Colo (11.10): 11 goles a favor, 10 en contra. El salto lo da un partido de transición pura." },
-  temporada: { pos:11, pts:29, xg:35.8, xga:27.4, xgdif:8.4, xpts:36.6, xptsD:7.6,
+  temporada: { pos:8, pts:32, pj:24, xg:35.8, xga:27.4, xgdif:8.4, xpts:36.6, xptsD:4.6, proy:41.4, ptop8:64,
     titular:"4-4-2 / 4-2-3-1",
-    headline:"IDENTIDAD CONFIRMADA Y VINDICADA: Coquimbo es REACTIVO y letal en transición. Ante Colo-Colo (5-2) generó 3,24 xG con solo 28,75% de posesión y 15 de 16 remates dentro del área: cuando el rival propone y hay espacio, su infrarrendimiento histórico (xPoints 36,6 vs 29) se convierte en goleada. El déficit persistente es defensivo: sigue encajando (10 GC en 6, 1,67/pp) y depende del estado del partido. [DATO Wyscout · nota: posición/puntos de liga pendientes de refresco CFDB tras la fecha 11.10]." },
+    headline:"IDENTIDAD CONFIRMADA Y VINDICADA: Coquimbo es REACTIVO y letal en transición. Ante Colo-Colo (5-2) generó 3,24 xG con solo 28,75% de posesión y 15 de 16 remates dentro del área, con 6-0 en big chances (CFDB): cuando el rival propone y hay espacio, su juego se convierte en goleada. Tras la fecha 24 va 8º con 32 pts (reconciliado CFDB al 13-10) y la proyección Monte Carlo lo da en ~41 pts (64% de terminar en zona internacional/top-8). El déficit persistente es defensivo: sigue encajando (10 GC en los últimos 6, 2 incluso ganando) y depende del estado del partido. [DATO CFDB+Wyscout]." },
   // jugadores: dato agregado de los 5 partidos. pases=intentados, pasesPct=% completados.
   players: [
     {d:13,n:"Diego Sánchez",pos:"GK",grupo:"GK",edad:39,alt:184,pj:6,min:607,g:0,xg:0,a:0,xa:0,tiros:0,tirosArco:0,pases:159,pasesPct:81,nota:"Arquero titular los 5 partidos. Perfil de experiencia (39) y mando de área; su lectura fina de atajada/salida requiere su página de arquero (fase 2)."},

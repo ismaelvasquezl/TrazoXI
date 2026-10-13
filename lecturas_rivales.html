@@ -461,7 +461,20 @@ function hudlExtra(w,f){
       `</tbody></table></div><div class="sub" style="margin-top:6px">${esc(f.opp)} juega ancho (≈49 m) y corto (≈41 m): mucha distancia lateral entre líneas → espacio entre carrilero y central. Coquimbo ganó a Colo-Colo con un bloque estrecho (42 m) y largo (57 m): compacto atrás y con salida vertical.</div></div>
       <div class="card"><h3>Cuándo remata y cuándo encaja</h3><div class="chart-wrap" style="height:200px"><canvas id="chTramo"></canvas></div>
       <div class="sub">Goles en contra (CFDB): ${w.partidos.map(p=>`<b>${esc(p.rival)}</b> ${p.golesContra.join(', ')}`).join(' · ')}</div></div></div>`; }
+  h+=preparacionCard(w,f);
   return h;
+}
+function preparacionCard(w,f){
+  const P=w.preparacion; if(!P) return '';
+  const nv=v=>`<span class="badge ${v==='HIPÓTESIS'?'b-ver':'b-inf'}">${esc(v)}</span>`;
+  const mk={ARQUERO:'🧤 Arquero',DEFENSAS:'🛡 Defensas',MEDIO:'⚙ Medio',DELANTEROS:'⚡ Delanteros'};
+  return `<div class="card" id="prepCard"><h3>Preparación del partido · inferencias, hipótesis y guión</h3>
+    ${P.contexto?`<div class="callout info">${esc(P.contexto)}</div>`:''}
+    <h4 style="margin:10px 0 2px;color:var(--gold)">Hipótesis de partido</h4>
+    ${(P.hipotesis||[]).map(x=>`<div class="card" style="margin-top:8px;background:var(--bg1)">${nv(x.nivel)} <b style="margin-left:4px">${esc(x.t)}</b><div class="sub" style="margin-top:5px">${esc(x.txt)}</div></div>`).join('')}
+    ${P.guion?`<h4 style="margin:14px 0 2px;color:var(--gold)">Guión probable</h4><div class="card" style="background:var(--bg1)">${P.guion.map(g=>`<div class="sub" style="padding:5px 0;border-bottom:1px solid var(--line)">▸ ${esc(g)}</div>`).join('')}</div>`:''}
+    ${P.mensajes?`<h4 style="margin:14px 0 2px;color:var(--gold)">Mensajes por línea (para la charla)</h4><div class="grid g2">${Object.keys(P.mensajes).map(k=>`<div class="card" style="background:var(--bg1)"><b>${mk[k]||k}</b><div class="sub" style="margin-top:4px">${esc(P.mensajes[k])}</div></div>`).join('')}</div>`:''}
+  </div>`;
 }
 function hudlCruce(w,f){
   if(!w.cruce) return '';

@@ -232,7 +232,7 @@
     <h3>Informe ejecutivo</h3>
     <div id="reporte"></div>
     <div class="glos" id="comoLeer"></div>
-    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). Liga 2026 reconciliada: <b>22 PJ · 8-5-9 · 29 pts · 10º</b>. Actualizado <span id="fecha"></span>.</p>
+    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). Liga 2026 reconciliada (CFDB al 13-10): <b>24 PJ · 9-5-10 · 32 pts · 8º</b> — incluye la goleada 5-2 a Colo-Colo (fecha 24). Actualizado <span id="fecha"></span>.</p>
   </section>
 
   <!-- ===== IDENTIDAD / ESTILO ===== -->
@@ -1283,7 +1283,7 @@ $('#modeSwitch').onclick=function(){this.classList.toggle('on');document.body.cl
   const y25=A.regresion.y2025,y26=A.regresion.y2026;
   new Chart($('#chReg'),{type:'bar',data:{labels:['Puntos /PJ','GF /PJ','GC /PJ'],datasets:[
     {label:'2025 (Campeón)',data:[+(y25.pts/y25.pj).toFixed(2),+(y25.gf/y25.pj).toFixed(2),+(y25.ga/y25.pj).toFixed(2)],backgroundColor:C.gold,borderRadius:4},
-    {label:'2026 (10º)',data:[+(y26.pts/y26.pj).toFixed(2),+(y26.gf/y26.pj).toFixed(2),+(y26.ga/y26.pj).toFixed(2)],backgroundColor:C.red,borderRadius:4}]},
+    {label:'2026 (8º)',data:[+(y26.pts/y26.pj).toFixed(2),+(y26.gf/y26.pj).toFixed(2),+(y26.ga/y26.pj).toFixed(2)],backgroundColor:C.red,borderRadius:4}]},
     options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw}}},scales:{x:{grid:{display:false}},y:{grid:{color:C.grid},beginAtZero:true}}}});
   const rg=$('#cfdbReg');if(rg)rg.innerHTML=`<span class="badge b-dato">DATO</span> ${A.regresion.lectura} <span class="badge b-ver">RITMO 30F</span> proyecta ${A.regresion.proyeccion_30.pts} pts, ${A.regresion.proyeccion_30.gf} GF, ${A.regresion.proyeccion_30.ga} GC (vs 75/49/17 del título).`;
   /* Proyección chart (rango IC80) */

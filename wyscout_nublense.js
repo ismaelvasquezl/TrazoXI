@@ -219,6 +219,30 @@ WYSCOUT.equipos["Ñublense"] = {
     defensivo: { cornersContraProm: null, pctRemateContra: null, aerialTeamProm: 52,
       veredicto: "El informe por equipo NO trae córners ni tiros en contra: sin dato de ABP defensiva. Proxy: gana 52% de los aéreos (Valencia 37,5% en su tercio) y concedió 2 penales en 4 partidos." },
     debilidadAerea: "El punto flaco aéreo es su central izquierdo (Valencia, 37,5% en su tercio). Calderón (57%) probablemente suspendido."
+  },
+  // ===== PREPARACIÓN DEL PARTIDO: inferencias, hipótesis y lecturas (lente /analista-futbol-pro) =====
+  preparacion: {
+    contexto: "[INFERENCIA] Choque de inercias opuestas: Coquimbo llega de GOLEAR 5-2 al líder Colo-Colo con su mejor versión (reactiva, letal en transición) y subió a 8º; Ñublense llega en caída libre (4 derrotas en los informes + 0-6 con U. de Chile, 3 rojas en 5). El estado anímico y el estado del partido juegan a nuestro favor, pero son precisamente los partidos que 'se deben ganar' los que más cuestan por ansiedad propia y por un rival sin nada que perder.",
+    hipotesis: [
+      { t: "Ñublense saldrá a proponer en casa (Chillán) — y eso nos conviene", nivel: "HIPÓTESIS", txt: "Local, necesitado y con un DT presionado, es probable que Ñublense tome la iniciativa con su línea de 3 y carrileros altos. Es justo el escenario que Coquimbo explota mejor (vs Colo-Colo: 28,75% de posesión, 3,24 xG). Cederles el balón no es renunciar: es tenderles la trampa. Si en cambio se encierran, habrá que tener plan B de ataque posicional (paciencia + Zavala/Cornejo por fuera)." },
+      { t: "Si marcamos primero, el partido se rompe a nuestro favor", nivel: "HIPÓTESIS", txt: "Ñublense ya pierde el orden al atacar; yendo abajo en el marcador suma delanteros y abre aún más la espalda de los carrileros (vs Everton usó 4 dibujos). Un gol temprano nuestro multiplica los espacios para Johansen/Chandía/Vadalá en transición. Prioridad: eficacia en la primera ocasión clara." },
+      { t: "Doble filo del tramo final (75'-90')", nivel: "INFERENCIA", txt: "Ellos encajan 4 de 8 goles tras el 75' y se descontrolan (rojas); nosotros encajamos tarde también (U. de Chile: 3 goles en 8'). El último cuarto de hora decide: con ventaja, cambios defensivos y bloque bajo; sin ventaja, piernas frescas (Chandía, Riveros, Pratto) para castigar su desorden." },
+      { t: "Baja probable de Calderón (RCB) abre su costado derecho", nivel: "HIPÓTESIS", txt: "Roja directa vs U. de Chile → sanción probable. Es su central más activo (recuperador y rematador de ABP). Si no juega, su línea de 3 pierde solidez por la derecha: atacar ahí con Cornejo + Chandía (nuestra izquierda) y cargar córners sobre su zona izquierda (Valencia 37,5% aéreo). Confirmar XI 60' antes." },
+      { t: "Nuestra ABP es palanca infrautilizada y hoy más fuerte", nivel: "INFERENCIA", txt: "Con Pratto (188) y Pons (186) sumados a Gazzolo, el peso aéreo ofensivo creció. Ñublense concede 2 penales en 4 partidos y es flojo por su central izquierdo. Ensayar córners al primer palo/área chica sobre Valencia y centros desde nuestra derecha al segundo palo es una vía de gol de alta probabilidad." },
+      { t: "Riesgo de ansiedad y faltas: no entrar en su juego", nivel: "HIPÓTESIS", txt: "Un rival en crisis busca cortar el ritmo con faltas (39% por su izquierda) y provocar. Nuestra indisciplina (8 rojas en la temporada) es el mayor riesgo de autoboicot. Mensaje: jugar rápido las faltas a favor, no responder, y acelerar hacia su izquierda para provocar sus tarjetas (3 rojas en 5)." }
+    ],
+    guion: [
+      "0-20': cederles el balón y defender en bloque medio-bajo compacto (≈42 m); robar en nuestro medio y salir a la espalda del carrilero en ≤3 pases. Primera ocasión = máxima eficacia.",
+      "20-60': sostener el orden; buscar su costado derecho (posible baja de Calderón) y el cut-back por fuera. Vigilancia de Plaza entre líneas (Galani) y marca al hombre sobre Jeraldino/Rami en centros.",
+      "60-75': ventana de cambios con piernas de transición (Chandía, Riveros, Pratto); ellos se abren y se cansan. Córners sobre la zona de Valencia.",
+      "75-90': gestión del resultado. Con ventaja: central extra, bloque bajo, cero faltas laterales. Sin ventaja: presión final a su salida izquierda y balón al área con los grandes."
+    ],
+    mensajes: {
+      ARQUERO: "Saque rápido para iniciar transición; ordena la última línea en los últimos 15'. Sal con decisión en el centro/segundo palo.",
+      DEFENSAS: "Gazzolo al 9 (Jeraldino/Rami). Cerrar el segundo palo del lado de Salinas. Cero faltas cerca del área. Salida limpia para iniciar la transición.",
+      MEDIO: "Robar y soltar rápido hacia el espacio; Galani vigila a Plaza y lo orienta afuera. Vadalá/Chandía conduciendo la transición. No forzar el 1v1 contra sus carrileros (fuertes en defensa).",
+      DELANTEROS: "Johansen fija a Bosso por el centro y abre la llegada de la segunda línea. Atacar la espalda del carrilero que sube. Remate dentro del área, no de lejos. Castigar su desorden tras el 60'."
+    }
   }
 };
 })();
