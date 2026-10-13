@@ -97,6 +97,17 @@
   .fix.next{border-color:var(--line-gold)}
   .fix .next-tag{position:absolute;top:8px;left:9px;font-size:8.5px;font-weight:800;color:var(--gold-ink);background:var(--teal);border-radius:4px;padding:1px 5px}
   @media(max-width:600px){.insgrid{grid-template-columns:1fr!important}}
+  #reading svg{cursor:zoom-in}
+  #zoomModal{position:fixed;inset:0;z-index:100;background:rgba(4,7,10,.88);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:14px}
+  #zoomModal.show{display:flex}
+  #zoomModal .zbox{background:var(--panel);border:1px solid var(--line-gold);border-radius:14px;padding:14px 16px;max-width:min(96vw,980px);max-height:96vh;overflow:auto;position:relative;text-align:center}
+  #zoomModal .zttl{font-family:var(--f-display);font-size:20px;font-weight:800;color:var(--gold);margin:0 34px 8px}
+  #zoomModal .zimg svg{width:auto!important;max-width:100%!important;height:min(78vh,820px)!important;cursor:default}
+  #zoomModal .zimg.wide svg{height:auto!important;width:min(90vw,760px)!important}
+  #zoomModal .zcap{text-align:left;max-width:760px;margin:10px auto 0}
+  #zoomModal .zhint{font-size:11px;color:var(--mut2);margin-top:6px}
+  #zoomModal .zclose{position:absolute;top:8px;right:10px;background:var(--panel3);color:var(--white);border:1px solid var(--line-strong);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px}
+  @media print{#zoomModal{display:none!important}}
   @media print{
     header,.fixrow,#invTable,.foot,.btnrow,.no-print,.lbtn,.layerbtns,.filters{display:none!important}
     body{background:#fff!important;color:#111!important}
@@ -166,6 +177,7 @@
     <p class="sub">Toca <b>☰ Rivales</b> para abrir la lista. El chip <span class="badge b-hudl">HUDL</span> indica cobertura Wyscout (dato de evento real). El resto usa proxies (CFDB + estilo datalabs), etiquetados.</p>
   </div>
   <div id="reading"></div>
+  <div id="zoomModal" role="dialog" aria-modal="true" aria-label="Mapa ampliado"><div class="zbox"><button class="zclose" aria-label="Cerrar">✕</button><div class="zttl" id="zTtl"></div><div class="zimg" id="zImg"></div><div class="zcap sub" id="zCap"></div><div class="zhint">Clic fuera o Esc para cerrar</div></div></div>
 
   <section id="ligaPanorama" style="margin-top:24px">
     <h2>Panorama de liga · Puntos vs xPoints <span class="badge b-hudl" style="font-size:10px">HUDL WYSCOUT 2026</span></h2>
@@ -412,7 +424,7 @@ function hudlExtra(w,f){
         <div class="sub" style="margin-top:4px"><b style="color:var(--blue)">Interpretación ·</b> ${esc(x.interpretacion)}</div>
         <div class="sub" style="margin-top:4px"><b style="color:var(--amber)">Riesgo / oportunidad ·</b> ${esc(x.riesgo)}</div>
         <div class="callout" style="margin:8px 0 0"><b>Respuesta ·</b> ${esc(x.respuesta)}</div></div>
-      <div style="text-align:center;cursor:pointer" onclick="goLayer('${x.capa}')" title="Ver en grande">${miniPitch(w,x.capa)}<div class="sub" style="font-size:11px">🔍 ver mapa</div></div>
+      <div style="text-align:center"><div class="zoomable" style="cursor:zoom-in" onclick="zoomLayer('${x.capa}',${i})" title="Ampliar mapa">${miniPitch(w,x.capa)}</div><div class="sub" style="font-size:11px"><a href="javascript:void(0)" onclick="zoomLayer('${x.capa}',${i})">⤢ ampliar</a> · <a href="javascript:void(0)" onclick="goLayer('${x.capa}')">ir a la capa</a></div></div>
       </div></div>`; });
   h+=`</div>`;
   // estructuras
@@ -494,7 +506,7 @@ function clashSVG(w,modo){
   }
   const lines=`<rect x="${mx}" y="${my}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><line x1="${mx}" y1="${my+ph/2}" x2="${mx+pw}" y2="${my+ph/2}" stroke="rgba(255,255,255,.22)"/><circle cx="${W/2}" cy="${my+ph/2}" r="30" fill="none" stroke="rgba(255,255,255,.22)"/><rect x="${W/2-46}" y="${my}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/><rect x="${W/2-46}" y="${my+ph-52}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`;
   const defs=`<defs><marker id="arG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd21f"/></marker><marker id="arR" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff5f5f"/></marker></defs>`;
-  return `<div style="text-align:center"><div class="sub" style="margin-bottom:4px">${modo==='ataque'?'Coquimbo ataca ↑ · campo de '+esc('Ñublense')+' arriba':'Coquimbo defiende ↓ · nuestro arco abajo'}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${defs}${cells}${lines}${over}</svg></div>`;
+  return `<div style="text-align:center"><div class="sub" style="margin-bottom:4px">${modo==='ataque'?'Coquimbo ataca ↑ · campo de '+esc('Ñublense')+' arriba':'Coquimbo defiende ↓ · nuestro arco abajo'}</div><svg class="pitch fx-lens" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${defs}${cells}${lines}${over}</svg></div>`;
 }
 function hudlExtraCharts(w,f){
   if(!window.Chart) return; const gc='rgba(255,255,255,.07)',tk='#aab8c4';
@@ -547,7 +559,7 @@ function pitchSVG(w,layer){
     `<circle cx="${W/2}" cy="${my+ph/2}" r="30" fill="none" stroke="rgba(255,255,255,.22)"/>`+
     `<rect x="${W/2-46}" y="${my}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`+
     `<rect x="${W/2-46}" y="${my+ph-52}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`;
-  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${cells}${lines}${net}<text x="${W-16}" y="20" font-size="9" fill="rgba(255,255,255,.65)" text-anchor="end">▲ ataque</text></svg>`;
+  return `<svg class="pitch fx-lens" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${cells}${lines}${net}<text x="${W-16}" y="20" font-size="9" fill="rgba(255,255,255,.65)" text-anchor="end">▲ ataque</text></svg>`;
 }
 function renderIllus(w){
   const btns=document.getElementById('layerBtns'); if(!btns)return;
@@ -572,7 +584,7 @@ function goalSVG(ar){
   for(let i=0;i<=3;i++)net+=`<line x1="${gx}" y1="${gy+i*gh/3}" x2="${gx+gw}" y2="${gy+i*gh/3}" stroke="rgba(255,255,255,.10)"/>`;
   const kx=W/2,ky=gy+gh-6;
   const keeper=`<circle cx="${kx}" cy="${ky-30}" r="7" fill="#ffd21f"/><rect x="${kx-9}" y="${ky-24}" width="18" height="24" rx="4" fill="#ffd21f"/>`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:340px;background:linear-gradient(180deg,#0f1620,#0b1119);border-radius:10px;border:1px solid var(--line-strong)">${cells}${net}<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" fill="none" stroke="#fff" stroke-width="4"/>${keeper}<line x1="8" y1="${gy+gh}" x2="${W-8}" y2="${gy+gh}" stroke="rgba(255,255,255,.3)"/><text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.6)">✓ zonas donde más lo baten (DATO, n=4 goles)</text></svg>`;
+  return `<svg class="pitch fx-lens" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:340px;background:linear-gradient(180deg,#0f1620,#0b1119);border-radius:10px;border:1px solid var(--line-strong)">${cells}${net}<rect x="${gx}" y="${gy}" width="${gw}" height="${gh}" fill="none" stroke="#fff" stroke-width="4"/>${keeper}<line x1="8" y1="${gy+gh}" x2="${W-8}" y2="${gy+gh}" stroke="rgba(255,255,255,.3)"/><text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.6)">✓ zonas donde más lo baten (DATO, n=4 goles)</text></svg>`;
 }
 
 /* ---- generador de informe automático (datos inferidos) ---- */
@@ -665,6 +677,35 @@ function renderLigaPanorama(){
   if(coq)document.getElementById('ligaNote').innerHTML='<span class="badge b-hudl">HALLAZGO CLAVE</span> <b>Coquimbo es el equipo que MÁS infrarrinde de la liga: xPoints '+coq.xpts+' vs '+coq.pts+' puntos reales (+'+coq.xptsD+').</b> Con xG '+coq.xg+' (4º ataque) y diferencia de xG +'+coq.xgdif+' (top-4), su juego es de zona alta de tabla pese a ir '+coq.pos+'º. El margen se pierde en definición (marcó '+coq.gf+' con '+coq.xg+' de xG) y en goles encajados por encima de lo esperado ('+coq.ga+' recibidos vs '+coq.xga+' de xGA). Es el dato más accionable del proyecto: el proceso está; falta convertir y sostener.';
 }
 
+
+/* ---- Lightbox: ampliar cualquier mapa/cancha de la lectura ---- */
+function openZoom(svgHTML,title,cap,wide){ const m=document.getElementById('zoomModal'); if(!m)return;
+  document.getElementById('zTtl').textContent=title||'Mapa';
+  const im=document.getElementById('zImg'); im.className='zimg'+(wide?' wide':''); im.innerHTML=svgHTML;
+  const s=im.querySelector('svg'); if(s){s.removeAttribute('width');s.removeAttribute('height');s.style.maxWidth='none';}
+  document.getElementById('zCap').innerHTML=cap||''; m.classList.add('show'); document.body.style.overflow='hidden'; }
+function closeZoom(){ const m=document.getElementById('zoomModal'); if(m){m.classList.remove('show'); document.body.style.overflow='';} }
+function zoomLayer(id,i){ const w=window.__curW; if(!w||!w.zonas)return; const L=w.zonas.capas.find(c=>c.id===id); if(!L)return;
+  const ins=(i!=null&&w.insights)?w.insights[i]:null;
+  openZoom(pitchSVG(w,L), ins?(i+1)+' · '+ins.t:L.label, '<b>'+esc(L.label)+'.</b> '+esc(L.interp)+(ins?'<div class="callout" style="margin-top:8px"><b>Respuesta ·</b> '+esc(ins.respuesta)+'</div>':'')+'<div style="margin-top:6px">'+esc(w.zonas.nota||'')+'</div>'); }
+(function(){
+  const m=document.getElementById('zoomModal'); if(!m)return;
+  m.addEventListener('click',e=>{ if(e.target===m||e.target.classList.contains('zclose'))closeZoom(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeZoom(); });
+  // cualquier SVG de la lectura se amplía al hacer clic (excepto las miniaturas de insights, que usan zoomLayer)
+  document.getElementById('reading').addEventListener('click',e=>{
+    const svg=e.target.closest&&e.target.closest('svg'); if(!svg||svg.closest('.zoomable'))return;
+    const card=svg.closest('.card'); const h=card?(card.querySelector('h3')||card.querySelector('h4')):null;
+    let title=h?h.textContent:'Mapa', cap='';
+    if(svg.closest('#pitchBox')){ const li=document.getElementById('layerInterp'); cap=li?li.innerHTML:''; const on=document.querySelector('#layerBtns .lbtn.on'); if(on)title=(h?h.textContent+' · ':'')+on.textContent; }
+    else { const wrap=svg.parentElement; const h4=wrap&&wrap.querySelector&&wrap.parentElement?wrap.parentElement.querySelector('h4'):null; if(h4&&card&&card.querySelectorAll('svg').length>1)title=(h?h.textContent+' · ':'')+h4.textContent; }
+    const wide=svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.width>svg.viewBox.baseVal.height;
+    openZoom(svg.outerHTML,title,cap,wide);
+  });
+})();
+
+// el script vive en una IIFE: exponer lo que usan los onclick en línea
+window.goLayer=goLayer; window.zoomLayer=zoomLayer; window.openZoom=openZoom; window.closeZoom=closeZoom;
 renderFixtures();
 (function(){ const tg=$('#rivToggle'), rb=$('#fixrow'), bk=$('#rivback');
   if(tg)tg.onclick=()=>{ const op=!rb.classList.contains('open'); rb.classList.toggle('open',op); if(bk)bk.classList.toggle('show',op); };

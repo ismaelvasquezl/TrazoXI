@@ -71,8 +71,38 @@
     refresh:function(){ mark(); observe(); markMagnify(); }
   };
 
+  /* --- 5) VISOR AMPLIADO de canchas (click para abrir, táctil/desktop) --- */
+  function buildLightbox(){
+    if(document.getElementById('fxLightbox')) return document.getElementById('fxLightbox');
+    var ov=document.createElement('div'); ov.id='fxLightbox'; ov.className='fx-lightbox';
+    ov.innerHTML='<div class="fx-lb-inner"><button class="fx-lb-close" aria-label="Cerrar">✕</button><div class="fx-lb-body"></div><div class="fx-lb-hint">Toca fuera o ✕ para cerrar</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov || e.target.className==='fx-lb-close') closeLightbox(); });
+    return ov;
+  }
+  function openLightbox(svg){
+    var ov=buildLightbox(), body=ov.querySelector('.fx-lb-body');
+    var clone=svg.cloneNode(true);
+    clone.removeAttribute('width'); clone.removeAttribute('height');
+    clone.style.maxWidth='100%'; clone.style.width='100%'; clone.style.height='auto';
+    clone.classList.remove('fx-magnify');
+    body.innerHTML=''; body.appendChild(clone);
+    ov.classList.add('show');
+  }
+  function closeLightbox(){ var ov=document.getElementById('fxLightbox'); if(ov) ov.classList.remove('show'); }
+  function wireLightbox(){
+    document.addEventListener('click',function(e){
+      if(!e.target.closest) return;
+      var hit=e.target.closest('svg.pitch, .fx-lens');
+      if(!hit) return;
+      var svg=(hit.tagName && hit.tagName.toLowerCase()==='svg') ? hit : hit.querySelector('svg');
+      if(svg){ e.preventDefault(); openLightbox(svg); }
+    });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
+  }
+
   function init(){
-    mark(); observe(); watchViews(); markMagnify();
+    mark(); observe(); watchViews(); markMagnify(); wireLightbox();
     // re-escanear contenido renderizado dinámicamente
     var n=0, iv=setInterval(function(){ mark(); observe(); markMagnify(); if(++n>25) clearInterval(iv); }, 350);
   }
