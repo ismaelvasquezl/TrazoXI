@@ -29,7 +29,7 @@
   .num{font-variant-numeric:tabular-nums}
   /* ---- barra superior fija: marca + cronómetro + marcador (siempre visible) ---- */
   .stickytop{position:sticky;top:0;z-index:60}
-  .top{background:rgba(8,11,15,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-gold)}
+  .top{background:rgba(8,11,15,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-gold)}
   .topin{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:8px 14px;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:15px;color:var(--white)}
   .crest{width:26px;height:26px;border-radius:50%;background:repeating-conic-gradient(var(--gold) 0 25%,#000 0 50%);border:2px solid var(--gold);box-shadow:0 0 10px rgba(255,210,0,.35);flex:none}
@@ -44,7 +44,7 @@
   .stpill.pause{background:rgba(245,166,35,.16);color:var(--amber);border-color:rgba(245,166,35,.4)}
   .stpill.fin{background:rgba(255,95,95,.16);color:var(--red);border-color:rgba(255,95,95,.4)}
   /* ---- navegación de vistas ---- */
-  .tabs{background:rgba(8,11,15,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tabs{background:rgba(8,11,15,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
   .tabsin{max-width:1080px;margin:0 auto;display:flex;gap:2px;padding:6px 10px}
   .tab{flex:0 0 auto;background:none;border:0;color:var(--mut);font-family:var(--f-display);font-size:14px;font-weight:700;
     text-transform:uppercase;letter-spacing:.8px;padding:8px 13px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.15s}
@@ -364,37 +364,49 @@ const Repo = (function(){
   function open(){
     return new Promise((res)=>{
       if(!('indexedDB' in window)){useLS=true;return res();}
+      let done=false; const finish=()=>{ if(!done){ done=true; res(); } };
       let r;
-      try{ r=indexedDB.open(DB,1); }catch(e){ useLS=true; return res(); }
+      try{ r=indexedDB.open(DB,1); }catch(e){ useLS=true; return finish(); }
+      // Safari: indexedDB.open puede COLGARSE (no dispara success ni error) o fallar en privado.
+      // Si en 1,5s no resolvió, caemos a localStorage para que la app nunca se quede "pegada".
+      const to=setTimeout(()=>{ useLS=true; finish(); },1500);
       r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id'});};
-      r.onsuccess=e=>{db=e.target.result;res();};
-      r.onerror=()=>{useLS=true;res();};
+      r.onsuccess=e=>{ db=e.target.result; clearTimeout(to); finish(); };
+      r.onerror=()=>{ useLS=true; clearTimeout(to); finish(); };
+      r.onblocked=()=>{ useLS=true; clearTimeout(to); finish(); };
     });
   }
-  function tx(mode){return db.transaction(STORE,mode).objectStore(STORE);}
+  // tx robusto: si la transacción de IndexedDB falla (p.ej. Safari privado), se marca para usar localStorage
+  function tx(mode){
+    if(useLS||!db) throw new Error('useLS');
+    try{ return db.transaction(STORE,mode).objectStore(STORE); }
+    catch(e){ useLS=true; throw e; }
+  }
+  // --- helpers localStorage (fallback) ---
+  function putLS(doc){ try{ localStorage.setItem(LS_PREFIX+doc.id, JSON.stringify(doc)); const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]'); if(idx.indexOf(doc.id)<0){idx.push(doc.id);localStorage.setItem(LS_INDEX,JSON.stringify(idx));} return Promise.resolve(doc);}catch(e){return Promise.reject(e);} }
+  function getLS(id){ const v=localStorage.getItem(LS_PREFIX+id); return Promise.resolve(v?JSON.parse(v):null); }
+  function allLS(){ const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]'); return Promise.resolve(idx.map(id=>{const v=localStorage.getItem(LS_PREFIX+id);return v?JSON.parse(v):null;}).filter(Boolean)); }
+  function delLS(id){ localStorage.removeItem(LS_PREFIX+id); const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]').filter(x=>x!==id); localStorage.setItem(LS_INDEX,JSON.stringify(idx)); return Promise.resolve(); }
   function put(doc){
     doc.updatedAt=new Date().toISOString();
-    if(useLS){
-      try{
-        localStorage.setItem(LS_PREFIX+doc.id, JSON.stringify(doc));
-        const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]');
-        if(idx.indexOf(doc.id)<0){idx.push(doc.id);localStorage.setItem(LS_INDEX,JSON.stringify(idx));}
-        return Promise.resolve(doc);
-      }catch(e){return Promise.reject(e);}
-    }
-    return new Promise((res,rej)=>{const r=tx('readwrite').put(doc);r.onsuccess=()=>res(doc);r.onerror=()=>rej(r.error);});
+    if(useLS) return putLS(doc);
+    try{ return new Promise((res,rej)=>{const r=tx('readwrite').put(doc);r.onsuccess=()=>res(doc);r.onerror=()=>{useLS=true;putLS(doc).then(res,rej);};}); }
+    catch(e){ useLS=true; return putLS(doc); }
   }
   function get(id){
-    if(useLS){const v=localStorage.getItem(LS_PREFIX+id);return Promise.resolve(v?JSON.parse(v):null);}
-    return new Promise((res,rej)=>{const r=tx('readonly').get(id);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});
+    if(useLS) return getLS(id);
+    try{ return new Promise((res,rej)=>{const r=tx('readonly').get(id);r.onsuccess=()=>res(r.result||null);r.onerror=()=>{useLS=true;getLS(id).then(res,rej);};}); }
+    catch(e){ useLS=true; return getLS(id); }
   }
   function all(){
-    if(useLS){const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]');return Promise.resolve(idx.map(id=>{const v=localStorage.getItem(LS_PREFIX+id);return v?JSON.parse(v):null;}).filter(Boolean));}
-    return new Promise((res,rej)=>{const out=[];const r=tx('readonly').openCursor();r.onsuccess=e=>{const c=e.target.result;if(c){out.push(c.value);c.continue();}else res(out);};r.onerror=()=>rej(r.error);});
+    if(useLS) return allLS();
+    try{ return new Promise((res,rej)=>{const out=[];const r=tx('readonly').openCursor();r.onsuccess=e=>{const c=e.target.result;if(c){out.push(c.value);c.continue();}else res(out);};r.onerror=()=>{useLS=true;allLS().then(res,rej);};}); }
+    catch(e){ useLS=true; return allLS(); }
   }
   function del(id){
-    if(useLS){localStorage.removeItem(LS_PREFIX+id);const idx=JSON.parse(localStorage.getItem(LS_INDEX)||'[]').filter(x=>x!==id);localStorage.setItem(LS_INDEX,JSON.stringify(idx));return Promise.resolve();}
-    return new Promise((res,rej)=>{const r=tx('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error);});
+    if(useLS) return delLS(id);
+    try{ return new Promise((res,rej)=>{const r=tx('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>{useLS=true;delLS(id).then(res,rej);};}); }
+    catch(e){ useLS=true; return delLS(id); }
   }
   return {open,put,get,all,del,mode:()=>useLS?'localStorage':'IndexedDB'};
 })();

@@ -26,7 +26,7 @@
   h1,h2,.brand,.tag{font-family:var(--f-display);letter-spacing:.3px}
   .kpi .v,.ex .exv,table td,table th,.kpi .l{font-variant-numeric:tabular-nums}
   ::selection{background:var(--gold);color:#000}
-  .topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;z-index:70;align-items:center;gap:12px;padding:0 14px;background:rgba(6,6,6,.96);border-bottom:2px solid var(--gold);backdrop-filter:blur(12px)}
+  .topbar{display:none;position:fixed;top:0;left:0;right:0;height:52px;z-index:70;align-items:center;gap:12px;padding:0 14px;background:rgba(6,6,6,.96);border-bottom:2px solid var(--gold);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
   .burger{width:40px;height:34px;border:1px solid var(--line);background:var(--panel2);border-radius:8px;color:var(--gold);font-size:17px;cursor:pointer}
   .sidebar{position:fixed;top:0;left:0;bottom:0;width:232px;z-index:80;display:flex;flex-direction:column;padding:16px 12px;background:linear-gradient(180deg,#121821,#0b0f14);border-right:1px solid var(--line-gold);box-shadow:inset -16px 0 28px rgba(0,0,0,.35);overflow-y:auto;transition:transform .25s ease}
   .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px;font-size:14px;padding:2px 4px 12px;border-bottom:1px solid var(--line);margin-bottom:10px}
@@ -121,7 +121,7 @@
   section{scroll-margin-top:78px}
   /* franja de resumen ejecutivo (siempre visible) */
   .exec-strip{position:sticky;top:0;z-index:40;display:flex;gap:8px;overflow-x:auto;padding:9px 2px;margin-bottom:4px;
-    background:rgba(8,8,8,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    background:rgba(8,8,8,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .ex{flex:0 0 auto;min-width:118px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
     border-radius:11px;padding:7px 12px}
   .ex .exv{font-size:16px;font-weight:800;color:var(--gold);white-space:nowrap}
