@@ -502,7 +502,7 @@ function go(view){
   if(view==='informe')renderInforme();
   if(view==='exportar')renderExport();
   if(view==='historial')renderHistorial();
-  window.scrollTo({top:0,behavior:'smooth'});
+  try{window.scrollTo(0,0);}catch(e){window.scrollTo({top:0});}  // instantáneo: fiable en Safari/iOS (el smooth no siempre se honra)
 }
 $$('.tab').forEach(t=>t.onclick=()=>go(t.dataset.view));
 document.addEventListener('click',e=>{const g=e.target.closest('[data-goto]');if(g)go(g.dataset.goto);});
