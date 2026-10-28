@@ -382,6 +382,14 @@ function renderHudl(f){
          <div class="kpi"><div class="v num">${w.cross.wyscout.duelosProm}%</div><div class="l">Duelos · Wyscout</div></div>
        </div>
        <div class="callout info">${esc(w.cross.veredicto)}</div></div>`+
+    (w.reflexiones?`<div class="card" id="reflexionesCard"><h3>Reflexiones · nuestro contexto para el planteamiento</h3>
+       <div class="sub">Inferencias que cruzan la lectura del rival con el momento de Coquimbo. Son lecturas orientativas (${'DATO'}/INFERENCIA/HIPÓTESIS), no certezas.</div>
+       <div class="callout">${esc(w.reflexiones.contexto)}</div>`+
+       w.reflexiones.puntos.map((x,i)=>`<div class="card" style="margin-top:10px;background:var(--bg1)">
+         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="disp" style="font-size:20px;font-weight:800;color:var(--gold)">${i+1}</span>
+         <b style="font-size:15px;color:var(--white)">${esc(x.t)}</b> ${nivelBadge(x.nivel)}</div>
+         <div class="sub" style="margin-top:6px">${esc(x.txt)}</div></div>`).join('')+
+       `</div>`:'')+
     `<div id="reportOut" class="card" style="display:none"></div>`;
 
   // botones informe / imprimir

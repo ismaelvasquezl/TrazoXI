@@ -164,6 +164,18 @@ WYSCOUT.equipos["Unión La Calera"] = {
       { d: 11, n: "Sáez",       x: 150, y: 110, c: 16 }
     ],
     edges: [[27,15,2],[27,4,1],[15,25,2],[15,23,1],[4,23,1],[23,10,2],[23,25,1],[25,10,2],[25,11,2],[10,11,2],[10,29,1],[10,7,1],[29,11,1],[7,11,1]]
+  },
+  // ===== REFLEXIONES: inferencias desde NUESTRO contexto para el planteamiento (lente /analista-futbol-pro) =====
+  reflexiones: {
+    contexto: "[DATO+INFERENCIA] Coquimbo (10º, 32 pts) recibe a Unión La Calera (16º/último, 21 pts) el 30-10 en el Estadio Francisco Sánchez Rumoroso. Llegamos de CAER 2-1 de visita ante Ñublense (fecha 25), con el ataque desplomado a 0,63 xG sin Johansen ni E. Hernández. Ellos llegan urgidos por el descenso pero envalentonados: vienen de ganar 3-1 a la UC. Dos equipos REACTIVOS enfrentados en nuestra casa: la lectura central es quién se ve obligado a proponer.",
+    puntos: [
+      { t: "Choque de identidades reactivas: no proponer de más", nivel: "INFERENCIA", txt: "Ambos rinden mejor SIN el balón. La Calera es estéril cuando propone (0 victorias con ≥56% de posesión). Como somos locales, el reflejo será tomar la iniciativa; pero nuestra mejor versión también es reactiva (vs Colo-Colo 3,24 xG con 29% de balón). Reflexión: no caer en la 'trampa del dominio' por ser locales — paciencia, ceder tenencia estéril y golpear en transición. El que primero se obligue a proponer, pierde el guion." },
+      { t: "La ausencia del 9 redefine CÓMO atacamos, no el plan", nivel: "HIPÓTESIS", txt: "Si Johansen no llega, el ataque pierde el punto de apoyo que fija centrales (lo vimos ante Ñublense: 0,63 xG). Reflexión: con Pratto (188 cm) de referencia, inclinar el ataque al JUEGO AÉREO y al balón parado — justo donde La Calera es débil (47% de aéreos, 48% de duelos, pierde el 53% de balones arriba). Convertimos nuestra carencia (sin un 9 asociativo) en ventaja contra su flojera física." },
+      { t: "Su arma (el centro) ataca nuestra grieta (aéreo del lateral)", nivel: "DATO", txt: "La Calera centra 21,4 veces por partido; nuestros puntos débiles por arriba son Cabrera (29% aéreo) y Salinas (48%). Reflexión: la prioridad defensiva nº1 es cortar el centro en origen (negar el perfil a C. Díaz) y blindar el segundo palo con ayuda del pivote. Es el cruce exacto entre su fortaleza y nuestra debilidad." },
+      { t: "Marcar primero rompe su libreto", nivel: "INFERENCIA", txt: "A un rival que pelea el descenso y vive de la eficacia (resultados por encima de su xG), el 1-0 lo obliga a proponer — su peor escenario — y nos abre la transición que mejor ejecutamos. Reflexión: máxima eficacia en la primera ocasión clara DENTRO del área (como el 15/16 vs Colo-Colo), no el disparo lejano." },
+      { t: "El cierre es doble riesgo: gestionarlo distinto según el marcador", nivel: "HIPÓTESIS", txt: "Nosotros encajamos tarde (U. de Chile: 3 goles en 8') y ellos marcan tarde y DESDE EL BANCO (Ferreyra, Oyarzo). Reflexión: leer sus cambios ofensivos como señal de que se vuelcan; con ventaja, bloque bajo y cambios defensivos a tiempo; sin ventaja, piernas frescas (Chandía, Riveros) para castigar su desorden en los últimos 20'." },
+      { t: "El contexto favorece, pero la urgencia del rival es real", nivel: "DATO", txt: "Hemos ganado 4 de los últimos 5 cruces (incluido el 2-1 de visita esta temporada) y competimos mejor en Rumoroso. Reflexión: el favoritismo es nuestro, pero un rival en descenso y recién reanimado saldrá intenso los primeros minutos; sostener el orden en los primeros 15' y no entrar en su ansiedad (ni en faltas que corten nuestro ritmo)." }
+    ]
   }
 };
 })();
