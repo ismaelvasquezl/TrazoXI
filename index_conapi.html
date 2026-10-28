@@ -10,7 +10,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
   :root{
     --bg0:#0a0d11;--bg1:#0e1319;--panel:#151b22;--panel2:#1b222b;--panel3:#212a34;
-    --gold:#ffd21f;--gold2:#e8bd00;--gold-ink:#0a0d11;
+    --gold:#ffd200;--gold2:#ffc400;--gold-soft:#ffe680;--gold-ink:#0a0d11;
     --white:#f4f7fa;--txt:#dfe6ec;--mut:#aab8c4;--mut2:#7f8c98;
     --blue:#5aa8ff;--teal:#3fd0c4;--green:#38d98a;--amber:#f5a623;--red:#ff5f5f;
     --line:rgba(255,255,255,.075);--line-strong:rgba(255,255,255,.14);--line2:rgba(255,210,0,.22);--line-gold:rgba(255,210,0,.22);
@@ -169,6 +169,44 @@
     /* impresión de una sección */
     body.print-one main section:not(.print-target){display:none!important}
   }
+  /* ===== Tema CLARO aurinegro (identidad: amarillo + negro sobre blanco cálido) ===== */
+  body.light{color:#141414;background:radial-gradient(1200px 700px at 18% -8%,#fffdf3 0,#f6f3ea 55%,#efece2 100%) fixed}
+  body.light{--bg0:#fafaf7;--bg1:#f3f1e8;--panel:#ffffff;--panel2:#f7f5ec;--panel3:#efece0;
+    --white:#0b0b0b;--txt:#1f1f1f;--mut:#5b5b52;--mut2:#8a897e;
+    --gold:#e8ab00;--gold2:#c99400;--gold-ink:#0b0b0b;
+    --line:rgba(0,0,0,.09);--line-strong:rgba(0,0,0,.16);--line2:rgba(200,150,0,.3);--line-gold:rgba(200,150,0,.3);
+    --sh:0 1px 2px rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.08);--sh2:0 14px 30px rgba(0,0,0,.14)}
+  body.light .sidebar{background:linear-gradient(180deg,#fffef8,#f3f1e7)}
+  body.light .tag{color:#0b0b0b}
+  body.light .exec-strip,body.light .topbar{background:rgba(255,253,243,.95)}
+  body.light p{color:#2a2a24}
+  /* ===== Centro de Métricas Avanzadas ===== */
+  .adv-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+  .adv-note{font-size:12px;color:var(--mut);border:1px dashed var(--line-strong);border-radius:10px;padding:8px 12px;margin:8px 0}
+  .metpill{display:inline-flex;align-items:center;gap:6px;cursor:help;border-bottom:1px dotted var(--mut2)}
+  .adv-tip{position:fixed;z-index:120;max-width:280px;background:var(--panel3);color:var(--txt);border:1px solid var(--line-gold);
+    border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.5;box-shadow:var(--sh2);pointer-events:none;opacity:0;transition:opacity .12s;display:none}
+  .adv-tip.show{opacity:1;display:block}
+  .adv-tip b{color:var(--gold)}
+  .pbar{position:relative;height:16px;border-radius:8px;background:var(--panel3);overflow:hidden;border:1px solid var(--line)}
+  .pbar>span{position:absolute;left:0;top:0;bottom:0;border-radius:8px;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+  .pbar.lo>span{background:linear-gradient(90deg,#c0463f,var(--red))}
+  .pbar.mid>span{background:linear-gradient(90deg,#c99400,var(--amber))}
+  .prow{display:grid;grid-template-columns:150px 1fr 46px;gap:10px;align-items:center;margin:7px 0;font-size:12.5px}
+  .prow .pv{font-weight:800;color:var(--gold);text-align:right;font-variant-numeric:tabular-nums}
+  .chip-team{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:18px;border:1px solid var(--line-strong);
+    background:var(--panel2);font-size:12px;font-weight:700;cursor:pointer;user-select:none}
+  .chip-team.on{background:var(--gold);color:#000;border-color:var(--gold)}
+  .btn-csv{background:var(--panel2);border:1px solid var(--line-strong);color:var(--gold);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:700}
+  .btn-csv:hover{background:var(--gold);color:#000}
+  .srchbox{position:relative;flex:1;min-width:200px}
+  .srchbox input{width:100%;background:var(--panel2);border:1px solid var(--line-strong);color:var(--txt);border-radius:10px;padding:9px 12px;font-size:13px;font-family:var(--f-body)}
+  .srch-res{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--panel3);border:1px solid var(--line-gold);border-radius:10px;z-index:60;max-height:260px;overflow:auto;box-shadow:var(--sh2);display:none}
+  .srch-res.show{display:block}
+  .srch-res a{display:flex;justify-content:space-between;gap:8px;padding:8px 12px;color:var(--txt);border-bottom:1px solid var(--line);font-size:13px;cursor:pointer}
+  .srch-res a:hover{background:rgba(255,210,0,.1);color:var(--gold)}
+  .srch-res .cat{font-size:10px;color:var(--mut2);text-transform:uppercase;letter-spacing:.5px}
+  table.sortable th{user-select:none}table.sortable th.sorted::after{content:" ▾";color:var(--gold)}table.sortable th.asc::after{content:" ▴";color:var(--gold)}
 </style>
 </head>
 <body>
@@ -183,6 +221,10 @@
     <div class="navgrp open">
       <button class="navhead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span>Resumen</span><span class="chev">›</span></button>
       <div class="navsub"><a href="#resumen">Reporte</a><a href="#estilo">Identidad</a></div>
+    </div>
+    <div class="navgrp">
+      <button class="navhead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12l6-3"/><circle cx="12" cy="12" r="2"/></svg><span>Métricas avanzadas</span><span class="chev">›</span></button>
+      <div class="navsub"><a href="#avanzado">Comparador Wyscout</a><a href="#avGlosario">Glosario avanzado</a></div>
     </div>
     <div class="navgrp">
       <button class="navhead" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-8"/><path d="M14 7h6v6"/></svg><span>Rendimiento</span><span class="chev">›</span></button>
@@ -210,6 +252,7 @@
     </div>
   </nav>
   <div class="side-foot"><div class="modewrap"><span>Ejecutiva</span><div class="switch" id="modeSwitch"><div class="knob"></div></div><span>Técnica</span></div>
+    <div class="modewrap" style="margin-top:8px"><span>Oscuro</span><div class="switch" id="themeSwitch"><div class="knob"></div></div><span>Claro</span></div>
     <div class="launchlbl">Módulos</div>
     <div class="launchwrap">
       <a class="launch feat" style="--acc:#ffd21f" href="registro_en_vivo.html"><span class="lic">⏱</span><span class="ltx"><span class="ltt">Registro en Vivo</span><span class="lsb">Táctico · tiempo real</span></span><span class="larr">›</span></a>
@@ -544,6 +587,48 @@
     <div class="glos" style="margin-top:12px"><b>Cómo actualizar.</b> Edita <code>reportes.js</code> (narrativa/rivales) y recarga. Los datos de partido viven en <code>fixtures.js</code> y <code>coquimbo_data.js</code>. Los cuatro archivos van en la misma carpeta.</div>
     <p class="foot">Fuentes: export FBref Coquimbo Unido y rivales 2026 (validado). Rivales sin export van marcados <span class="badge b-ver">REQUIERE_VERIFICACION</span>. Mapas de calor = proxy de eventos, no tracking posicional.</p>
   </section>
+
+  <!-- ===== CENTRO DE MÉTRICAS AVANZADAS ===== -->
+  <section id="avanzado">
+    <h2>Centro de métricas avanzadas · comparador Wyscout</h2>
+    <p class="sub">Comparación con <b>dato de evento real</b> (Hudl Wyscout) de los equipos con feed cargado. El resto de la liga/mundo <b>no tiene xG ni coordenadas públicas</b>: esas métricas aparecen como <span class="badge b-ver">No disponible</span>. Pasa el cursor sobre cada métrica para su definición. <span class="badge b-dato">DATO Wyscout</span></p>
+
+    <div class="adv-toolbar">
+      <div class="srchbox"><input id="advSearch" type="text" placeholder="Buscar equipo o jugador…" autocomplete="off" aria-label="Buscador global"><div class="srch-res" id="advSearchRes"></div></div>
+      <button class="btn-csv" id="advCsv">⬇ Exportar CSV</button>
+    </div>
+    <div class="adv-toolbar" id="advChips" aria-label="Elegir equipos a comparar (hasta 4)"></div>
+
+    <div class="grid g2" style="margin-top:4px;align-items:start">
+      <div class="card"><h4><span class="metpill" data-met="xg">xG generado</span> vs <span class="metpill" data-met="xga">xG concedido</span> · por partido</h4>
+        <div class="sub" style="margin-bottom:6px">Arriba-izquierda = genera mucho y concede poco (perfil dominante). Abajo-derecha = sufre.</div>
+        <div class="chart-wrap"><canvas id="advScatter"></canvas></div></div>
+      <div class="card"><h4><span class="metpill" data-met="ppda">PPDA</span> vs <span class="metpill" data-met="pos">posesión</span></h4>
+        <div class="sub" style="margin-bottom:6px">Izquierda = presión más intensa (PPDA bajo). Permite ver si el equipo presiona o espera.</div>
+        <div class="chart-wrap"><canvas id="advScatter2"></canvas></div></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h4>Tabla comparativa · promedios Wyscout por partido</h4>
+      <div class="scroll-x"><table class="sortable" id="advTable"><thead></thead><tbody></tbody></table></div>
+      <div class="adv-note" id="advInsight"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h4>Perfil por percentiles · <span id="advRadarTeam" style="color:var(--gold)">—</span> <span class="sub" style="font-weight:400">(vs. los equipos con feed)</span></h4>
+      <div class="sub" style="margin-bottom:8px">Percentil dentro de la muestra Wyscout cargada (no de toda la liga). 100 = mejor del grupo en esa métrica.</div>
+      <div id="advPerc"></div>
+    </div>
+  </section>
+
+  <!-- ===== GLOSARIO DE MÉTRICAS AVANZADAS ===== -->
+  <section id="avGlosario">
+    <h2>Glosario de métricas avanzadas</h2>
+    <p class="sub">Definiciones de cuerpo técnico. El estado indica si la fuente del proyecto la entrega hoy: <span class="badge b-dato">DATO</span> disponible (feed Hudl Wyscout) · <span class="badge b-ver">No disponible</span> en fuentes públicas chilenas (haría falta feed de evento liga/mundial).</p>
+    <div class="grid g3" id="advGlosGrid" style="margin-top:12px"></div>
+    <div class="callout info" style="margin-top:14px"><b>Nota de método.</b> El <b>PPDA</b> mide los pases que permites por acción defensiva: <b>más bajo = presión más intensa</b>. El <b>xG</b> estima la calidad de una ocasión <i>antes</i> del disparo; el <b>xGOT/PSxG</b> incorpora la calidad del remate <i>tras</i> el disparo (sirve para evaluar finalización y porteros). Todas las lecturas automáticas son orientativas.</div>
+  </section>
+
 </main>
 
 <script src="coquimbo_data.js"></script>
@@ -565,6 +650,10 @@
 <script src="formaciones.js"></script>
 <script src="scouting.js"></script>
 <script src="radares.js"></script>
+<script src="wyscout.js"></script>
+<script src="wyscout_nublense.js"></script>
+<script src="wyscout_calera.js"></script>
+<script src="wyscout_acumulado.js"></script>
 <script>
 const C={gold:'#ffd200',blue:'#7fb0ff',mut:'#b7b7ad',green:'#4ad991',amber:'#ffcf5c',red:'#ff6b6b',grid:'rgba(255,210,0,.10)'};
 Chart.defaults.color=C.mut;Chart.defaults.font.family="'Segoe UI',sans-serif";Chart.defaults.plugins.legend.labels.boxWidth=12;
@@ -1572,6 +1661,240 @@ $('#modeSwitch').onclick=function(){this.classList.toggle('on');document.body.cl
     `<div class="callout" style="margin-top:12px"><span class="badge b-hip">LECTURA TÁCTICA</span> Coquimbo es de <b>mínimo control</b>: <b>último en posesión (${Q.posesion}%) y en % de pases (${Q.pases}%)</b>, y penúltimo en tiros — pero <b>${Q.rank.corners}º en córners</b>. Perfil <b>directo y de balón parado</b>: no construye, llega por segundas jugadas y centros. Refuerza la tesis del scouting: el déficit no es volumen, es <b>creación en Zona 14</b> que convierta esas llegadas en ocasiones claras.</div>`+
     (typeof CREADORES!=='undefined'?`<div class="sub" style="margin-top:8px"><b>Creadores de la liga (2025, top asistencias):</b> ${CREADORES.players.slice(0,5).map(c=>`${c.n} (${c.a}A/${c.g}G)`).join(' · ')}. <span class="badge b-ver">datalabs</span> referencia de perfil, no plantilla actual.</div>`:'')+
     `<p class="foot" style="padding-top:10px">${E.procedencia}</p>`;
+})();
+</script>
+<!-- ===== MÓDULO: Centro de Métricas Avanzadas (aditivo, IIFE aislado) ===== -->
+<script>
+(function(){
+  'use strict';
+  if(typeof document==='undefined')return;
+  var $=function(s){return document.querySelector(s);};
+  var ADVC={gold:'#ffd200',colo:'#9aa7b2',nub:'#5aa8ff',cal:'#ff7a7a',grid:'rgba(255,255,255,.08)',mut:'#aab8c4'};
+
+  /* ---------- 1 · Diccionario de métricas (definiciones de cuerpo técnico) ---------- */
+  var MET={
+    xg:{n:'xG (goles esperados)',s:'dato',d:'Probabilidad de gol de cada remate según su calidad (ubicación, tipo de jugada, parte del cuerpo) ANTES del disparo. Suma por partido = ocasiones generadas.'},
+    npxg:{n:'npxG (xG sin penales)',s:'nd',d:'xG excluyendo penales, para medir el juego abierto sin el ruido de los penaltis. No disponible en el feed cargado.'},
+    xga:{n:'xG concedido (xGA)',s:'dato',d:'xG de los remates del rival: calidad de las ocasiones que permite tu equipo. Más bajo = defensa que concede poco peligro.'},
+    xa:{n:'xA (asistencias esperadas)',s:'nd',d:'Probabilidad de que un pase termine en gol (xG del remate que genera). No disponible a nivel liga sin datos de evento con coordenadas.'},
+    xag:{n:'xAG',s:'nd',d:'xG generado por el pase del asistente final, atribuido al pasador. Requiere datos de evento por jugador; no disponible.'},
+    xgchain:{n:'xGChain',s:'nd',d:'xG de toda la posesión en la que participó un jugador (tocó el balón), reparte crédito a quien construye. No disponible.'},
+    xgbuildup:{n:'xGBuildup',s:'nd',d:'Como xGChain pero SIN contar el remate ni la asistencia: mide la construcción pura. No disponible.'},
+    xgot:{n:'xGOT / PSxG',s:'nd',d:'xG tras el disparo (post-shot): incorpora la calidad del remate (a dónde va). Compara finalización (xGOT−xG) y rendimiento del portero (PSxG−goles). No disponible en el feed cargado.'},
+    sobre:{n:'Sobre/sub-rendimiento',s:'dato',d:'Goles reales menos xG. Positivo = finaliza por encima de lo esperado; negativo = desperdicia ocasiones. Se calcula con los goles reales y el xG Wyscout.'},
+    tiros:{n:'Tiros / a puerta',s:'dato',d:'Volumen de remates y cuántos van al arco. Combinado con xG mide si el equipo busca cantidad o calidad de ocasión.'},
+    npxgsh:{n:'npxG por tiro',s:'nd',d:'Calidad media del remate (xG sin penales ÷ tiros). Necesita xG por tiro; no disponible a nivel liga.'},
+    prog:{n:'Pases progresivos',s:'nd',d:'Pases que avanzan el balón de forma significativa hacia la portería rival. Requiere datos de evento con coordenadas; no disponible públicamente.'},
+    ut3:{n:'Pases al último tercio',s:'nd',d:'Pases completados que entran en el último tercio del campo. No disponible sin coordenadas.'},
+    clave:{n:'Pases clave / SCA / GCA',s:'nd',d:'Pases que generan un remate (clave), acciones que crean un tiro (SCA) o un gol (GCA) en las 2 acciones previas. No disponible a nivel liga.'},
+    centros:{n:'Centros',s:'dato',d:'Envíos al área desde banda y su precisión. Mide el peso del juego lateral en el ataque.'},
+    cond:{n:'Conducciones/recepciones progresivas',s:'nd',d:'Metros ganados conduciendo o recibiendo el balón hacia adelante. Requiere tracking/evento; no disponible.'},
+    ppda:{n:'PPDA',s:'dato',d:'Pases del rival permitidos por cada acción defensiva propia en su campo. MÁS BAJO = presión más intensa y arriba.'},
+    presion:{n:'Intensidad de presión / recuperaciones',s:'dato',d:'Recuperaciones y balones robados; dónde los recupera (bajas/medias/altas) indica si presiona arriba o se repliega.'},
+    tilt:{n:'Field tilt / control territorial',s:'nd',d:'% de posesión en el último tercio: dónde se juega el partido. Aproximable solo con coordenadas; no disponible como dato puro.'},
+    duelos:{n:'Duelos ganados %',s:'dato',d:'Porcentaje de duelos (terrestres y aéreos) ganados. Mide el dominio físico y la disputa de la segunda pelota.'},
+    aer:{n:'Duelos aéreos %',s:'dato',d:'Porcentaje de duelos aéreos ganados. Clave contra equipos que centran mucho o en balón parado.'},
+    gk:{n:'Portero: PSxG−GA, % paradas',s:'nd',d:'Goles evitados (PSxG menos goles encajados), % de paradas, salidas y cruces detenidos. Requiere página de arquero del informe; parcial / no disponible a nivel liga.'},
+    perc:{n:'Percentiles por posición',s:'parcial',d:'Rango del jugador/equipo frente a su posición. Aquí se calcula dentro de la MUESTRA Wyscout cargada, no de toda la liga.'}
+  };
+
+  /* ---------- 2 · Datos de equipos con feed Wyscout ---------- */
+  function avg(arr,k){var v=[];for(var i=0;i<arr.length;i++){var x=arr[i][k];if(x!=null&&!isNaN(x))v.push(+x);}return v.length?v.reduce(function(s,x){return s+x;},0)/v.length:null;}
+  function buildTeams(){
+    var out=[];
+    try{
+      if(typeof WY_ACUM!=='undefined' && WY_ACUM.equipos && WY_ACUM.equipos['Coquimbo Unido']){
+        var cq=WY_ACUM.equipos['Coquimbo Unido'].partidos||[];
+        out.push({name:'Coquimbo Unido',color:ADVC.gold,n:cq.length,gf:avg(cq,'gf'),
+          xg:avg(cq,'xg'),xga:avg(cq,'xga'),pos:avg(cq,'pos'),ppda:avg(cq,'ppda'),duelos:avg(cq,'duelos'),aer:avg(cq,'aerPct')});
+      }
+    }catch(e){}
+    if(typeof WYSCOUT!=='undefined' && WYSCOUT.equipos){
+      var map=[['Colo-Colo',ADVC.colo],['Ñublense',ADVC.nub],['Unión La Calera',ADVC.cal]];
+      for(var i=0;i<map.length;i++){
+        var e=WYSCOUT.equipos[map[i][0]]; if(!e||!e.partidos)continue;
+        var p=e.partidos;
+        out.push({name:map[i][0],color:map[i][1],n:p.length,gf:avg(p,'gf'),
+          xg:avg(p,'xg'),xga:avg(p,'xgRival'),pos:avg(p,'pos'),ppda:avg(p,'ppda'),duelos:avg(p,'duelos'),
+          aer:(map[i][0]==='Unión La Calera'?47.3:null)}); // aéreos: solo medido para La Calera en esta muestra
+      }
+    }
+    return out;
+  }
+  var TEAMS=buildTeams();
+  var sel={}; TEAMS.forEach(function(t){sel[t.name]=true;});
+  var charts={};
+  function fmt(v,d){return v==null?'—':(+v).toFixed(d==null?2:d);}
+
+  /* ---------- 3 · Tooltips de métricas ---------- */
+  var tip=document.createElement('div'); tip.className='adv-tip'; document.body.appendChild(tip);
+  function wireTips(root){
+    (root||document).querySelectorAll('.metpill').forEach(function(el){
+      var m=MET[el.getAttribute('data-met')]; if(!m)return;
+      el.setAttribute('tabindex','0'); el.setAttribute('role','note');
+      function show(ev){ tip.innerHTML='<b>'+m.n+'</b><br>'+m.d; tip.classList.add('show');
+        var x=(ev.clientX||100)+14, y=(ev.clientY||100)+14;
+        if(x+290>window.innerWidth)x=window.innerWidth-294; tip.style.left=x+'px'; tip.style.top=y+'px'; }
+      function hide(){ tip.classList.remove('show'); }
+      el.addEventListener('mousemove',show); el.addEventListener('mouseenter',show);
+      el.addEventListener('mouseleave',hide); el.addEventListener('focus',function(){var r=el.getBoundingClientRect();show({clientX:r.left,clientY:r.top});}); el.addEventListener('blur',hide);
+    });
+  }
+
+  /* ---------- 4 · Chips de selección de equipos ---------- */
+  function renderChips(){
+    var box=$('#advChips'); if(!box)return;
+    box.innerHTML='<span class="sub" style="align-self:center">Comparar (máx. 4):</span>'+TEAMS.map(function(t){
+      return '<span class="chip-team'+(sel[t.name]?' on':'')+'" data-t="'+t.name.replace(/"/g,'')+'" style="border-left:4px solid '+t.color+'">'+t.name+'</span>';
+    }).join('');
+    box.querySelectorAll('.chip-team').forEach(function(c){
+      c.onclick=function(){
+        var nm=c.getAttribute('data-t'); var onCount=TEAMS.filter(function(t){return sel[t.name];}).length;
+        if(sel[nm]){ if(onCount<=1)return; sel[nm]=false; }
+        else { if(onCount>=4)return; sel[nm]=true; }
+        renderAll();
+      };
+    });
+  }
+  function activeTeams(){return TEAMS.filter(function(t){return sel[t.name];});}
+
+  /* ---------- 5 · Scatters ---------- */
+  function scatter(id,xk,yk,xlab,ylab,invX){
+    var cv=document.getElementById(id); if(!cv||!window.Chart)return;
+    if(charts[id]){charts[id].destroy();}
+    var ds=activeTeams().filter(function(t){return t[xk]!=null&&t[yk]!=null;}).map(function(t){
+      return {label:t.name,data:[{x:t[xk],y:t[yk]}],backgroundColor:t.color,borderColor:t.color,pointRadius:8,pointHoverRadius:11};
+    });
+    charts[id]=new Chart(cv,{type:'scatter',data:{datasets:ds},options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:ADVC.mut,boxWidth:10}},tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+xlab+' '+c.parsed.x.toFixed(2)+' · '+ylab+' '+c.parsed.y.toFixed(1);}}}},
+      scales:{x:{reverse:!!invX,title:{display:true,text:xlab,color:ADVC.mut},ticks:{color:ADVC.mut},grid:{color:ADVC.grid}},
+              y:{title:{display:true,text:ylab,color:ADVC.mut},ticks:{color:ADVC.mut},grid:{color:ADVC.grid}}}}});
+  }
+
+  /* ---------- 6 · Tabla comparativa ordenable + CSV ---------- */
+  var COLS=[['name','Equipo',0],['n','PJ',0],['xg','xG',2],['xga','xGA',2],['sobre','Gol−xG',2],['pos','Pos%',0],['ppda','PPDA',1],['duelos','Duelos%',0],['aer','Aéreos%',0]];
+  var sortK='xg', sortAsc=false;
+  function rowsData(){
+    return activeTeams().map(function(t){
+      var sobre=(t.gf!=null&&t.xg!=null)?(t.gf-t.xg):null; // goles reales − xG = sobre/sub-rendimiento de finalización
+      return {name:t.name,color:t.color,n:t.n,xg:t.xg,xga:t.xga,sobre:sobre,pos:t.pos,ppda:t.ppda,duelos:t.duelos,aer:t.aer};
+    });
+  }
+  function renderTable(){
+    var tb=$('#advTable'); if(!tb)return;
+    var rows=rowsData();
+    rows.sort(function(a,b){var x=a[sortK],y=b[sortK];if(x==null)return 1;if(y==null)return -1;if(typeof x==='string')return sortAsc?x.localeCompare(y):y.localeCompare(x);return sortAsc?x-y:y-x;});
+    tb.querySelector('thead').innerHTML='<tr>'+COLS.map(function(c){return '<th data-k="'+c[0]+'" class="'+(c[0]===sortK?(sortAsc?'asc':'sorted'):'')+'">'+c[1]+'</th>';}).join('')+'</tr>';
+    tb.querySelector('tbody').innerHTML=rows.map(function(r){
+      return '<tr>'+COLS.map(function(c){
+        var v=r[c[0]];
+        if(c[0]==='name')return '<td><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:'+r.color+';margin-right:6px"></span><b>'+v+'</b></td>';
+        return '<td class="'+(v==null?'':'')+'">'+(v==null?'<span class="badge b-ver">N/D</span>':(typeof v==='number'?v.toFixed(c[2]):v))+'</td>';
+      }).join('')+'</tr>';
+    }).join('');
+    tb.querySelectorAll('th').forEach(function(th){th.onclick=function(){var k=th.getAttribute('data-k');if(k===sortK)sortAsc=!sortAsc;else{sortK=k;sortAsc=false;}renderTable();};});
+  }
+  function toCSV(){
+    var rows=rowsData(); var head=COLS.map(function(c){return c[1];}).join(',');
+    var body=rows.map(function(r){return COLS.map(function(c){var v=r[c[0]];return v==null?'N/D':(typeof v==='number'?v.toFixed(c[2]):'"'+v+'"');}).join(',');}).join('\n');
+    var blob=new Blob([head+'\n'+body],{type:'text/csv;charset=utf-8;'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='comparador_wyscout_coquimbo.csv'; document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  /* ---------- 7 · Percentiles del equipo seleccionado ---------- */
+  function pct(all,val,lowerBetter){
+    var v=all.filter(function(x){return x!=null;}); if(v.length<2||val==null)return null;
+    var worse=v.filter(function(x){return lowerBetter?x>val:x<val;}).length;
+    return Math.round(worse/(v.length-1)*100);
+  }
+  function renderPerc(){
+    var box=$('#advPerc'); if(!box)return;
+    var act=activeTeams(); if(!act.length){box.innerHTML='';return;}
+    var team=act[0]; $('#advRadarTeam').textContent=team.name;
+    var defs=[['xg','xG generado',false],['xga','xG concedido',true],['pos','Posesión',false],['ppda','PPDA (presión)',true],['duelos','Duelos ganados',false],['aer','Duelos aéreos',false]];
+    box.innerHTML=defs.map(function(d){
+      var all=TEAMS.map(function(t){return t[d[0]];});
+      var p=pct(all,team[d[0]],d[2]);
+      var cls=p==null?'':(p>=66?'':(p>=33?'mid':'lo'));
+      var val=team[d[0]]; var vs=val==null?'N/D':(d[0]==='pos'||d[0]==='duelos'||d[0]==='aer'?Math.round(val)+'%':(+val).toFixed(d[0]==='ppda'?1:2));
+      return '<div class="prow"><span>'+d[1]+'</span><div class="pbar '+cls+'"><span style="width:'+(p==null?0:p)+'%"></span></div><span class="pv">'+(p==null?'N/D':p)+'</span></div><div class="sub" style="margin:-4px 0 6px 160px;font-size:11px">valor: '+vs+'</div>';
+    }).join('');
+  }
+
+  /* ---------- 8 · Insight automático (orientativo) ---------- */
+  function renderInsight(){
+    var box=$('#advInsight'); if(!box)return; var cq=TEAMS.filter(function(t){return t.name==='Coquimbo Unido';})[0];
+    if(!cq){box.innerHTML='';return;}
+    var over=(cq.xg!=null)?(cq.xg>1.4?'genera ocasiones de sobra':'genera poco volumen de ocasión'):'—';
+    box.innerHTML='<b>Lectura orientativa.</b> Coquimbo genera <b>'+fmt(cq.xg,2)+' xG/partido</b> y concede <b>'+fmt(cq.xga,2)+' xGA</b> en la muestra Wyscout ('+cq.n+' partidos): '+over+'. '+
+      'Percentiles calculados sólo contra los '+TEAMS.length+' equipos con feed cargado; no representan a toda la liga. Métricas de evento (xA, SCA/GCA, progresivos) <b>no disponibles</b> en fuentes públicas chilenas.';
+  }
+
+  /* ---------- 9 · Glosario ---------- */
+  function renderGlos(){
+    var grid=$('#advGlosGrid'); if(!grid)return;
+    grid.innerHTML=Object.keys(MET).map(function(k){
+      var m=MET[k]; var b=m.s==='dato'?'<span class="badge b-dato">DATO</span>':(m.s==='parcial'?'<span class="badge b-clave">Parcial</span>':'<span class="badge b-ver">No disponible</span>');
+      return '<div class="card" style="padding:14px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b style="color:var(--white)">'+m.n+'</b>'+b+'</div><div class="sub" style="margin-top:6px">'+m.d+'</div></div>';
+    }).join('');
+  }
+
+  /* ---------- 10 · Buscador global con autocompletado ---------- */
+  function buildIndex(){
+    var idx=[]; var seen={};
+    TEAMS.forEach(function(t){idx.push({t:t.name,c:'Equipo · Wyscout',k:'team',ref:t.name});seen[t.name]=1;});
+    try{ if(typeof DATALABS!=='undefined'&&DATALABS.players){
+      DATALABS.players.forEach(function(p){
+        if(!seen[p.team]){seen[p.team]=1;idx.push({t:p.team,c:'Equipo · liga',k:'teamx'});}
+        idx.push({t:p.n,c:'Jugador · '+p.team,k:'player'});
+      });
+    }}catch(e){}
+    return idx;
+  }
+  var IDX=buildIndex();
+  function wireSearch(){
+    var inp=$('#advSearch'), res=$('#advSearchRes'); if(!inp||!res)return;
+    function norm(s){return (s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();}
+    inp.addEventListener('input',function(){
+      var q=norm(inp.value.trim()); if(q.length<2){res.classList.remove('show');res.innerHTML='';return;}
+      var hits=IDX.filter(function(x){return norm(x.t).indexOf(q)>=0;}).slice(0,12);
+      if(!hits.length){res.innerHTML='<a><span>Sin resultados</span><span class="cat">—</span></a>';res.classList.add('show');return;}
+      res.innerHTML=hits.map(function(h){return '<a data-k="'+h.k+'" data-ref="'+(h.ref||h.t).replace(/"/g,'')+'"><span>'+h.t+'</span><span class="cat">'+h.c+'</span></a>';}).join('');
+      res.classList.add('show');
+      res.querySelectorAll('a').forEach(function(a){a.onclick=function(){
+        var k=a.getAttribute('data-k'), ref=a.getAttribute('data-ref');
+        res.classList.remove('show'); inp.value='';
+        if(k==='team'){ TEAMS.forEach(function(t){sel[t.name]=(t.name===ref);}); renderAll(); document.getElementById('avanzado').scrollIntoView({behavior:'smooth'}); }
+        else if(k==='player'){ var sc=document.getElementById('scouting')||document.getElementById('jugadores'); if(sc)sc.scrollIntoView({behavior:'smooth'}); }
+        else { var el=document.getElementById('rivales'); if(el)el.scrollIntoView({behavior:'smooth'}); }
+      };});
+    });
+    document.addEventListener('click',function(e){ if(!res.contains(e.target)&&e.target!==inp)res.classList.remove('show'); });
+  }
+
+  /* ---------- 11 · Tema claro/oscuro (mantiene identidad aurinegra) ---------- */
+  function wireTheme(){
+    var sw=$('#themeSwitch'); if(!sw)return;
+    try{ if(localStorage.getItem('trazoxi-theme')==='light'){document.body.classList.add('light');sw.classList.add('on');} }catch(e){}
+    sw.onclick=function(){ var light=document.body.classList.toggle('light'); sw.classList.toggle('on',light);
+      try{localStorage.setItem('trazoxi-theme',light?'light':'dark');}catch(e){}
+      // redibujar charts para que tomen los colores del tema
+      setTimeout(renderCharts,60);
+    };
+  }
+
+  function renderCharts(){
+    scatter('advScatter','xg','xga','xG generado','xG concedido',false);
+    scatter('advScatter2','ppda','pos','PPDA (presión)','Posesión %',true);
+  }
+  function renderAll(){ renderChips(); renderCharts(); renderTable(); renderPerc(); renderInsight(); }
+
+  function init(){
+    if(!document.getElementById('avanzado'))return;
+    if(!TEAMS.length){ var b=$('#advInsight'); if(b)b.innerHTML='<b>No disponible.</b> No se cargaron feeds Wyscout en esta página.'; renderGlos(); wireTips(); return; }
+    renderGlos(); renderAll(); wireTips(); wireSearch(); wireTheme();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
 })();
 </script>
 <script src="trazoxi_fx.js"></script>

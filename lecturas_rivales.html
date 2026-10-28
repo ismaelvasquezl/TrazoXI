@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="wyscout.js"></script>
 <script src="wyscout_nublense.js"></script>
+<script src="wyscout_calera.js"></script>
 <script src="wyscout_acumulado.js"></script>
 <script src="nosotros.js"></script>
 <script src="liga_wyscout.js"></script>
@@ -505,7 +506,7 @@ function clashSVG(w,modo){
       cells+=`<rect x="${x}" y="${y}" width="${cw}" height="${bh}" fill="rgba(255,95,95,${(v*0.7).toFixed(2)})"/>`;}
     const A=(x1,y1,x2,y2,lab)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ffd21f" stroke-width="4" marker-end="url(#arG)" opacity=".95"/>`+(lab?`<text x="${x2}" y="${y2-8}" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="800">${lab}</text>`:'');
     over+=`<circle cx="150" cy="300" r="26" fill="rgba(255,210,31,.18)" stroke="#ffd21f" stroke-dasharray="4 3"/><text x="150" y="304" text-anchor="middle" font-size="9" fill="#ffd21f" font-weight="800">ROBO</text>`;
-    over+=A(140,280,62,140,'espalda carrilero')+A(160,280,238,140,'espalda carrilero')+A(150,275,150,110,'Z14 / Johansen');
+    over+=A(140,280,62,140,'espalda lateral')+A(160,280,238,140,'espalda lateral')+A(150,275,150,110,'Z14');
     over+=`<text x="${W/2}" y="${H-30}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">rojo = zonas que el rival deja libres al atacar</text><text x="${W/2}" y="${H-18}" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">oro = nuestras rutas tras el robo</text>`;
   } else {
     const g=flip(capa('ataque').grid);
@@ -514,12 +515,12 @@ function clashSVG(w,modo){
     const D=(typeof NOSOTROS!=='undefined'&&NOSOTROS.zonas)?NOSOTROS.zonas.defensores:[];
     D.forEach(n=>{ if(n.aer==null)return; const col=n.aer<=30?'#ff5f5f':n.aer<=50?'#f5a623':'#38d98a'; const r=n.aer<=30?15:n.aer<=50?12:10;
       over+=`<circle cx="${n.x}" cy="${n.y}" r="${r}" fill="${col}" fill-opacity=".3" stroke="${col}" stroke-width="2.5"/><text x="${n.x}" y="${n.y-r-3}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">${esc(n.n)}</text><text x="${n.x}" y="${n.y+3.5}" text-anchor="middle" font-size="9" fill="#fff" font-weight="800">${n.aer}%</text>`;});
-    over+=`<path d="M 250 250 Q 230 360 120 395" fill="none" stroke="#ff5f5f" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="248" y="244" text-anchor="end" font-size="9" fill="#ff9a9a" font-weight="800">centro Sanhueza/Campos</text>`;
+    over+=`<path d="M 250 250 Q 230 360 120 395" fill="none" stroke="#ff5f5f" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arR)"/><text x="248" y="244" text-anchor="end" font-size="9" fill="#ff9a9a" font-weight="800">centro rival</text>`;
     over+=`<text x="${W/2}" y="80" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">rojo = su zona de llegada y remate</text><text x="${W/2}" y="92" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.8)">círculos = nuestro % de duelos aéreos</text>`;
   }
   const lines=`<rect x="${mx}" y="${my}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><line x1="${mx}" y1="${my+ph/2}" x2="${mx+pw}" y2="${my+ph/2}" stroke="rgba(255,255,255,.22)"/><circle cx="${W/2}" cy="${my+ph/2}" r="30" fill="none" stroke="rgba(255,255,255,.22)"/><rect x="${W/2-46}" y="${my}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/><rect x="${W/2-46}" y="${my+ph-52}" width="92" height="52" fill="none" stroke="rgba(255,255,255,.28)"/>`;
   const defs=`<defs><marker id="arG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd21f"/></marker><marker id="arR" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ff5f5f"/></marker></defs>`;
-  return `<div style="text-align:center"><div class="sub" style="margin-bottom:4px">${modo==='ataque'?'Coquimbo ataca ↑ · campo de '+esc('Ñublense')+' arriba':'Coquimbo defiende ↓ · nuestro arco abajo'}</div><svg class="pitch fx-lens" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${defs}${cells}${lines}${over}</svg></div>`;
+  return `<div style="text-align:center"><div class="sub" style="margin-bottom:4px">${modo==='ataque'?'Coquimbo ataca ↑ · campo rival arriba':'Coquimbo defiende ↓ · nuestro arco abajo'}</div><svg class="pitch fx-lens" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:320px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:10px;border:1px solid var(--line-strong)">${defs}${cells}${lines}${over}</svg></div>`;
 }
 function hudlExtraCharts(w,f){
   if(!window.Chart) return; const gc='rgba(255,255,255,.07)',tk='#aab8c4';
