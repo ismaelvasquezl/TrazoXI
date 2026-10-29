@@ -67,7 +67,35 @@
   .layerbtns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
   .lbtn{background:var(--bg1);border:1px solid var(--line-strong);color:var(--mut);border-radius:8px;padding:7px 11px;font-size:12px;font-weight:600;cursor:pointer}
   .lbtn:hover{color:var(--white)}.lbtn.on{background:var(--gold);color:#000;border-color:var(--gold)}
-  @media print{header,.tabs,.btnrow,.no-print{display:none!important}.view{display:block!important}body{background:#fff!important;color:#111!important}.card,.pc,.kpi{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;break-inside:avoid}h2,h3,.kpi .v,.pc .nm,.pc .m b{color:#111!important}.sub,.pc .nota,td,li{color:#222!important}}
+  /* Informe por posición (vista imprimible) */
+  #v-informe .inf-head{border-bottom:2px solid var(--gold);padding-bottom:10px;margin-bottom:14px}
+  .inf-grp{margin:0 0 20px}
+  .inf-h3{display:flex;align-items:center;gap:8px;font-size:15px;margin:0 0 8px;color:var(--white)}
+  .inf-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .inf-tbl th,.inf-tbl td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left}
+  .inf-tbl th{color:var(--mut);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+  .inf-tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .inf-tbl tr.inf-nota td{border-bottom:1px solid var(--line);padding-top:0;font-size:11.5px;line-height:1.4}
+  .inf-foot{margin-top:10px;font-size:11px}
+  @media print{
+    @page{margin:12mm}
+    header,.tabs,.btnrow,.no-print,.ov{display:none!important}
+    /* Redefinir la paleta en impresión: texto claro (var(--white)/var(--gold)) → oscuro legible sobre blanco. */
+    html,body{background:#fff!important;color:#111!important;
+      --bg0:#fff;--bg1:#fff;--panel:#fff;--panel2:#fff;--panel3:#f4f4f4;
+      --white:#111;--txt:#1a1a1a;--mut:#3a3a3a;--mut2:#555;
+      --gold:#8a6a00;--gold2:#6e5500;--gold-ink:#111;
+      --teal:#0b6b63;--blue:#1f4fb0;--green:#1a7a3a;--amber:#8a5a00;--red:#b23b3b;
+      --line:#ddd;--line-strong:#ccc;--line-gold:#d8c47a}
+    .view{display:block!important}
+    body.only-informe .view{display:none!important}
+    body.only-informe #v-informe{display:block!important}
+    .card,.pc,.kpi{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;break-inside:avoid}
+    h1,h2,h3,h4,b,strong,.kpi .v,.pc .nm,.pc .m b{color:#111!important}
+    .sub,.pc .nota,td,th,li,span,p{color:#222!important}
+    .inf-grp{break-inside:avoid} .inf-tbl th{background:#eee!important}
+    .badge,.chip{color:#111!important;border-color:#bbb!important;background:#eee!important}
+  }
   .pc.clk{cursor:pointer;transition:transform .12s,border-color .12s}.pc.clk:hover{transform:translateY(-2px);border-color:var(--line-gold)}
   .pc .expand{font-size:10.5px;color:var(--gold);margin-top:8px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;opacity:.85}
   .ov{position:fixed;inset:0;background:rgba(5,8,11,.7);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
@@ -169,6 +197,7 @@
   <button class="tab" data-v="LAT">Laterales</button>
   <button class="tab" data-v="VOL">Volantes</button>
   <button class="tab" data-v="DEL">Delanteros</button>
+  <button class="tab" data-v="informe">📋 Informe PDF</button>
   <button class="tab" data-v="campo">Campo</button>
   <button class="tab" data-v="metricas">Métricas</button>
   <button class="tab" data-v="fases">Por fase</button>
@@ -182,6 +211,7 @@
   <section class="view" id="v-LAT"></section>
   <section class="view" id="v-VOL"></section>
   <section class="view" id="v-DEL"></section>
+  <section class="view" id="v-informe"></section>
   <section class="view" id="v-campo"></section>
   <section class="view" id="v-metricas"></section>
   <section class="view" id="v-fases"></section>
@@ -524,9 +554,59 @@ renderResumen(); renderFases(); renderMapas(); renderCampo(); renderMetricas();
 document.addEventListener('click',e=>{const pn=e.target.closest&&e.target.closest('.pnode');if(pn&&pn.dataset&&pn.dataset.pm){openPlayerPM(+pn.dataset.pm,pn);return;}const c=e.target.closest('.pc.clk');if(c&&c.dataset.pm)openPlayerPM(+c.dataset.pm,c);});
 $('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeOv();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
+/* ===== INFORME GENERAL POR POSICIÓN (vista imprimible para enviar por WhatsApp) ===== */
+const POSES={GK:'Portero',RCB:'Central (der.)',LCB:'Central (izq.)',CB:'Central',LB:'Lateral izq.',RB:'Lateral der.',
+  RDMF:'Volante def. (der.)',LDMF:'Volante def. (izq.)',DMF:'Volante defensivo',AMF:'Enganche',
+  RAMF:'Interior/extremo der.',LAMF:'Interior/extremo izq.',LWF:'Extremo izq.',RWF:'Extremo der.',CF:'Delantero centro'};
+function num(v,d){return (v==null||isNaN(v))?'—':(+v).toFixed(d==null?0:d);}
+function renderInforme(){
+  const box=document.getElementById('v-informe'); if(!box||box.dataset.done)return;
+  const orden=['GK','DEF','LAT','VOL','DEL'];
+  const u=N.ult5||{};
+  const rec=u.pj?`${u.pj} PJ · ${u.w}-${u.d}-${u.l} · ${u.gf}-${u.ga}`:'';
+  let h=`<div class="btnrow no-print" style="margin:4px 0 14px">
+      <button class="btn primary" id="printInforme">📄 Guardar / Imprimir informe (PDF)</button>
+      <span class="sub" style="margin-left:10px">Vista pensada para enviar por WhatsApp cuando no haya acceso al sitio.</span></div>
+    <div id="informeDoc">
+    <div class="inf-head">
+      <h2 style="margin:0">Informe de plantel por posición</h2>
+      <div class="sub">Coquimbo Unido · Temporada 2026 · Actualizado ${esc(N.actualizado||'')}${rec?' · Últimos: '+esc(rec):''}</div>
+      <div class="sub" style="margin-top:3px">Métricas por jugador: minutos y producción acumulada de la muestra con detalle (dato de evento Hudl Wyscout + CFDB). Lecturas orientativas.</div>
+    </div>`;
+  orden.forEach(g=>{
+    const ps=N.players.filter(p=>p.grupo===g).sort((a,b)=>(b.min||0)-(a.min||0));
+    if(!ps.length)return;
+    const sumG=ps.reduce((s,p)=>s+(p.g||0),0), sumXg=ps.reduce((s,p)=>s+(+p.xg||0),0), sumA=ps.reduce((s,p)=>s+(p.a||0),0);
+    const esGK=g==='GK';
+    h+=`<div class="inf-grp"><h3 class="inf-h3"><span class="chip ${CHIP[g]}">${g}</span> ${GRPLABEL[g]} <span class="sub" style="font-weight:400">· ${ps.length} jugador${ps.length>1?'es':''}${esGK?'':` · ${sumG} goles · ${sumXg.toFixed(1)} xG · ${sumA} asist.`}</span></h3>
+      <div class="scroll-x"><table class="inf-tbl"><thead><tr>
+        <th>#</th><th>Jugador</th><th>Pos.</th><th>Edad</th><th>PJ</th><th>Min</th>`+
+        (esGK?`<th>Pases</th><th>Pase%</th>`:`<th>G</th><th>xG</th><th>A</th><th>xA</th><th>Rem (arco)</th><th>Pase%</th>`)+
+      `</tr></thead><tbody>`+
+      ps.map(p=>`<tr>
+        <td class="num"><b>${p.d??'—'}</b></td>
+        <td><b>${esc(p.n)}</b></td>
+        <td class="sub">${esc(POSES[p.pos]||p.pos||'')}</td>
+        <td class="num">${p.edad?p.edad:'—'}</td>
+        <td class="num">${num(p.pj)}</td>
+        <td class="num">${num(p.min)}'</td>`+
+        (esGK?`<td class="num">${num(p.pases)}</td><td class="num">${p.pasesPct?p.pasesPct+'%':'—'}</td>`
+             :`<td class="num">${num(p.g)}</td><td class="num">${num(p.xg,2)}</td><td class="num">${num(p.a)}</td><td class="num">${num(p.xa,2)}</td><td class="num">${num(p.tiros)} (${num(p.tirosArco)})</td><td class="num">${p.pasesPct?p.pasesPct+'%':'—'}</td>`)+
+      `</tr>`+
+      (p.nota?`<tr class="inf-nota"><td></td><td colspan="${esGK?7:9}" class="sub">${esc(p.nota)}</td></tr>`:'')
+      ).join('')+
+      `</tbody></table></div></div>`;
+  });
+  h+=`<p class="sub inf-foot">Fuente: ${esc(N.fuente||'Hudl Wyscout + CFDB')}. Las cifras sin dato fino aparecen como «—». Documento generado automáticamente desde el panel TrazoXI.</p></div>`;
+  box.innerHTML=h; box.dataset.done='1';
+  const b=document.getElementById('printInforme');
+  if(b)b.onclick=()=>{document.body.classList.add('only-informe');window.print();setTimeout(()=>document.body.classList.remove('only-informe'),400);};
+}
+
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='v-'+t.dataset.v));
+  if(t.dataset.v==='informe')renderInforme();
   if(t.dataset.v==='resumen')renderResumen();
   if(t.dataset.v==='mapas')renderMapas();
   if(t.dataset.v==='campo')renderCampo();

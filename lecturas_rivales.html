@@ -110,12 +110,20 @@
   #zoomModal .zclose{position:absolute;top:8px;right:10px;background:var(--panel3);color:var(--white);border:1px solid var(--line-strong);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:15px}
   @media print{#zoomModal{display:none!important}}
   @media print{
+    @page{margin:12mm}
     header,.fixrow,#invTable,.foot,.btnrow,.no-print,.lbtn,.layerbtns,.filters{display:none!important}
-    body{background:#fff!important;color:#111!important}
+    /* Redefinir la paleta en impresión: todo texto claro (var(--white)/var(--gold) en línea) pasa a oscuro legible sobre blanco → corrige los títulos que salían en blanco en el PDF. */
+    html,body{background:#fff!important;color:#111!important;
+      --bg0:#fff;--bg1:#fff;--panel:#fff;--panel2:#fff;--panel3:#f4f4f4;
+      --white:#111;--txt:#1a1a1a;--mut:#3a3a3a;--mut2:#555;
+      --gold:#8a6a00;--gold2:#6e5500;--gold-ink:#111;
+      --teal:#0b6b63;--blue:#1f4fb0;--green:#1a7a3a;--amber:#8a5a00;--red:#b23b3b;
+      --line:#ddd;--line-strong:#ccc;--line-gold:#d8c47a}
     main{padding:0;max-width:100%}
-    h2{color:#111!important} h2::before{background:#b78f00!important}
+    h1,h2,h3,h4,b,strong,.vs,.disp{color:#111!important} h2::before{background:#b78f00!important}
     .card{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;break-inside:avoid;margin-top:10px}
-    h3,h4,.kpi .v,.vs{color:#111!important} .sub,td,th,li,p{color:#222!important}
+    h3,h4,.kpi .v,.vs{color:#111!important} .sub,td,th,li,p,span{color:#222!important}
+    .badge{color:#111!important;border-color:#bbb!important;background:#eee!important}
     .callout{background:#f6f6f6!important;border-left-color:#b78f00!important}
     .kpi{background:#f6f6f6!important;border:1px solid #ddd!important}
     .chart-wrap{height:220px!important}
