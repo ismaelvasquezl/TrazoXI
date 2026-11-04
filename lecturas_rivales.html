@@ -9,6 +9,7 @@
 <script src="wyscout.js"></script>
 <script src="wyscout_nublense.js"></script>
 <script src="wyscout_calera.js"></script>
+<script src="wyscout_audax.js"></script>
 <script src="wyscout_acumulado.js"></script>
 <script src="nosotros.js"></script>
 <script src="liga_wyscout.js"></script>
@@ -255,7 +256,7 @@ function ligaCard(opp){
 /* ---- barra de fixtures ---- */
 let current=null;
 function renderFixtures(){
-  const row=$('#fixrow'); let fx=(RIV.fixture||[]).filter(f=>f.comp==='LIG');
+  const row=$('#fixrow'); let fx=(RIV.fixture||[]).filter(f=>f.comp==='LIG'||f.comp==='COPA');
   // lecturas Hudl ya jugadas (archivo): clubes con informe Wyscout que ya no están en el calendario restante
   if(typeof WYSCOUT!=='undefined'){ const FX=(typeof FIXTURES!=='undefined')?FIXTURES:[];
     Object.keys(WYSCOUT.equipos).filter(k=>!fx.some(f=>sameTeam(f.opp,k))).forEach(k=>{
@@ -272,7 +273,7 @@ function renderFixtures(){
     return `<div class="fix${i===nextIdx?' next':''}" data-i="${i}" title="${esc(f.opp)} · ${f.ven==='H'?'Local':'Visita'} · ${esc(f.date)}">`+
       `<div class="ic">${ini(f.opp)}<span class="vdot" style="background:${vcol}"></span></div>`+
       `<div class="txt">`+
-        `<div class="o">${esc(f.opp)}${hud?' <span class="hudl">HUDL</span>':''}${i===nextIdx?' <span class="hudl" style="background:var(--teal);color:#06131f">PRÓX</span>':''}</div>`+
+        `<div class="o">${esc(f.opp)}${hud?' <span class="hudl">HUDL</span>':''}${f.comp==='COPA'?' <span class="hudl" style="background:#b07cff;color:#06131f">COPA</span>':''}${i===nextIdx?' <span class="hudl" style="background:var(--teal);color:#06131f">PRÓX</span>':''}</div>`+
         `<div class="d">${esc(f.date)} · ${dlabel}</div>`+
         `<div class="v" style="color:${vcol}">${f.ven==='H'?'● Local':'○ Visita'}</div>`+
       `</div></div>`;
@@ -305,6 +306,7 @@ function renderHudl(f){
      </div>
      <div class="callout">${esc(w.resumen)}</div>
      <div class="btnrow no-print" style="margin-top:10px"><button class="btn primary" id="genReport">📄 Generar informe automático</button><button class="btn" id="printReading">🖨 Imprimir / PDF</button>${sameTeam(f.opp,'Colo-Colo')?'<a class="btn" href="onepager_balon_parado_colocolo.html" target="_blank" style="text-decoration:none">⚑ One-pager balón parado</a>':''}</div></div>`+
+    ((f.comp==='COPA'&&w.copaChile)?`<div class="card" style="border:1px solid var(--line-gold);background:linear-gradient(180deg,rgba(176,124,255,.08),var(--panel))"><h3 style="color:#b07cff">⚑ Copa Chile · ${esc(w.copaChile.titulo)}</h3><div class="sub" style="margin-bottom:6px">${esc(w.copaChile.sede)}</div><div class="callout">${esc(w.copaChile.contexto)}</div><div class="sub"><b>Claves del cruce:</b></div><ul class="clean rec">`+w.copaChile.claves.map(x=>`<li>${esc(x)}</li>`).join('')+`</ul><div class="callout info">${esc(w.copaChile.cierre)}</div><div class="sub" style="margin-top:4px;font-size:11px">La lectura completa del rival (métricas Wyscout, insights y reflexiones) está más abajo: es el mismo rival de liga.</div></div>`:'')+
     ligaCard(f.opp)+
 
     hudlExtra(w,f)+

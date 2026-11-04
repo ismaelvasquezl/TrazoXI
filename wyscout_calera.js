@@ -36,7 +36,7 @@ WYSCOUT.equipos["Unión La Calera"] = {
   },
   jugadores: [
     { n: "Jorge Sáez", d: 11, rol: "9 de referencia · fijo en el XI", metr: "[DATO] 2 goles en la muestra (45' vs UC, 59' vs O'Higgins). Punto de apoyo del ataque directo y destino del pase lateral/centro. Si se le niega el apoyo de espaldas, el ataque pierde el eje." },
-    { n: "Brian Ferreyra", d: null, rol: "Delantero SUPER-SUB · desequilibrio", metr: "[DATO] 2 goles entrando desde el banco (58' vs UC, 16' vs Limache de titular puntual). El cambio que más les cambia el partido: frescura y gol en el tramo final." },
+    { n: "Brian Ferreyra", d: "—", rol: "Delantero SUPER-SUB · desequilibrio", metr: "[DATO] 2 goles entrando desde el banco (58' vs UC, 16' vs Limache de titular puntual). El cambio que más les cambia el partido: frescura y gol en el tramo final." },
     { n: "Bayron Oyarzo", d: 7, rol: "Enganche/interior de impacto desde el banco", metr: "[DATO] 1 gol (90' vs UC) + 2 asistencias (a Ferreyra y a C. Díaz). Entra y conecta el último tercio: su ingreso es señal de que van a volcarse." },
     { n: "Alán Kevin Méndez", d: 10, rol: "Creador · mediapunta/interior derecho", metr: "[DATO] 2 asistencias en la muestra (a Sáez y a Ferreyra). Principal fuente de pase clave; orientarlo hacia afuera le quita el pase filtrado al 9." },
     { n: "Christopher Díaz", d: 25, rol: "Lateral derecho ofensivo · centrador", metr: "[DATO] 1 gol (90' vs Concepción) + 1 asistencia; sube la banda y centra. Es el carril por donde más atacan: su subida deja espacio a su espalda (nuestra izquierda)." },
@@ -164,6 +164,20 @@ WYSCOUT.equipos["Unión La Calera"] = {
       { d: 11, n: "Sáez",       x: 150, y: 110, c: 16 }
     ],
     edges: [[27,15,2],[27,4,1],[15,25,2],[15,23,1],[4,23,1],[23,10,2],[23,25,1],[25,10,2],[25,11,2],[10,11,2],[10,29,1],[10,7,1],[29,11,1],[7,11,1]]
+  },
+  // ===== COPA CHILE · Cuartos (lectura breve del cruce del 04-11) =====
+  copaChile: {
+    titulo: "Cuartos de Final · Unión La Calera vs Coquimbo (04-11, La Florida — Nicolás Chahuán Nazar)",
+    sede: "Coquimbo de VISITA · partido a eliminación. Los enfrentamos hace 5 días en liga y GANAMOS 1-0 (Riveros 63') jugando con 10 desde el minuto 22.",
+    contexto: "Mismo rival, misma semana: el plan es casi el mismo, con matices de llave eliminatoria y de ser visita. La Calera es local y viene golpeado (perdió con nosotros y empató su último); hoy deberá proponer más que el domingo — su peor escenario, porque con el balón es estéril (0 victorias con ≥56% de posesión).",
+    claves: [
+      "Cederles el balón y golpear en transición: robar en nuestro medio y salir a la espalda de C. Díaz (lateral derecho muy ofensivo) en ≤3 pases. No caer en proponer por ser favoritos.",
+      "Ganar por aire y balón parado: su gran grieta física (47% aéreos, 48% duelos). Cargar el área con Pratto/Gazzolo; defensivamente, cortar el centro en origen y blindar el segundo palo.",
+      "Marcar primero y gestionar la llave: el 1-0 los obliga a abrirse. Con ventaja, bloque bajo y control del cierre; Riveros de 9 vuelve a ser la referencia que fija y define.",
+      "Disciplina: el domingo ganamos con 10, pero en un partido a eliminación NO conviene repetirlo. Cero faltas evitables cerca del área ni penales (ojo con sus goles tardíos y de pelota parada: Ferreyra/Oyarzo desde el banco).",
+      "Atención a su XI: en Copa ambos pueden rotar; si meten a Ferreyra/Oyarzo de inicio cambia el peso ofensivo. Posible alargue/penales si hay paridad."
+    ],
+    cierre: "Favoritos por forma (racha W3), por el 1-0 reciente y porque la localía los empuja a su versión más incómoda. El riesgo real no es su juego, sino nuestra pérdida que les regala la transición, un penal/falta cerca del área, o relajarnos ante un rival al que ya ganamos la semana pasada."
   },
   // ===== REFLEXIONES: inferencias desde NUESTRO contexto para el planteamiento (lente /analista-futbol-pro) =====
   reflexiones: {

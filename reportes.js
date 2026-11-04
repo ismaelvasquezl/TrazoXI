@@ -16,7 +16,7 @@ const REPORTES = {
   coquimbo: {
     titular: "Campeón vigente 2025 · reactivo, intenso y de ataque lateral",
     perfil: [
-      "ACTUALIDAD (al 28-10): 25 PJ · 9-5-11 · 32 pts · 10º, DG +1 (GF 37 / GC 36). Tras GOLEAR 5-2 a Colo-Colo, CAYÓ 2-1 de visita ante Ñublense (fecha 25): sin Johansen ni E. Hernández el ataque se desplomó a 0,63 xG (único gol de Riveros). Lección: nuestra 'transición artificial' (dejar que el rival se estire y golpear el espacio) PIERDE su punto de apoyo sin un 9 que fije. Próximo: U. La Calera (LOCAL, fecha 26).",
+      "ACTUALIDAD (al 04-11): 26 PJ · 10-5-11 · 35 pts · 8º, DG +2 (GF 38 / GC 36). RACHA DE 3 VICTORIAS: tras golear 5-2 a Colo-Colo y caer 2-1 ante Ñublense, GANAMOS 1-0 a Unión La Calera (fecha 26) con gol de Riveros (63') y jugando con 10 desde el minuto 22 (roja de Cabrera): la identidad reactiva se sostiene incluso en inferioridad y Riveros responde a la ausencia de Johansen. Próximo: Audax Italiano (VISITA, La Florida).",
       "Equipo REACTIVO, no dominador: posesión ~50% y correlación posesión→goles negativa. Ante rivales que se cierran debe evitar la 'trampa del dominio': lo logró venciendo 1-0 a U. de Concepción con 60% de balón, tras insistir hasta el 85'.",
       "Ataque muy LATERAL: 24,0 centros/partido (rango 10–47). Es su sello y su límite: si le cierran las bandas, se vuelve previsible. Contrapunto: ante Colo-Colo (5-2) ganó con solo 29% de balón y 10 centros, golpeando por dentro y en transición (6 big chances a 0, CFDB).",
       "Dos deudas de fondo agravadas: se le escapan los CIERRES (colapsó 1-2→4 vs U. de Chile en 8') y es un COLADOR de visita (1,83 GC/PJ frente a 0,78 de local).",
@@ -24,10 +24,10 @@ const REPORTES = {
       "Indisciplina doméstica: 8 rojas en Liga 2026 (0 en Libertadores)."
     ],
     defensa: [   // {k, v, nota}  — Liga 2026, 24 PJ (FBref/fixtures.js; 23 con detalle de tiros)
-      { k: "Goles en contra", v: "1,44 /PJ (25 PJ)", nota: "1,00 de local vs ¡1,83 de visita!; cayó 2-1 en Chillán (fecha 25)" },
+      { k: "Goles en contra", v: "1,38 /PJ (26 PJ)", nota: "mejora: llave a cero ante La Calera (1-0) jugando con 10" },
       { k: "Tiros concedidos", v: "11,8 /PJ (SoT 35%)", nota: "Concede volumen" },
       { k: "Atajadas · Save%", v: "2,7 /PJ · ~66%", nota: "Arco muy exigido" },
-      { k: "Clean sheets", v: "4/25 (16%)", nota: "Poca portería a cero" },
+      { k: "Clean sheets", v: "5/26 (19%)", nota: "Poca portería a cero (mejora reciente)" },
       { k: "Entradas+intercepciones", v: "≈21,6 /PJ", nota: "Recuperación activa" }
     ],
     intensidad: [
