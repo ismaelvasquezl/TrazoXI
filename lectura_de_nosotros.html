@@ -234,7 +234,7 @@ function pcard(p){
   else if(p.grupo==='LAT'){ m.push(['xA',p.xa]); if(p.pases)m.push(['Pases',p.pases]); m.push(['Pases %',p.pasesPct+'%']); }
   else if(p.grupo==='DEF'){ if(p.pases)m.push(['Pases',p.pases]); m.push(['Pases %',p.pasesPct+'%']); }
   else { m.push(['Altura',p.alt+'cm']); }
-  const hasPM=!!(window.NOSOTROS_PM&&NOSOTROS_PM.jug[String(p.d)]&&NOSOTROS_PM.jug[String(p.d)].some(x=>x));
+  const hasPM=!!(PM.jug&&PM.jug[String(p.d)]&&PM.jug[String(p.d)].some(x=>x));
   return `<div class="pc${hasPM?' clk':''}"${hasPM?` data-pm="${p.d}"`:''}><div class="hd"><div class="dor num">${p.d}</div>
      <div><div class="nm">${esc(p.n)}</div><div class="meta"><span class="chip ${CHIP[p.grupo]}">${p.pos}</span> · ${p.edad?p.edad+' años':'—'}${p.alt?' · '+p.alt+'cm':''}</div></div></div>
      <div class="mg">${m.map(x=>`<div class="m"><b class="num">${x[1]}</b>${x[0]}</div>`).join('')}</div>
@@ -242,7 +242,7 @@ function pcard(p){
 }
 
 /* ================= DESPLIEGUE POR JUGADOR · 5 PARTIDOS ================= */
-const PM = window.NOSOTROS_PM||{partidos:[],jug:{}};
+const PM = (typeof NOSOTROS_PM!=='undefined'?NOSOTROS_PM:(window.NOSOTROS_PM||{partidos:[],jug:{}}));
 const pmState={d:null,off:{},metric:'auto'};
 // ejes del radar segun grupo (clave de dato, etiqueta, formateo)
 const AXES={
@@ -256,9 +256,17 @@ function axVal(rec,key){ if(!rec)return 0; if(key==='perdInv')return Math.max(0,
 
 function openPlayerPM(d,srcEl){
   const p=N.players.find(x=>x.d===d); if(!p)return;
-  const serie=PM.jug[String(d)]||[];
-  pmState.d=d; pmState.off={}; pmState.metric='auto';
+  const serie=(PM.jug&&PM.jug[String(d)])||[];
   const box=$('#modalBox');
+  // Guarda: si no hay detalle partido a partido, mostrar mensaje (no un modal vacío que tape el sitio).
+  if(!serie.some(x=>x)){
+    box.innerHTML=`<div class="mh"><div class="dor num">${p.d}</div><div><div class="nm">${esc(p.n)}</div>
+      <div class="meta sub"><span class="chip ${CHIP[p.grupo]}">${esc(p.pos)}</span> · ${GRPLABEL[p.grupo]}</div></div>
+      <button class="close" id="pmClose">✕</button></div>
+      <p class="sub" style="margin:14px 2px">Sin detalle partido a partido para este jugador en la muestra Hudl Wyscout cargada.</p>`;
+    $('#pmClose').onclick=closeOv; $('#ov').classList.add('show'); return;
+  }
+  pmState.d=d; pmState.off={}; pmState.metric='auto';
   box.innerHTML=`
     <div class="mh"><div class="dor num">${p.d}</div>
       <div><div class="nm">${esc(p.n)}</div>
