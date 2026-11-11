@@ -10,6 +10,7 @@
 <script src="wyscout_nublense.js"></script>
 <script src="wyscout_calera.js"></script>
 <script src="wyscout_audax.js"></script>
+<script src="wyscout_ohiggins.js"></script>
 <script src="wyscout_acumulado.js"></script>
 <script src="nosotros.js"></script>
 <script src="liga_wyscout.js"></script>
@@ -294,6 +295,28 @@ function select(f,el){
 }
 
 /* ================= LECTURA HUDL (Colo-Colo) ================= */
+/* Card de DESARROLLO (tendencia por tiempo + timing de goles). Guardado: solo si w.desarrollo existe. */
+function desarrolloCard(w,f){
+  const D=w.desarrollo; if(!D)return '';
+  const tramos=["0-15","16-30","31-45","46-60","61-75","76-90"];
+  const maxG=Math.max(1,...tramos.map(t=>Math.max(D.golesFavor[t]||0,D.golesContra[t]||0)));
+  const barRow=(obj,color,lbl)=>`<div style="display:flex;align-items:center;gap:6px;margin:3px 0"><span class="sub" style="width:54px;font-size:11px">${lbl}</span>`+
+    tramos.map(t=>{const v=obj[t]||0;return `<div style="flex:1;text-align:center"><div style="height:${6+v/maxG*42}px;background:${color};border-radius:4px 4px 0 0;min-height:6px" title="${t}: ${v}"></div><div style="font-size:10px;color:var(--mut);margin-top:2px">${v||''}</div></div>`;}).join('')+`</div>`;
+  const prows=D.porTiempo.map(p=>`<tr><td>${esc(p.rival)}</td>
+    <td class="num">${p.pos1}→${p.pos2}%</td><td class="num">${p.xg1}→${p.xg2}</td>
+    <td class="num">${p.largo1!=null?p.largo1+'→'+p.largo2+' m':'—'}</td></tr>`).join('');
+  return `<div class="card" style="border:1px solid var(--line-gold)">
+    <h3 style="color:var(--gold)">📈 Desarrollo del partido · cómo evolucionan minuto a minuto</h3>
+    <div class="sub">${esc(D.nota)}</div>
+    <div class="scroll-x" style="margin-top:8px"><table><thead><tr><th>Partido</th><th>Posesión 1T→2T</th><th>xG 1T→2T</th><th>Largo bloque 1T→2T</th></tr></thead><tbody>${prows}</tbody></table></div>
+    <div class="callout">${esc(D.resumenTiempo)}</div>
+    <h4 style="margin:12px 0 2px">Goles por tramo de 15' (sus 5 partidos)</h4>
+    <div style="display:flex;gap:4px;font-size:10px;color:var(--mut);padding-left:54px">${tramos.map(t=>`<span style="flex:1;text-align:center">${t}'</span>`).join('')}</div>
+    ${barRow(D.golesFavor,'var(--green)','A favor')}
+    ${barRow(D.golesContra,'var(--red)','En contra')}
+    <div class="callout warn" style="margin-top:8px">${esc(D.golesNota)}</div>
+    <div class="callout info"><b>Lectura:</b> ${esc(D.insightDesarrollo)}</div></div>`;
+}
 function renderHudl(f){
   const w=hudl(f.opp); const box=$('#reading');
   const tit=w.partidos.filter(p=>p.xi==='Titular'), rot=w.partidos.filter(p=>p.xi!=='Titular');
@@ -306,7 +329,8 @@ function renderHudl(f){
      </div>
      <div class="callout">${esc(w.resumen)}</div>
      <div class="btnrow no-print" style="margin-top:10px"><button class="btn primary" id="genReport">📄 Generar informe automático</button><button class="btn" id="printReading">🖨 Imprimir / PDF</button>${sameTeam(f.opp,'Colo-Colo')?'<a class="btn" href="onepager_balon_parado_colocolo.html" target="_blank" style="text-decoration:none">⚑ One-pager balón parado</a>':''}</div></div>`+
-    ((f.comp==='COPA'&&w.copaChile)?`<div class="card" style="border:1px solid var(--line-gold);background:linear-gradient(180deg,rgba(176,124,255,.08),var(--panel))"><h3 style="color:#b07cff">⚑ Copa Chile · ${esc(w.copaChile.titulo)}</h3><div class="sub" style="margin-bottom:6px">${esc(w.copaChile.sede)}</div><div class="callout">${esc(w.copaChile.contexto)}</div><div class="sub"><b>Claves del cruce:</b></div><ul class="clean rec">`+w.copaChile.claves.map(x=>`<li>${esc(x)}</li>`).join('')+`</ul><div class="callout info">${esc(w.copaChile.cierre)}</div><div class="sub" style="margin-top:4px;font-size:11px">La lectura completa del rival (métricas Wyscout, insights y reflexiones) está más abajo: es el mismo rival de liga.</div></div>`:'')+
+    ((f.comp==='COPA'&&w.copaChile)?`<div class="card" style="border:1px solid var(--line-gold);background:linear-gradient(180deg,rgba(176,124,255,.08),var(--panel))"><h3 style="color:#b07cff">⚑ ${esc(w.copaChile.titulo)}</h3><div class="sub" style="margin-bottom:6px">${esc(w.copaChile.sede)}</div><div class="callout">${esc(w.copaChile.contexto)}</div><div class="sub"><b>Claves del cruce:</b></div><ul class="clean rec">`+w.copaChile.claves.map(x=>`<li>${esc(x)}</li>`).join('')+`</ul><div class="callout info">${esc(w.copaChile.cierre)}</div><div class="sub" style="margin-top:4px;font-size:11px">La lectura completa del rival (métricas Wyscout, insights y reflexiones) está más abajo: es el mismo rival de liga.</div></div>`:'')+
+    (w.desarrollo?desarrolloCard(w,f):'')+
     ligaCard(f.opp)+
 
     hudlExtra(w,f)+
