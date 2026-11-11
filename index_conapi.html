@@ -207,6 +207,33 @@
   .srch-res a:hover{background:rgba(255,210,0,.1);color:var(--gold)}
   .srch-res .cat{font-size:10px;color:var(--mut2);text-transform:uppercase;letter-spacing:.5px}
   table.sortable th{user-select:none}table.sortable th.sorted::after{content:" ▾";color:var(--gold)}table.sortable th.asc::after{content:" ▴";color:var(--gold)}
+  /* ===== CENTRO DE MANDO (nueva visual del dashboard principal) ===== */
+  .cmd{margin:14px 0 6px}
+  .cmd-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:14px}
+  @media(max-width:760px){.cmd-grid{grid-template-columns:1fr}}
+  .cmd-next{display:block;text-decoration:none;position:relative;overflow:hidden;border-radius:16px;padding:18px 20px;
+    background:linear-gradient(135deg,#1a1205 0%,#14181e 55%,#0e1319 100%);border:1px solid var(--line-gold);box-shadow:var(--sh)}
+  .cmd-next::after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,0,.16),transparent 70%)}
+  .cmd-next-tag{font-family:var(--f-display);font-size:12px;letter-spacing:1.5px;font-weight:800;color:var(--gold);text-transform:uppercase}
+  .cmd-next-vs{font-family:var(--f-display);font-size:clamp(22px,3.4vw,32px);font-weight:800;color:var(--white);line-height:1.05;margin:6px 0 2px}
+  .cmd-next-vs span{color:var(--mut);font-size:.7em;font-weight:700}
+  .cmd-next-meta{color:var(--mut);font-size:13px;margin-top:4px}
+  .cmd-next-cta{display:inline-block;margin-top:12px;background:var(--gold);color:#0a0d11;font-weight:800;font-size:13px;padding:8px 16px;border-radius:10px}
+  .cmd-next:hover .cmd-next-cta{filter:brightness(1.06)}
+  .cmd-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .cmd-kpi{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+  .cmd-kpi .v{font-size:26px;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1}
+  .cmd-kpi .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+  .cmd-form{display:flex;gap:4px;margin-top:4px}
+  .cmd-form span{width:18px;height:18px;border-radius:5px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#0a0d11}
+  .cmd-form .w{background:var(--green)}.cmd-form .d{background:var(--amber)}.cmd-form .l{background:var(--red);color:#fff}
+  .cmd-launch{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+  @media(max-width:760px){.cmd-launch{grid-template-columns:1fr 1fr}}
+  .cmd-launch a{display:flex;align-items:center;gap:9px;text-decoration:none;background:var(--panel2);border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;color:var(--txt);font-weight:700;font-size:13.5px;transition:border-color .15s,transform .12s,background .15s}
+  .cmd-launch a:hover{border-color:var(--line-gold);transform:translateY(-2px);background:var(--panel3)}
+  .cmd-launch a .ic{font-size:18px}
+  .cmd-launch a.feat{border-color:var(--line-gold);background:linear-gradient(180deg,rgba(255,210,0,.08),var(--panel2))}
 </style>
 </head>
 <body>
@@ -265,6 +292,29 @@
     <div style="margin-top:12px;text-align:center;font-size:9.5px;color:var(--mut);letter-spacing:.5px;line-height:1.5">CENTRO DE ALTO RENDIMIENTO<br>Y ANÁLISIS · <b style="color:var(--gold)">TrazoXI</b> © 2026</div></div>
 </aside>
 <main>
+  <!-- ===== CENTRO DE MANDO (lo primero que se ve) ===== -->
+  <section class="cmd" aria-label="Centro de mando">
+    <div class="cmd-grid">
+      <a class="cmd-next" href="lecturas_rivales.html">
+        <div class="cmd-next-tag" id="cmdNextTag">⚑ Próximo partido</div>
+        <div class="cmd-next-vs" id="cmdNextVs">Coquimbo Unido <span>vs</span> O'Higgins</div>
+        <div class="cmd-next-meta" id="cmdNextMeta">Sáb 14 nov · 18:30 · Estadio Santa Laura (neutral)</div>
+        <div class="cmd-next-cta">Ver lectura del rival →</div>
+      </a>
+      <div class="cmd-kpis" id="cmdKpis">
+        <div class="cmd-kpi"><div class="v">6º</div><div class="l">Posición (liga)</div></div>
+        <div class="cmd-kpi"><div class="v">—</div><div class="l">Puntos</div></div>
+        <div class="cmd-kpi"><div class="v">—</div><div class="l">GF / GC</div></div>
+        <div class="cmd-kpi"><div class="l">Forma (últimos 5)</div><div class="cmd-form" id="cmdForm"></div></div>
+      </div>
+    </div>
+    <div class="cmd-launch">
+      <a class="feat" href="lecturas_rivales.html"><span class="ic">🎯</span>Lecturas de Rivales</a>
+      <a href="lectura_de_nosotros.html"><span class="ic">🔍</span>Lectura de Nosotros</a>
+      <a href="registro_en_vivo.html"><span class="ic">⏱</span>Registro en Vivo</a>
+      <a href="#tendencia"><span class="ic">📊</span>Dashboard completo</a>
+    </div>
+  </section>
 <div id="execStrip" class="exec-strip"></div>
 
   <!-- ===== REPORTE / RESUMEN ===== -->
@@ -275,7 +325,7 @@
     <h3>Informe ejecutivo</h3>
     <div id="reporte"></div>
     <div class="glos" id="comoLeer"></div>
-    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). Liga 2026 reconciliada (CFDB al 04-11): <b>26 PJ · 10-5-11 · 35 pts · 8º</b> (GF 38 / GC 36, DG +2) — <b>racha de 3 victorias</b>; incluye el 5-2 a Colo-Colo (fecha 24), la caída 2-1 ante Ñublense (fecha 25) y el <b>1-0 a La Calera (fecha 26, con gol de Riveros y jugando con 10)</b>. Próximo: <b>Audax Italiano</b>, visita (fecha 27). Actualizado <span id="fecha"></span>.</p>
+    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). Liga 2026 reconciliada (CFDB al 11-11): <b>27 PJ · 11-5-11 · 38 pts · 6º</b> (GF 39 / GC 36, DG +3) — <b>racha de 2 victorias</b>; incluye el 1-0 a La Calera (fecha 26) y el <b>1-0 a Audax de visita (fecha 27, gol de Vadalá, 2,31 xG con 38% de balón)</b>. Próximo:<b>FINAL Copa de la Liga vs O'Higgins</b> (sáb 14-11, Santa Laura, neutral). Actualizado <span id="fecha"></span>.</p>
   </section>
 
   <!-- ===== IDENTIDAD / ESTILO ===== -->
@@ -1897,6 +1947,33 @@ $('#modeSwitch').onclick=function(){this.classList.toggle('on');document.body.cl
     renderGlos(); renderAll(); wireTips(); wireSearch(); wireTheme();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<!-- Menu a prueba de fallos: cableado aislado para que un error de datos del dashboard nunca mate la navegacion. -->
+<script>
+(function(){
+  function qsa(s){return [].slice.call(document.querySelectorAll(s));}
+  var sb=document.getElementById('sidebar'),ov=document.getElementById('ovl'),bg=document.getElementById('burger');
+  function open(){if(sb)sb.classList.add('open');if(ov)ov.classList.add('show');}
+  function close(){if(sb)sb.classList.remove('open');if(ov)ov.classList.remove('show');}
+  if(bg)bg.onclick=function(){(sb&&sb.classList.contains('open'))?close():open();};
+  if(ov)ov.onclick=close;
+  var grps=qsa('#navLinks .navgrp');
+  grps.forEach(function(g){var h=g.querySelector('.navhead');if(h)h.onclick=function(){var was=g.classList.contains('open');grps.forEach(function(x){x.classList.remove('open');});if(!was)g.classList.add('open');};});
+  qsa('#navLinks a').forEach(function(a){a.addEventListener('click',function(){if(window.innerWidth<=900)close();});});
+  // abre por defecto el primer grupo si ninguno está abierto
+  if(grps.length && !grps.some(function(g){return g.classList.contains('open');})) grps[0].classList.add('open');
+  // ===== Centro de Mando: KPIs con datos defensivos (si algo falla, quedan los '—') =====
+  try{
+    var LIGc=(typeof FIXTURES!=='undefined'?FIXTURES:[]).filter(function(x){return x.comp==='LIG'&&x.res!=='S';});
+    var w=LIGc.filter(function(x){return x.res==='W';}).length,d2=LIGc.filter(function(x){return x.res==='D';}).length,l2=LIGc.filter(function(x){return x.res==='L';}).length;
+    var gf=LIGc.reduce(function(s,x){return s+(x.gf||0);},0),ga=LIGc.reduce(function(s,x){return s+(x.ga||0);},0);
+    var pos='—';try{if(typeof SIMTABLA!=='undefined'&&SIMTABLA.coquimbo&&SIMTABLA.coquimbo.pos_mode)pos=SIMTABLA.coquimbo.pos_mode+'º';}catch(e){}
+    var k=document.getElementById('cmdKpis');
+    if(k){var vs=k.querySelectorAll('.cmd-kpi .v');/* vs[0]=Posición queda fija (actual) */if(vs[1])vs[1].textContent=(w*3+d2);if(vs[2])vs[2].textContent=gf+' / '+ga;}
+    var fm=document.getElementById('cmdForm');
+    if(fm){fm.innerHTML=LIGc.slice(-5).map(function(x){var c=x.res==='W'?'w':x.res==='D'?'d':'l';return '<span class="'+c+'">'+x.res+'</span>';}).join('');}
+  }catch(e){}
 })();
 </script>
 <script src="trazoxi_fx.js"></script>
