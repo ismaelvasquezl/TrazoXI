@@ -6,7 +6,12 @@
 <title>Acumulado Hudl Wyscout · Coquimbo Unido · por TrazoXI</title>
 <link rel="stylesheet" href="trazoxi_fx.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="wyscout_acumulado.js"></script>
+<script src="wyscout.js"></script>
+<script src="wyscout_nublense.js"></script>
+<script src="wyscout_calera.js"></script>
+<script src="wyscout_audax.js"></script>
+<script src="wyscout_ohiggins.js"></script>
+<script src="wyscout_acumulado.js"</script>
 <script src="liga_wyscout.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
@@ -87,7 +92,22 @@
 <script>
 const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const A=(typeof WY_ACUM!=='undefined')?WY_ACUM:{equipos:{},jugadores:[]};
-const TEAMS=Object.keys(A.equipos); let team=TEAMS.includes('Ñublense')?'Ñublense':TEAMS[0], view='tot', sortK='min', sortD=-1, selKey=null, chart=null;
+/* ===== Fusión: añade rivales recientes (La Calera, Audax, O'Higgins…) desde los módulos WYSCOUT que no están en WY_ACUM, normalizando su formato ===== */
+(function(){ if(typeof WYSCOUT==='undefined'||!WYSCOUT.equipos)return;
+  const avg=a=>{a=a.filter(v=>v!=null&&!isNaN(v));return a.length?+(a.reduce((s,v)=>s+v,0)/a.length).toFixed(2):null;};
+  Object.keys(WYSCOUT.equipos).forEach(name=>{
+    if(A.equipos[name])return; // ya en WY_ACUM (Coquimbo, Ñublense, Colo-Colo) con datos más ricos
+    const e=WYSCOUT.equipos[name], P=(e.partidos||[]); if(!P.length)return;
+    const parts=P.map(p=>({fecha:p.fecha,rival:p.rival,loc:p.loc,gf:p.gf,ga:p.ga,xg:p.xg,xga:(p.xgRival!=null?p.xgRival:null),xgaCobertura:100,pos:p.pos,ppda:p.ppda,duelos:p.duelos,pasePct:null,tiros:null,arco:null,perd:null,rec:null,recAdv:null,aerPct:null,ancho:null,largo:null,formaciones:[],fuente:'Hudl «Informe Partido»'}));
+    const w=parts.filter(p=>p.gf>p.ga).length,d=parts.filter(p=>p.gf===p.ga).length,l=parts.filter(p=>p.gf<p.ga).length;
+    const tot={pj:parts.length,w:w,d:d,l:l,gf:parts.reduce((s,p)=>s+(p.gf||0),0),ga:parts.reduce((s,p)=>s+(p.ga||0),0),
+      xg:+parts.map(p=>p.xg).filter(v=>v!=null).reduce((s,v)=>s+v,0).toFixed(2),xgPJ:avg(parts.map(p=>p.xg)),
+      xga:avg(parts.map(p=>p.xga)),xgaPJ:avg(parts.map(p=>p.xga)),nXga:parts.filter(p=>p.xga!=null).length,
+      pos:avg(parts.map(p=>p.pos)),ppda:avg(parts.map(p=>p.ppda)),duelos:avg(parts.map(p=>p.duelos)),pasePct:null,perdPJ:null,recPJ:null,ancho:null,largo:null};
+    A.equipos[name]={partidos:parts,totales:tot,informes:[e.informe||('Lectura Hudl Wyscout de '+name+' (ver Centro de Lecturas de Rivales).')]};
+  });
+})();
+const TEAMS=Object.keys(A.equipos); let team=TEAMS.includes('Coquimbo Unido')?'Coquimbo Unido':TEAMS[0], view='tot', sortK='min', sortD=-1, selKey=null, chart=null;
 const f1=v=>v==null?'<span class="dim">—</span>':(Math.round(v*100)/100).toLocaleString('es-CL');
 const pct=(a,b)=>(a==null||!b)?null:Math.round(100*a/b);
 $('#nota').textContent=A.nota||'';
