@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Lectura de Nosotros · Coquimbo Unido · por TrazoXI</title>
 <link rel="stylesheet" href="trazoxi_fx.css">
+<script src="trazoxi_guard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="nosotros.js"></script>
 <script src="nosotros_partidos.js"></script>
@@ -101,7 +102,8 @@
   .ov{position:fixed;inset:0;background:rgba(5,8,11,.7);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
   .ov.show{display:flex}
   .modal{background:linear-gradient(180deg,var(--panel),var(--bg1));border:1px solid var(--line-gold);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);max-width:860px;width:100%;padding:18px 18px 22px}
-  .modal .mh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
+  .modal .mh{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:4px 0 12px;position:sticky;top:0;z-index:4;background:linear-gradient(180deg,var(--panel),var(--panel) 70%,rgba(21,27,34,0))}
+  .modal .close{flex:none}
   .modal .mh .dor{width:44px;height:44px;border-radius:11px;background:var(--panel3);border:1px solid var(--line-gold);display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--gold);flex:none}
   .modal .mh .nm{font-family:var(--f-display);font-size:24px;font-weight:800;color:var(--white);line-height:1}
   .modal .close{margin-left:auto;background:var(--panel3);border:1px solid var(--line-strong);color:var(--white);border-radius:9px;width:34px;height:34px;font-size:18px;cursor:pointer}
@@ -221,7 +223,17 @@
 <script>
 (function(){
 'use strict';
-const N=NOSOTROS, $=s=>document.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* === RED DE SEGURIDAD GLOBAL (anti-cuelgue): ningún error no previsto deja la página pegada.
+   Si algo lanza de forma asíncrona (p.ej. Chart.js con datos raros), se cierra cualquier overlay
+   abierto y la navegación por pestañas sigue funcionando. === */
+window.addEventListener('error',function(ev){
+  try{var ov=document.getElementById('ov');if(ov)ov.classList.remove('show');}catch(e){}
+  console.error('[lectura_de_nosotros] error capturado y contenido:', ev&&(ev.error||ev.message));
+});
+window.addEventListener('unhandledrejection',function(ev){console.error('[lectura_de_nosotros] promesa rechazada:',ev&&ev.reason);});
+/* N y PM resilientes: si un archivo de datos no cargó, la página sigue viva con una estructura vacía. */
+const N=(typeof NOSOTROS!=='undefined'?NOSOTROS:(window.NOSOTROS||{players:[],zonas:{},ult5:{},fases:{},insights:{},temporada:{}}));
+const $=s=>document.querySelector(s), esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const charts={}; const destroy=k=>{if(charts[k]){charts[k].destroy();delete charts[k];}};
 const GRPLABEL={GK:'Arqueros',DEF:'Defensas (centrales)',LAT:'Laterales',VOL:'Volantes',DEL:'Delanteros'};
 const CHIP={GK:'gk',DEF:'def',LAT:'lat',VOL:'vol',DEL:'del'};
@@ -291,11 +303,13 @@ function openPlayerPM(d,srcEl){
     : [['auto','Auto'],['xg','xG'],['xa','xA'],['tiros','Remates'],['pases','Pases'],['pasesPct','Pase %'],['duPct','Duelos %'],['rec','Recuperados'],['toq','Toques área'],['min','Minutos']];
   $('#pmMet').innerHTML=METS.map(mt=>`<button class="msb${mt[0]===pmState.metric?' on':''}" data-m="${mt[0]}">${mt[1]}</button>`).join('');
   $('#pmMet').querySelectorAll('.msb').forEach(b=>b.onclick=()=>{pmState.metric=b.dataset.m;$('#pmMet').querySelectorAll('.msb').forEach(x=>x.classList.toggle('on',x===b));drawTrend();});
-  renderPMcards(p,serie); renderVdef(p,serie);
+  try{renderPMcards(p,serie);}catch(e){console.error('renderPMcards',e);}
+  try{renderVdef(p,serie);}catch(e){console.error('renderVdef',e);}
   $('#pmClose').onclick=closeOv;
   $('#ov').classList.add('show');
-  if(window.TrazoFX)TrazoFX.growFrom(srcEl,box,$('#ov'));
-  drawPM(); drawTrend();
+  try{if(window.TrazoFX)TrazoFX.growFrom(srcEl,box,$('#ov'));}catch(e){}
+  try{drawPM();}catch(e){console.error('drawPM',e);}
+  try{drawTrend();}catch(e){console.error('drawTrend',e);}
 }
 function closeOv(){ $('#ov').classList.remove('show'); destroy('pm'); destroy('pmtrend'); }
 
@@ -329,11 +343,14 @@ function drawTrend(){
 }
 function renderPMcards(p,serie){
   const rows=g=>{ // relevant per group
-    return g==='GK'?[['min',"Min",r=>r.min+"'"],['gc',"Goles recib.",r=>r.gc],['paradas',"Paradas",r=>r.paradas+'/'+r.tirosContra],['savePct',"Save %",r=>r.savePct==null?'—':r.savePct+'%'],['pasesPct',"Distribución",r=>r.pasesC+'/'+r.pases+' '+r.pasesPct+'%'],['pasesLejos',"Juego largo",r=>r.pasesLejosC+'/'+r.pasesLejos+' '+r.pasesLejosPct+'%'],['salidas',"Salidas",r=>r.salidas],['cesion',"Cesiones",r=>r.cesion]]
-     : g==='DEL'?[['min',"Min",r=>r.min+"'"],['g',"Goles",r=>r.g],['xg',"xG",r=>r.xg],['tiros',"Remates",r=>r.tiros+'/'+r.arco],['toq',"Toques área",r=>r.toq],['regOk',"Regates",r=>r.regOk+'/'+r.regInt]]
-     : g==='VOL'?[['min',"Min",r=>r.min+"'"],['xa',"xA",r=>r.xa],['xg',"xG",r=>r.xg],['pases',"Pases",r=>r.pasesC+'/'+r.pases],['pasesPct',"Pase %",r=>r.pasesPct+'%'],['duPct',"Duelos %",r=>r.duOk+'/'+r.duInt+' '+r.duPct+'%']]
-     : g==='LAT'?[['min',"Min",r=>r.min+"'"],['xa',"xA",r=>r.xa],['pases',"Pases",r=>r.pasesC+'/'+r.pases],['pasesPct',"Pase %",r=>r.pasesPct+'%'],['duPct',"Duelos %",r=>r.duPct+'%'],['rec',"Recuper.",r=>r.rec]]
-     : [['min',"Min",r=>r.min+"'"],['pases',"Pases",r=>r.pasesC+'/'+r.pases],['pasesPct',"Pase %",r=>r.pasesPct+'%'],['duPct',"Duelos %",r=>r.duOk+'/'+r.duInt+' '+r.duPct+'%'],['rec',"Recuper.",r=>r.rec],['perd',"Pérdidas",r=>r.perd]];
+    // sv: formateo null-safe (nunca imprime "undefined"/"null"/"NaN"); par: "a/b" null-safe
+    const sv=(v,suf)=>(v==null||(typeof v==='number'&&isNaN(v)))?'—':(v+(suf||''));
+    const par=(a,b,suf)=>(a==null&&b==null)?'—':(sv(a)+'/'+sv(b)+(suf||''));
+    return g==='GK'?[['min',"Min",r=>sv(r.min,"'")],['gc',"Goles recib.",r=>sv(r.gc)],['paradas',"Paradas",r=>(r.paradas==null&&r.tirosContra==null)?'—':par(r.paradas,r.tirosContra)],['savePct',"Save %",r=>sv(r.savePct,'%')],['pasesPct',"Distribución",r=>r.pasesPct!=null?par(r.pasesC,r.pases)+' '+r.pasesPct+'%':(r.pases!=null?r.pases+' pases':'—')],['pasesLejos',"Juego largo",r=>r.pasesLejos!=null?par(r.pasesLejosC,r.pasesLejos)+' '+sv(r.pasesLejosPct,'%'):'—'],['salidas',"Salidas",r=>sv(r.salidas)],['cesion',"Cesiones",r=>sv(r.cesion)]]
+     : g==='DEL'?[['min',"Min",r=>sv(r.min,"'")],['g',"Goles",r=>sv(r.g)],['xg',"xG",r=>sv(r.xg)],['tiros',"Remates",r=>par(r.tiros,r.arco)],['toq',"Toques área",r=>sv(r.toq)],['regOk',"Regates",r=>par(r.regOk,r.regInt)]]
+     : g==='VOL'?[['min',"Min",r=>sv(r.min,"'")],['xa',"xA",r=>sv(r.xa)],['xg',"xG",r=>sv(r.xg)],['pases',"Pases",r=>par(r.pasesC,r.pases)],['pasesPct',"Pase %",r=>sv(r.pasesPct,'%')],['duPct',"Duelos %",r=>par(r.duOk,r.duInt)+' '+sv(r.duPct,'%')]]
+     : g==='LAT'?[['min',"Min",r=>sv(r.min,"'")],['xa',"xA",r=>sv(r.xa)],['pases',"Pases",r=>par(r.pasesC,r.pases)],['pasesPct',"Pase %",r=>sv(r.pasesPct,'%')],['duPct',"Duelos %",r=>sv(r.duPct,'%')],['rec',"Recuper.",r=>sv(r.rec)]]
+     : [['min',"Min",r=>sv(r.min,"'")],['pases',"Pases",r=>par(r.pasesC,r.pases)],['pasesPct',"Pase %",r=>sv(r.pasesPct,'%')],['duPct',"Duelos %",r=>par(r.duOk,r.duInt)+' '+sv(r.duPct,'%')],['rec',"Recuper.",r=>sv(r.rec)],['perd',"Pérdidas",r=>sv(r.perd)]];
   };
   const cfg=rows(p.grupo);
   $('#pmCards').innerHTML=PM.partidos.map((m,i)=>{ const r=serie[i]; if(!r)return'';
@@ -556,8 +573,11 @@ function metJugTable(d){const p=N.players.find(x=>x.d===d),serie=PM.jug[String(d
   parts.forEach((m,i)=>{const r=serie[i];if(!r){rows+=`<tr class="dim"><td>${esc(m.rival)} (${m.loc}) ${m.res}</td><td colspan="${C.length-1}" class="na">no disputó / sin detalle</td></tr>`;return;}rows+='<tr><td>'+C[0][1](r,m)+'</td>'+C.slice(1).map(c=>`<td>${c[1](r)}</td>`).join('')+'</tr>';});
   $('#metjbody').innerHTML=`<div class="scroll-x"><table class="mt"><caption>#${p.d} ${esc(p.n)} · ${esc(p.pos)}</caption>${head}${rows}</table></div>`;
 }
-['GK','DEF','LAT','VOL','DEL'].forEach(renderGroup);
-renderResumen(); renderFases(); renderMapas(); renderCampo(); renderMetricas();
+/* Lazy render: solo la vista activa al inicio; el resto se dibuja al abrir su pestaña (mucho más ágil en móvil). */
+const RENDERV={resumen:renderResumen,GK:()=>renderGroup('GK'),DEF:()=>renderGroup('DEF'),LAT:()=>renderGroup('LAT'),VOL:()=>renderGroup('VOL'),DEL:()=>renderGroup('DEL'),informe:renderInforme,campo:renderCampo,metricas:renderMetricas,fases:renderFases,mapas:renderMapas};
+const viewDone={};
+function showView(v){ if(viewDone[v])return; viewDone[v]=true; try{(RENDERV[v]||function(){})();}catch(e){console.error('render '+v,e);} }
+showView('resumen');
 // click en tarjeta -> despliegue 5 partidos (delegación)
 document.addEventListener('click',e=>{const pn=e.target.closest&&e.target.closest('.pnode');if(pn&&pn.dataset&&pn.dataset.pm){openPlayerPM(+pn.dataset.pm,pn);return;}const c=e.target.closest('.pc.clk');if(c&&c.dataset.pm)openPlayerPM(+c.dataset.pm,c);});
 $('#ov').addEventListener('click',e=>{if(e.target.id==='ov')closeOv();});
@@ -614,11 +634,7 @@ function renderInforme(){
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===t));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='v-'+t.dataset.v));
-  if(t.dataset.v==='informe')renderInforme();
-  if(t.dataset.v==='resumen')renderResumen();
-  if(t.dataset.v==='mapas')renderMapas();
-  if(t.dataset.v==='campo')renderCampo();
-  if(t.dataset.v==='metricas')renderMetricas();
+  showView(t.dataset.v);
   window.scrollTo({top:120,behavior:'smooth'});
 });
 })();

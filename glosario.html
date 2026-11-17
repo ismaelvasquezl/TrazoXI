@@ -75,75 +75,470 @@
   <div id="out"></div>
   <div class="foot">Centro de Alto Rendimiento y Análisis · Coquimbo Unido · por <b style="color:var(--gold)">TrazoXI</b>. Fuente de métricas avanzadas: Hudl Wyscout. Actualizable a medida que se incorporen nuevos conceptos.</div>
 </main>
+<script src="trazoxi_guard.js"></script>
 <script>
 const GLOS=[
- {sec:"Métricas avanzadas (datos de evento · Wyscout)", hint:"Números medidos a partir de los eventos del partido. Son el salto de calidad respecto a estimaciones: miden lo que realmente pasó.", items:[
-   {t:"Goles esperados", abbr:"xG", lvl:"dato", d:"Probabilidad de que un remate termine en gol según su contexto (distancia, ángulo, tipo de jugada). Suma la calidad de las ocasiones, no solo la cantidad.", ex:"Un xG de 1.4 en un partido = las ocasiones generadas valían, en promedio, 1,4 goles. Si se marcó 0, hubo infra-rendimiento en la definición."},
-   {t:"Asistencias esperadas", abbr:"xA", lvl:"dato", d:"Probabilidad de que un pase se convierta en asistencia según el xG del remate que habilita. Mide la calidad de creación de un jugador.", ex:"Zavala con <b>1.76 xA</b> es el principal generador: sus pases habilitan ocasiones de alto valor, marque o no el compañero."},
-   {t:"Goles esperados en contra", abbr:"xGA", lvl:"dato", d:"xG que un equipo concede a sus rivales. Mide la solidez defensiva real, más allá del marcador.", ex:"xGA bajo + muchos goles encajados = mala suerte o fallos puntuales del arquero, no un problema estructural."},
-   {t:"Diferencia de goles esperados", abbr:"xGDif", lvl:"dato", d:"xG a favor menos xG en contra. Resume el dominio de ocasiones en un número.", ex:"xGDif positivo sostenido indica un equipo que merece más puntos de los que saca."},
-   {t:"Puntos esperados", abbr:"xPTS", lvl:"dato", d:"Puntos que un equipo 'debería' haber sumado según el xG de cada partido. Revela sobre/infra-rendimiento en la tabla.", ex:"Coquimbo con <b>36.6 xPTS vs 29 pts reales</b> = infra-rendimiento de +7,6: el juego genera más de lo que refleja la tabla."},
-   {t:"Pases por acción defensiva permitidos", abbr:"PPDA", lvl:"dato", d:"Pases que el rival completa antes de que el equipo haga una acción defensiva (presión). A menor PPDA, presión más intensa y alta.", ex:"PPDA bajo = equipo que presiona arriba y agresivo; PPDA alto = bloque que espera."},
-   {t:"Toques en el área", abbr:"Toques área /90", lvl:"dato", d:"Veces que un jugador toca el balón dentro del área rival por cada 90 minutos. Indica presencia y peligro ofensivo.", ex:"Johansen es <b>3º de la liga</b> en toques de área (5.16/90): se asocia a volumen de ocasiones."},
-   {t:"Jugadas clave", abbr:"KP /90", lvl:"dato", d:"Pases que generan directamente un remate (sin ser necesariamente gol). Mide creación de ocasiones.", ex:"Cornejo: 2.14 jugadas clave/90, 3º de la liga entre los perfiles de su rol."},
-   {t:"Duelos defensivos (% ganados)", abbr:"Duelos def %", lvl:"dato", d:"Porcentaje de enfrentamientos defensivos 1v1 que un jugador gana. Mide fiabilidad en la recuperación.", ex:"Cordero: 8.01 duelos def/90 al 58% ganados — alto volumen y eficacia."},
-   {t:"Duelos aéreos (% ganados)", abbr:"Aéreo %", lvl:"dato", d:"Porcentaje de disputas por alto que un jugador gana. Clave en centrales, delanteros referencia y balón parado.", ex:"Cornejo 68% aéreo vs Cabrera 29%: perfiles muy distintos ante centros y despejes."},
-   {t:"Precisión de pase", abbr:"Pase %", lvl:"dato", d:"Porcentaje de pases completados. Debe leerse junto al volumen y al riesgo (no es lo mismo en salida que en último tercio).", ex:"Gazzolo 87% con alto volumen = fiabilidad en la primera fase de construcción."},
-   {t:"Recuperaciones", abbr:"Recuperac.", lvl:"dato", d:"Balones recuperados por un jugador. Mide trabajo defensivo y capacidad de corte.", ex:"Camargo: 86 recuperaciones — motor de reciclaje en el mediocampo."},
-   {t:"Regates completados", abbr:"Regates", lvl:"dato", d:"Conducciones que superan a un rival en 1v1. Mide desequilibrio individual.", ex:"Zavala: 34 regates completados en 5 partidos — recurso para romper bloques."},
- ]},
- {sec:"Fases del juego", hint:"Todo partido se divide en estas fases. Analizar por fase evita el 'jugó bien' y señala dónde exactamente se gana o se pierde.", items:[
-   {t:"Organización ofensiva", d:"Equipo con balón y rival ordenado. Cómo se construye, progresa y se crea ante una defensa colocada."},
-   {t:"Transición ofensiva", d:"Momento inmediato tras recuperar el balón. Decisión entre atacar rápido el espacio o asegurar y organizar."},
-   {t:"Organización defensiva", d:"Equipo sin balón y ordenado. Altura del bloque, coberturas y cómo se protege la portería ante un ataque colocado."},
-   {t:"Transición defensiva", d:"Momento inmediato tras perder el balón. Reacción para recuperar (contrapresión) o replegar y ordenarse."},
-   {t:"Balón parado (ABP)", abbr:"BP", d:"Acciones detenidas: córners, tiros libres, laterales largos y penales, ofensivos y defensivos. Fuente muy rentable de goles.", ex:"Coquimbo genera el <b>16% de sus goles</b> desde balón parado."},
- ]},
- {sec:"Principios tácticos", hint:"Las ideas que ordenan el juego dentro de cada fase. Son el 'por qué' detrás de cada movimiento.", items:[
-   {t:"Progresión", d:"Avanzar el balón hacia la portería rival superando líneas de presión."},
-   {t:"Amplitud", d:"Ocupar el ancho del campo para estirar al rival y abrir espacios interiores."},
-   {t:"Profundidad", d:"Amenazar el espacio a la espalda de la defensa para fijarla y no dejarla subir."},
-   {t:"Fijación", d:"Atraer a uno o varios rivales para liberar a un compañero en otra zona."},
-   {t:"Juego entre líneas", d:"Recibir en el espacio entre la defensa y el mediocampo rival, zona de máximo daño."},
-   {t:"Tercer hombre", d:"Jugada de tres: A pasa a B y aparece C, que llega libre al espacio que generó el movimiento. Rompe marcas.", ex:"Patrón típico para progresar ante bloques que presionan al receptor directo."},
-   {t:"Cambio de orientación", d:"Mover el balón de un costado al otro para atacar el lado débil del rival."},
-   {t:"Temporización", d:"Retrasar la acción defensiva para ganar tiempo a que lleguen las coberturas."},
-   {t:"Presión", d:"Acción coordinada para recuperar el balón e incomodar la salida rival. Puede ser alta, media o baja según la altura."},
-   {t:"Cobertura", d:"Un defensor se coloca por detrás de un compañero para cubrir si éste es superado."},
-   {t:"Permuta", d:"Dos defensores intercambian marcas tras un desajuste para no dejar a nadie libre."},
-   {t:"Vigilancia", d:"Atención preventiva sobre un rival peligroso aun sin marcarlo, anticipando la transición."},
-   {t:"Basculación", d:"Desplazamiento en bloque de todo el equipo hacia el lado del balón para compactar."},
- ]},
- {sec:"Mapas, zonas y niveles de evidencia", hint:"Cómo leer los mapas de los informes. No tenemos coordenadas (x,y) en los PDF, así que trabajamos por ZONAS y siempre etiquetamos el nivel de certeza.", items:[
-   {t:"Modelo de 18 zonas", d:"La cancha se divide en 6 bandas (de portería propia a rival) × 3 columnas (izquierda / centro / derecha) = 18 zonas. Permite ubicar dónde ocurren las acciones sin coordenadas exactas."},
-   {t:"Tercios", d:"División en tercio defensivo, medio y ofensivo. Marco rápido para ubicar la fase y la altura del juego."},
-   {t:"Carriles", d:"Columnas verticales del campo (lateral izq., interior izq., centro, interior der., lateral der.). Clave en el juego de posición."},
-   {t:"Zona 14", d:"El espacio central justo por delante del área rival (frontal). Zona de máxima generación de ocasiones; quien la ocupa y asiste desde ahí es determinante.", ex:"Recibir en Zona 14 entre líneas es el objetivo del enganche/mediapunta."},
-   {t:"Nivel DATO", lvl:"dato", d:"El valor está medido directamente por Wyscout (p. ej. % aéreo de un jugador). Máxima confianza."},
-   {t:"Nivel INFERENCIA", lvl:"infer", d:"La ubicación en el mapa se deduce por la posición y el rol del jugador, no por una coordenada medida. Confianza media."},
-   {t:"Nivel HIPÓTESIS", lvl:"hipo", d:"Lectura táctica a confirmar con video. Es una interpretación razonada, no un hecho medido. Marcada siempre como tal."},
-   {t:"Mapa de calor", d:"Representa dónde se concentra la actividad (de un jugador o del equipo). Muestra tendencias de ocupación de espacio."},
-   {t:"Mapa de pérdidas", d:"Dónde se pierde el balón. Pérdidas en zona propia o en el carril central son las más peligrosas (habilitan transición rival)."},
-   {t:"Red de pases", abbr:"Pass network", lvl:"dato", d:"Grafo que une a los jugadores según los pases entre ellos: el grosor indica volumen y la posición, la ubicación media. Revela por dónde circula el juego y quién es el nudo."},
- ]},
- {sec:"Fútbol formativo", hint:"Conceptos del módulo de formativo: seguimiento individual de cada jugador partido a partido, incluyendo su desarrollo integral.", items:[
-   {t:"Momento educativo (1–10)", abbr:"Educ", d:"Indicador OPCIONAL de qué tan conectado está el jugador con sus estudios. 10 = muy conectado; ≤4 = riesgo de repetir el año. Convierte el desarrollo integral en un dato seguible.", ex:"Un valor <b>≤4</b> dispara una alerta roja para coordinar con el área educativa / apoderado antes de que sea tarde."},
-   {t:"Evaluación 1–5 (Téc/Tác/Fís/Act)", abbr:"Eval", d:"Nota por partido en cuatro dimensiones: Técnica, Táctica, Física y Actitud. El promedio y su tendencia muestran la curva de desarrollo.", ex:"Tendencia a la baja (≤ −0,5) = señal de seguimiento; en alza (≥ +0,5) = jugador en progreso."},
-   {t:"Carga de minutos", abbr:"Min", d:"Minutos acumulados. Cruzado con las convocatorias detecta jugadores convocados pero sin minutos (riesgo de estancamiento)."},
-   {t:"Antropometría", d:"Registro de estatura y peso en el tiempo para seguir el crecimiento físico, clave en edades formativas."},
-   {t:"Grupo de posición", d:"Clasificación del jugador en POR / DEF / LAT / VOL / DEL para agrupar y comparar perfiles dentro de su rol."},
-   {t:"Carga rápida de jornada", d:"Pantalla única para registrar a toda una categoría de un partido/sesión de una sola vez (minutos, participación, eval y educ). Forma estandarizada y práctica de rellenar las fichas."},
- ]},
- {sec:"Posiciones y abreviaturas", hint:"Códigos de posición usados en plantillas y fichas.", items:[
-   {t:"Portero", abbr:"POR / GK", d:"Guardameta."},
-   {t:"Central", abbr:"CT / DFC", d:"Defensa central."},
-   {t:"Lateral", abbr:"LT / LD-LI", d:"Defensa de banda (derecho o izquierdo)."},
-   {t:"Volante / Mediocampista", abbr:"VC / MC", d:"Centrocampista central. Puede ser de contención, mixto o de creación."},
-   {t:"Extremo", abbr:"EX", d:"Atacante de banda."},
-   {t:"Delantero", abbr:"DEL / DC", d:"Punta o referencia de área."},
-   {t:"Por 90 minutos", abbr:"/90", d:"Métrica normalizada por 90 minutos jugados. Permite comparar a jugadores con distinta cantidad de minutos de forma justa."},
-   {t:"Partidos jugados", abbr:"PJ", d:"Número de partidos en que el jugador participó."},
- ]},
+ {
+  "sec": "Métricas avanzadas (datos de evento · Wyscout)",
+  "hint": "Números medidos a partir de los eventos del partido. Son el salto de calidad respecto a estimaciones: miden lo que realmente pasó.",
+  "items": [
+   {
+    "t": "Goles esperados",
+    "abbr": "xG",
+    "lvl": "dato",
+    "d": "Probabilidad de que un remate termine en gol según su contexto (distancia, ángulo, tipo de jugada). Suma la calidad de las ocasiones, no solo la cantidad.",
+    "ex": "Un xG de 1.4 en un partido = las ocasiones generadas valían, en promedio, 1,4 goles. Si se marcó 0, hubo infra-rendimiento en la definición.",
+    "an": "Imagina que cada remate es un billete de lotería: el xG es el <b>valor</b> de ese billete según desde dónde y cómo se compró. Sumar xG es contar cuánto valían tus boletos, no cuántos premios cobraste. Si compraste boletos por 2,2 y ganaste 0, no jugaste mal: te faltó suerte (o puntería) al raspar."
+   },
+   {
+    "t": "Asistencias esperadas",
+    "abbr": "xA",
+    "lvl": "dato",
+    "d": "Probabilidad de que un pase se convierta en asistencia según el xG del remate que habilita. Mide la calidad de creación de un jugador.",
+    "ex": "Zavala con <b>1.76 xA</b> es el principal generador: sus pases habilitan ocasiones de alto valor, marque o no el compañero.",
+    "an": "El xA es el mérito del <b>último pase antes del remate</b>: como el cocinero que deja el plato listo para emplatar. Aunque el delantero falle el emplatado, quien dio ese pase ya hizo lo difícil. Zavala es ese cocinero que deja ocasiones servidas."
+   },
+   {
+    "t": "Goles esperados en contra",
+    "abbr": "xGA",
+    "lvl": "dato",
+    "d": "xG que un equipo concede a sus rivales. Mide la solidez defensiva real, más allá del marcador.",
+    "ex": "xGA bajo + muchos goles encajados = mala suerte o fallos puntuales del arquero, no un problema estructural.",
+    "an": "Es el <b>peligro real que te crean</b>, no los goles del marcador. Un xGA bajo con muchos goles encajados es como una casa bien cerrada a la que igual entraron: el problema no es la cerradura (la estructura), es que alguien dejó una ventana abierta un día puntual."
+   },
+   {
+    "t": "Diferencia de goles esperados",
+    "abbr": "xGDif",
+    "lvl": "dato",
+    "d": "xG a favor menos xG en contra. Resume el dominio de ocasiones en un número.",
+    "ex": "xGDif positivo sostenido indica un equipo que merece más puntos de los que saca.",
+    "an": "El saldo de tu cuenta de ocasiones: cuánto generaste menos cuánto te generaron. Positivo y sostenido = juegas para merecer más de lo que el marcador te paga. Es el <b>extracto bancario</b> del dominio."
+   },
+   {
+    "t": "Puntos esperados",
+    "abbr": "xPTS",
+    "lvl": "dato",
+    "d": "Puntos que un equipo 'debería' haber sumado según el xG de cada partido. Revela sobre/infra-rendimiento en la tabla.",
+    "ex": "Coquimbo con <b>36.6 xPTS vs 29 pts reales</b> = infra-rendimiento de +7,6: el juego genera más de lo que refleja la tabla.",
+    "an": "Los puntos que el <b>casino te debía</b> según cómo jugaste cada mano. Si mereciste 36 y la tabla te dio 29, no es que juegues mal: es que la ruleta aún no te paga. Suele corregirse con el tiempo."
+   },
+   {
+    "t": "Pases por acción defensiva permitidos",
+    "abbr": "PPDA",
+    "lvl": "dato",
+    "d": "Pases que el rival completa antes de que el equipo haga una acción defensiva (presión). A menor PPDA, presión más intensa y alta.",
+    "ex": "PPDA bajo = equipo que presiona arriba y agresivo; PPDA alto = bloque que espera.",
+    "an": "Cuántos pases <b>dejas tocar al rival</b> antes de ir a morder. Pocos = eres un perro de presa que salta al primer toque; muchos = eres un cazador paciente que espera agazapado. Ni bueno ni malo: es una decisión de estilo."
+   },
+   {
+    "t": "Toques en el área",
+    "abbr": "Toques área /90",
+    "lvl": "dato",
+    "d": "Veces que un jugador toca el balón dentro del área rival por cada 90 minutos. Indica presencia y peligro ofensivo.",
+    "ex": "Johansen es <b>3º de la liga</b> en toques de área (5.16/90): se asocia a volumen de ocasiones.",
+    "an": "Las veces que un jugador <b>pone el pie en la cocina</b> del rival. Más toques ahí = más cerca del olor a gol. Johansen vive metido en esa cocina (3º de la liga): por eso huele las ocasiones."
+   },
+   {
+    "t": "Jugadas clave",
+    "abbr": "KP /90",
+    "lvl": "dato",
+    "d": "Pases que generan directamente un remate (sin ser necesariamente gol). Mide creación de ocasiones.",
+    "ex": "Cornejo: 2.14 jugadas clave/90, 3º de la liga entre los perfiles de su rol.",
+    "an": "El <b>pase que enciende el gatillo</b> de un remate. No cuenta si entró o no: cuenta que dejaste a un compañero en posición de disparar. Cornejo reparte esas balas desde el lateral."
+   },
+   {
+    "t": "Duelos defensivos (% ganados)",
+    "abbr": "Duelos def %",
+    "lvl": "dato",
+    "d": "Porcentaje de enfrentamientos defensivos 1v1 que un jugador gana. Mide fiabilidad en la recuperación.",
+    "ex": "Cordero: 8.01 duelos def/90 al 58% ganados — alto volumen y eficacia.",
+    "an": "El <b>mano a mano</b> en el barro: de cada diez veces que te enfrentas a un rival por el balón, cuántas te lo quedas. Cordero gana más de la mitad con mucho volumen: es el que apaga incendios."
+   },
+   {
+    "t": "Duelos aéreos (% ganados)",
+    "abbr": "Aéreo %",
+    "lvl": "dato",
+    "d": "Porcentaje de disputas por alto que un jugador gana. Clave en centrales, delanteros referencia y balón parado.",
+    "ex": "Cornejo 68% aéreo vs Cabrera 29%: perfiles muy distintos ante centros y despejes.",
+    "an": "La ley del <b>más alto salta</b> en el salón de baile por arriba. Cornejo gana 7 de cada 10; Cabrera, 3 de cada 10. Contra un rival que centra, sabes a quién mandar al baile y a quién proteger."
+   },
+   {
+    "t": "Precisión de pase",
+    "abbr": "Pase %",
+    "lvl": "dato",
+    "d": "Porcentaje de pases completados. Debe leerse junto al volumen y al riesgo (no es lo mismo en salida que en último tercio).",
+    "ex": "Gazzolo 87% con alto volumen = fiabilidad en la primera fase de construcción.",
+    "an": "No es lo mismo pasar el salero en la mesa (salida, fácil) que enhebrar una aguja entre líneas (riesgo). Un 87% sacando el balón es fiabilidad; un 60% creando puede ser <b>valentía</b>, no torpeza. Lee el % junto al dónde."
+   },
+   {
+    "t": "Recuperaciones",
+    "abbr": "Recuperac.",
+    "lvl": "dato",
+    "d": "Balones recuperados por un jugador. Mide trabajo defensivo y capacidad de corte.",
+    "ex": "Camargo: 86 recuperaciones — motor de reciclaje en el mediocampo.",
+    "an": "El jugador <b>escoba</b>: cuántos balones barre y recupera para los suyos. Camargo con 86 es el que mantiene limpio el mediocampo para que otros creen."
+   },
+   {
+    "t": "Regates completados",
+    "abbr": "Regates",
+    "lvl": "dato",
+    "d": "Conducciones que superan a un rival en 1v1. Mide desequilibrio individual.",
+    "ex": "Zavala: 34 regates completados en 5 partidos — recurso para romper bloques.",
+    "an": "El <b>abrelatas</b>: conducciones que dejan a un rival sentado y abren una defensa cerrada. Zavala con 34 es la llave para forzar la cerradura de un bloque bajo."
+   }
+  ]
+ },
+ {
+  "sec": "Fases del juego",
+  "hint": "Todo partido se divide en estas fases. Analizar por fase evita el 'jugó bien' y señala dónde exactamente se gana o se pierde.",
+  "items": [
+   {
+    "t": "Organización ofensiva",
+    "d": "Equipo con balón y rival ordenado. Cómo se construye, progresa y se crea ante una defensa colocada.",
+    "an": "Ajedrez con el reloj parado: tú tienes el balón y el rival está colocado y mirándote. Hay que <b>mover piezas con paciencia</b> hasta abrir un hueco. Es la fase que más nos cuesta cuando el rival se encierra."
+   },
+   {
+    "t": "Transición ofensiva",
+    "d": "Momento inmediato tras recuperar el balón. Decisión entre atacar rápido el espacio o asegurar y organizar.",
+    "an": "Los <b>tres segundos de oro</b> justo después de robar: el rival está desordenado y descolocado. O corres ya al espacio o se vuelven a peinar. Es nuestra especialidad: el zarpazo pirata tras el abordaje."
+   },
+   {
+    "t": "Organización defensiva",
+    "d": "Equipo sin balón y ordenado. Altura del bloque, coberturas y cómo se protege la portería ante un ataque colocado.",
+    "an": "La <b>muralla colocada</b>: sin balón, todos en su sitio, cubriendo caminos hacia nuestro tesoro (la portería). Altura, líneas juntas y nadie libre entre ellas."
+   },
+   {
+    "t": "Transición defensiva",
+    "d": "Momento inmediato tras perder el balón. Reacción para recuperar (contrapresión) o replegar y ordenarse.",
+    "an": "El instante en que <b>pierdes el botín</b> y decides: ¿salto a recuperarlo ya (contrapresión) o retrocedo y me reordeno? Elegir mal aquí es por donde más nos han hecho daño."
+   },
+   {
+    "t": "Balón parado (ABP)",
+    "abbr": "BP",
+    "d": "Acciones detenidas: córners, tiros libres, laterales largos y penales, ofensivos y defensivos. Fuente muy rentable de goles.",
+    "ex": "Coquimbo genera el <b>16% de sus goles</b> desde balón parado.",
+    "an": "Las <b>jugadas de pizarra</b>: con el juego detenido, todo es ensayable como una obra de teatro. Un córner o una falta bien ensayados son goles baratos — rentan sin necesidad de jugar bien 90 minutos."
+   }
+  ]
+ },
+ {
+  "sec": "Principios tácticos",
+  "hint": "Las ideas que ordenan el juego dentro de cada fase. Son el 'por qué' detrás de cada movimiento.",
+  "items": [
+   {
+    "t": "Progresión",
+    "d": "Avanzar el balón hacia la portería rival superando líneas de presión.",
+    "an": "<b>Ganar metros hacia adelante</b> superando líneas rivales, como avanzar casillas en la oca saltando trampas. No es tener el balón: es llevarlo a terreno peligroso."
+   },
+   {
+    "t": "Amplitud",
+    "d": "Ocupar el ancho del campo para estirar al rival y abrir espacios interiores.",
+    "an": "<b>Estirar la sábana</b> a lo ancho: si abres bien los extremos, el rival tiene que cubrir más tela y se le hacen agujeros por dentro. Ancho para abrir el centro."
+   },
+   {
+    "t": "Profundidad",
+    "d": "Amenazar el espacio a la espalda de la defensa para fijarla y no dejarla subir.",
+    "an": "La <b>amenaza a la espalda</b>: alguien siempre asomándose detrás de la defensa, como el que amaga con robar en una base de béisbol. Obliga a la zaga a no subir y le roba terreno."
+   },
+   {
+    "t": "Fijación",
+    "d": "Atraer a uno o varios rivales para liberar a un compañero en otra zona.",
+    "an": "<b>Hipnotizar a un rival</b> para que te mire solo a ti y suelte a quien debía marcar. Atraes dos y liberas a un tercero: el truco del mago que distrae con una mano."
+   },
+   {
+    "t": "Juego entre líneas",
+    "d": "Recibir en el espacio entre la defensa y el mediocampo rival, zona de máximo daño.",
+    "an": "Recibir en la <b>tierra de nadie</b> entre la defensa y el medio rival: ni uno ni otro sabe de quién eres. Es la zona desde donde más daño se hace, el escondite perfecto del enganche."
+   },
+   {
+    "t": "Tercer hombre",
+    "d": "Jugada de tres: A pasa a B y aparece C, que llega libre al espacio que generó el movimiento. Rompe marcas.",
+    "ex": "Patrón típico para progresar ante bloques que presionan al receptor directo.",
+    "an": "El <b>pase de billar a tres bandas</b>: yo te la doy a ti, y cuando el rival va a por ti, aparece un tercero ya lanzado y libre. Rompe marcas porque nadie puede vigilar al que no estaba en la jugada."
+   },
+   {
+    "t": "Cambio de orientación",
+    "d": "Mover el balón de un costado al otro para atacar el lado débil del rival.",
+    "an": "<b>Apagar el fuego de un lado</b> moviendo el balón al otro: mientras todos corren a un costado, cambias de banda y atacas donde se quedaron solos."
+   },
+   {
+    "t": "Temporización",
+    "d": "Retrasar la acción defensiva para ganar tiempo a que lleguen las coberturas.",
+    "an": "El defensor que <b>hace tiempo sin ir a la entrada</b>, frenando al rival como quien aguanta una puerta hasta que lleguen los refuerzos. Ganar segundos para que lleguen las coberturas."
+   },
+   {
+    "t": "Presión",
+    "d": "Acción coordinada para recuperar el balón e incomodar la salida rival. Puede ser alta, media o baja según la altura.",
+    "an": "<b>Acosar en manada</b> para incomodar y robar. Como lobos coordinados: si uno va suelto, el rival escapa; si van en bloque, lo encierran."
+   },
+   {
+    "t": "Cobertura",
+    "d": "Un defensor se coloca por detrás de un compañero para cubrir si éste es superado.",
+    "an": "El <b>paracaídas de reserva</b>: un compañero se coloca detrás por si al de delante lo superan. Nadie queda sin red."
+   },
+   {
+    "t": "Permuta",
+    "d": "Dos defensores intercambian marcas tras un desajuste para no dejar a nadie libre.",
+    "an": "<b>Cambiar de pareja de baile</b> al vuelo: si tu marca te deja atrás, un compañero la toma y tú tomas la suya. Intercambio para que nadie quede libre."
+   },
+   {
+    "t": "Vigilancia",
+    "d": "Atención preventiva sobre un rival peligroso aun sin marcarlo, anticipando la transición.",
+    "an": "El <b>ojo puesto en el peligroso</b> aunque no lo marques: como el guardia que no quita la vista del sospechoso, listo para saltar en cuanto el balón cambie de dueño."
+   },
+   {
+    "t": "Basculación",
+    "d": "Desplazamiento en bloque de todo el equipo hacia el lado del balón para compactar.",
+    "an": "El equipo se <b>desplaza en bloque</b> al lado del balón, como un banco de peces que gira junto. Compacta el costado donde está el peligro y cede el lado lejano."
+   }
+  ]
+ },
+ {
+  "sec": "Mapas, zonas y niveles de evidencia",
+  "hint": "Cómo leer los mapas de los informes. No tenemos coordenadas (x,y) en los PDF, así que trabajamos por ZONAS y siempre etiquetamos el nivel de certeza.",
+  "items": [
+   {
+    "t": "Modelo de 18 zonas",
+    "d": "La cancha se divide en 6 bandas (de portería propia a rival) × 3 columnas (izquierda / centro / derecha) = 18 zonas. Permite ubicar dónde ocurren las acciones sin coordenadas exactas.",
+    "an": "El <b>tablero de ajedrez del campo</b>: 6 filas × 3 columnas. Sin GPS no sabemos la casilla exacta (coordenada), pero sí en qué <b>cuadro grande</b> pasó cada cosa. Suficiente para leer patrones sin inventar precisión."
+   },
+   {
+    "t": "Tercios",
+    "d": "División en tercio defensivo, medio y ofensivo. Marco rápido para ubicar la fase y la altura del juego.",
+    "an": "Dividir la cancha en <b>tres pisos</b>: sótano (defensa), planta (medio) y azotea (ataque). Un marco rápido para decir a qué altura se juega el partido."
+   },
+   {
+    "t": "Carriles",
+    "d": "Columnas verticales del campo (lateral izq., interior izq., centro, interior der., lateral der.). Clave en el juego de posición.",
+    "an": "Las <b>cinco escaleras verticales</b> del edificio: dos bandas, dos medio-espacios y el centro. El Juego de Posición vive de ocupar la escalera correcta en cada momento."
+   },
+   {
+    "t": "Zona 14",
+    "d": "El espacio central justo por delante del área rival (frontal). Zona de máxima generación de ocasiones; quien la ocupa y asiste desde ahí es determinante.",
+    "ex": "Recibir en Zona 14 entre líneas es el objetivo del enganche/mediapunta.",
+    "an": "El <b>living de la casa rival</b>, justo frente al área: quien recibe y manda desde ahí es el que decide la fiesta. Es la zona de oro del enganche."
+   },
+   {
+    "t": "Nivel DATO",
+    "lvl": "dato",
+    "d": "El valor está medido directamente por Wyscout (p. ej. % aéreo de un jugador). Máxima confianza."
+   },
+   {
+    "t": "Nivel INFERENCIA",
+    "lvl": "infer",
+    "d": "La ubicación en el mapa se deduce por la posición y el rol del jugador, no por una coordenada medida. Confianza media."
+   },
+   {
+    "t": "Nivel HIPÓTESIS",
+    "lvl": "hipo",
+    "d": "Lectura táctica a confirmar con video. Es una interpretación razonada, no un hecho medido. Marcada siempre como tal."
+   },
+   {
+    "t": "Mapa de calor",
+    "d": "Representa dónde se concentra la actividad (de un jugador o del equipo). Muestra tendencias de ocupación de espacio.",
+    "an": "La <b>huella térmica</b> de dónde estuvo un jugador o el equipo: las manchas rojas marcan sus querencias, como el sillón favorito que queda desgastado de tanto sentarse."
+   },
+   {
+    "t": "Mapa de pérdidas",
+    "d": "Dónde se pierde el balón. Pérdidas en zona propia o en el carril central son las más peligrosas (habilitan transición rival).",
+    "an": "El mapa de <b>dónde se te cae el tesoro</b>. Perderlo en tu propia puerta o por el centro es dejar la caja fuerte abierta: ahí nacen los contraataques en tu contra."
+   },
+   {
+    "t": "Red de pases",
+    "abbr": "Pass network",
+    "lvl": "dato",
+    "d": "Grafo que une a los jugadores según los pases entre ellos: el grosor indica volumen y la posición, la ubicación media. Revela por dónde circula el juego y quién es el nudo.",
+    "an": "La <b>telaraña del equipo</b>: los hilos gruesos son las amistades más frecuentes entre jugadores, y el centro de la tela revela quién es el cerebro por el que pasa todo."
+   }
+  ]
+ },
+ {
+  "sec": "Fútbol formativo",
+  "hint": "Conceptos del módulo de formativo: seguimiento individual de cada jugador partido a partido, incluyendo su desarrollo integral.",
+  "items": [
+   {
+    "t": "Momento educativo (1–10)",
+    "abbr": "Educ",
+    "d": "Indicador OPCIONAL de qué tan conectado está el jugador con sus estudios. 10 = muy conectado; ≤4 = riesgo de repetir el año. Convierte el desarrollo integral en un dato seguible.",
+    "ex": "Un valor <b>≤4</b> dispara una alerta roja para coordinar con el área educativa / apoderado antes de que sea tarde.",
+    "an": "El <b>semáforo del estudiante</b>: verde (10) está conectado al colegio; rojo (≤4) avisa de que puede repetir. Convierte 'cómo va en clase' en un dato que el club puede cuidar a tiempo."
+   },
+   {
+    "t": "Evaluación 1–5 (Téc/Tác/Fís/Act)",
+    "abbr": "Eval",
+    "d": "Nota por partido en cuatro dimensiones: Técnica, Táctica, Física y Actitud. El promedio y su tendencia muestran la curva de desarrollo.",
+    "ex": "Tendencia a la baja (≤ −0,5) = señal de seguimiento; en alza (≥ +0,5) = jugador en progreso.",
+    "an": "El <b>boletín de notas</b> del partido en cuatro materias. No importa tanto la nota de un día como la <b>curva</b>: si sube o baja a lo largo de los meses."
+   },
+   {
+    "t": "Carga de minutos",
+    "abbr": "Min",
+    "d": "Minutos acumulados. Cruzado con las convocatorias detecta jugadores convocados pero sin minutos (riesgo de estancamiento).",
+    "an": "El <b>cuentakilómetros</b> del jugador. Cruzado con las convocatorias detecta al que viaja pero nunca sale a la cancha: convocado sin rodar es un motor que se oxida."
+   },
+   {
+    "t": "Antropometría",
+    "d": "Registro de estatura y peso en el tiempo para seguir el crecimiento físico, clave en edades formativas.",
+    "an": "La <b>marca de lápiz en la pared</b> que hacían en casa para medir cuánto creciste. En formativo, seguir estatura y peso en el tiempo es clave: el cuerpo aún está en obra."
+   },
+   {
+    "t": "Grupo de posición",
+    "d": "Clasificación del jugador en POR / DEF / LAT / VOL / DEL para agrupar y comparar perfiles dentro de su rol.",
+    "an": "El <b>casillero por oficio</b> (POR/DEF/LAT/VOL/DEL) para comparar peras con peras: no se mide a un central con la vara de un delantero."
+   },
+   {
+    "t": "Carga rápida de jornada",
+    "d": "Pantalla única para registrar a toda una categoría de un partido/sesión de una sola vez (minutos, participación, eval y educ). Forma estandarizada y práctica de rellenar las fichas.",
+    "an": "El <b>formulario express</b>: cargar a toda una categoría de un partido de una sola pasada, como pasar lista con un solo golpe de vista en vez de alumno por alumno."
+   }
+  ]
+ },
+ {
+  "sec": "Posiciones y abreviaturas",
+  "hint": "Códigos de posición usados en plantillas y fichas.",
+  "items": [
+   {
+    "t": "Portero",
+    "abbr": "POR / GK",
+    "d": "Guardameta."
+   },
+   {
+    "t": "Central",
+    "abbr": "CT / DFC",
+    "d": "Defensa central."
+   },
+   {
+    "t": "Lateral",
+    "abbr": "LT / LD-LI",
+    "d": "Defensa de banda (derecho o izquierdo)."
+   },
+   {
+    "t": "Volante / Mediocampista",
+    "abbr": "VC / MC",
+    "d": "Centrocampista central. Puede ser de contención, mixto o de creación."
+   },
+   {
+    "t": "Extremo",
+    "abbr": "EX",
+    "d": "Atacante de banda."
+   },
+   {
+    "t": "Delantero",
+    "abbr": "DEL / DC",
+    "d": "Punta o referencia de área."
+   },
+   {
+    "t": "Por 90 minutos",
+    "abbr": "/90",
+    "d": "Métrica normalizada por 90 minutos jugados. Permite comparar a jugadores con distinta cantidad de minutos de forma justa.",
+    "an": "Poner a todos en la <b>misma regla</b>: ¿cuánto rindes si jugaras un partido entero? Así se compara justo al que jugó 300 minutos con el que jugó 900."
+   },
+   {
+    "t": "Partidos jugados",
+    "abbr": "PJ",
+    "d": "Número de partidos en que el jugador participó.",
+    "an": "Las <b>funciones a las que te subiste al escenario</b>: la base para saber si un número es una tendencia o una casualidad de un día."
+   }
+  ]
+ },
+ {
+  "sec": "Modelo de juego TrazoXI (nuestra identidad)",
+  "hint": "Los conceptos con los que leemos a Coquimbo y a los rivales. De Zerbi y el Juego de Posición (Óscar Cano) como lentes; nuestra identidad reactiva como punto de partida.",
+  "items": [
+   {
+    "t": "Identidad reactiva",
+    "d": "Equipo que NO busca dominar el balón: cede tenencia, defiende compacto y hace daño cuando recupera y ataca el espacio. Es el perfil de Coquimbo 2026.",
+    "an": "El <b>boxeador de contragolpe</b>: no va a buscar al rival, lo deja venir, esquiva y pega cuando el otro se descubre. No es cobardía — es saber que pegas mejor al que se abrió para atacarte. 1-0 a Audax con 38% de balón; 5-2 a Colo-Colo con 29%."
+   },
+   {
+    "t": "Identidad proponente (proactiva)",
+    "d": "Equipo que quiere el balón, domina la posesión y ataca a un bloque colocado. Es el perfil de rivales como O'Higgins o Everton.",
+    "an": "El <b>boxeador que presiona y tira jabs</b> todo el rato: lleva la iniciativa y acorrala. Pero si pega mucho y no noquea (crea y no define), se cansa y queda expuesto al contragolpe. Ahí lo cazamos."
+   },
+   {
+    "t": "Transición artificial (De Zerbi)",
+    "d": "Provocar a propósito que el rival venga a presionar o se estire, para generar el espacio de una transición sin haber perdido el balón de forma caótica. Se invita al rival a salir de su sitio y se golpea el hueco que deja.",
+    "an": "El <b>cebo del pescador</b>: mueves el balón cerca de tu área casi como ofreciéndolo, el rival pica y sube a morder, y justo cuando se estira le pasas el anzuelo por encima y corres al espacio que dejó. Vivimos de esto."
+   },
+   {
+    "t": "Superioridad (numérica / posicional / cualitativa)",
+    "d": "El fin del Juego de Posición: tener ventaja en la zona del balón. Numérica (más jugadores), posicional (un hombre libre entre líneas o sin rival de frente) o cualitativa (tu mejor jugador en un 1v1 que domina).",
+    "an": "Tres formas de <b>ganar la mano en la mesa de póker</b>: tener más fichas (numérica), estar sentado donde ves las cartas de todos (posicional), o ser sencillamente el que mejor juega el mano a mano (cualitativa). El juego consiste en fabricar una de las tres cerca del balón."
+   },
+   {
+    "t": "Hombre libre",
+    "d": "El jugador que queda sin rival que lo marque, normalmente por una superioridad bien generada. Encontrarlo es la llave para progresar; taparlo, la llave para defender.",
+    "an": "El <b>invitado sin pareja de baile</b>: si lo encuentras, por ahí avanza el juego; si eres tú quien defiende, tu trabajo es que nunca quede nadie suelto en la pista."
+   },
+   {
+    "t": "Fijar para liberar",
+    "d": "Juntar/atraer rivales en una zona para desajustar sus distancias y liberar a un compañero en otra. Mover al par (fijarlo) amplía la línea de pase.",
+    "an": "<b>Amontonar a todos en una esquina de la fiesta</b> para que la otra punta quede vacía y tu amigo entre por ahí tranquilo. Atraes para soltar."
+   },
+   {
+    "t": "Contrapresión",
+    "d": "Presión inmediata y colectiva justo tras perder el balón, en los primeros segundos, para recuperarlo en el sitio antes de que el rival salga. Es nuestra deuda pendiente en transición defensiva.",
+    "an": "El <b>'¡que no escape!' en los dos segundos siguientes</b> a que se te cae la billetera: o la pisas al instante entre varios, o el carterista ya desapareció. Si no saltamos juntos y rápido, nos nace el contraataque en contra."
+   },
+   {
+    "t": "Medio-espacio (half-space)",
+    "d": "Los carriles interiores entre el centro y la banda. Zona preferida para recibir entre líneas y la más vulnerable de defender, porque no es ni del central ni del lateral.",
+    "an": "El <b>asiento de pasillo intermedio</b> del que nadie se hace cargo: ni el de ventana ni el de centro lo sienten suyo. Por eso recibir ahí hace tanto daño."
+   }
+  ]
+ },
+ {
+  "sec": "Modelos y proyección",
+  "hint": "Cómo proyectamos resultados y comparamos jugadores, siempre declarando el límite de la muestra. Nada de magia: probabilidad honesta.",
+  "items": [
+   {
+    "t": "Dixon-Coles",
+    "abbr": "1X2",
+    "lvl": "infer",
+    "d": "Modelo de probabilidad que estima victoria/empate/derrota y goles a partir de las fuerzas ofensiva y defensiva de cada equipo más la localía. Ajusta los marcadores bajos (0-0, 1-0) que un Poisson simple subestima.",
+    "an": "La <b>balanza de fuerzas</b> de dos boxeadores antes de pelear: pesa el ataque de uno contra la defensa del otro, suma la ventaja de pelear en casa, y dice cuántas veces de cada 100 gana cada uno. No predice el futuro: reparte probabilidades."
+   },
+   {
+    "t": "Simulación Monte Carlo",
+    "abbr": "Proyección",
+    "lvl": "infer",
+    "d": "Jugar la temporada restante miles de veces por computadora, cada vez con los dados que marca el modelo, para ver en qué posición y con cuántos puntos termina el equipo en el escenario más probable (con su margen).",
+    "an": "Como <b>repetir el final del campeonato 10.000 veces en un videojuego</b> y anotar dónde quedas en cada partida. Si en la mayoría terminas 6º, esa es tu proyección — con el rango de lo mejor y lo peor que podría pasar."
+   },
+   {
+    "t": "Percentiles (radar de jugador)",
+    "lvl": "dato",
+    "d": "Ubicar a un jugador respecto a sus pares normalizando por 90': percentil 90 = mejor que el 90% de los de su puesto. El radar dibuja su perfil en varias métricas a la vez.",
+    "an": "El <b>'estás en el top 10% de tu clase'</b>: no importa tu nota bruta, sino cuántos quedan por debajo de ti en cada materia. El radar es tu boletín dibujado como una estrella."
+   },
+   {
+    "t": "Índice de encaje (scouting)",
+    "lvl": "infer",
+    "d": "Medida ponderada de cuánto encaja un fichaje potencial en lo que el equipo necesita, comparándolo con el titular actual en las métricas donde el equipo está flojo.",
+    "an": "El <b>test de compatibilidad</b> antes de una contratación: no busca al mejor del mundo, busca al que mejor tapa justo el agujero que tienes y mejora lo que hoy te falta."
+   },
+   {
+    "t": "xG por remate",
+    "abbr": "xG/tiro",
+    "lvl": "dato",
+    "d": "Calidad promedio de cada ocasión: xG total dividido por número de remates. Distingue al que patea mucho de lejos (xG/tiro bajo) del que llega limpio al área (alto).",
+    "an": "El <b>precio medio por entrada</b>: no es lo mismo llenar el estadio con entradas baratas de lejos (muchos tiros malos) que vender pocas entradas VIP pegadas al escenario (pocas ocasiones, pero clarísimas)."
+   },
+   {
+    "t": "Goles evitados / PsxG",
+    "abbr": "PsxG",
+    "lvl": "dato",
+    "d": "Post-shot xG: la calidad del remate ya ejecutado, visto desde la portería. Comparado con los goles encajados mide cuánto salva (o cuánto cuesta) el arquero.",
+    "an": "La <b>nota del portero corregida por dificultad</b>: no es lo mismo encajar un misil a la escuadra que un tiro flojo al centro. PsxG mide qué tan difícil era cada balón, y así se sabe si el arquero salvó más de lo esperable."
+   },
+   {
+    "t": "Conversión (goles vs xG)",
+    "lvl": "dato",
+    "d": "Diferencia entre goles reales y xG acumulado. Positiva = define por encima de lo esperado (puntería/eficacia); negativa sostenida = desperdicia ocasiones.",
+    "an": "El <b>cambio entre lo que cosechaste y lo que sembraste</b>: si plantaste para 50 (xG) y recogiste 40 (goles), estás dejando fruta en el árbol. Everton siembra mucho y cosecha poco (−10,6): por eso le llegan ocasiones a quien lo enfrenta."
+   }
+  ]
+ }
 ];
 
 const out=document.getElementById('out'), tabs=document.getElementById('tabs'), q=document.getElementById('q'), count=document.getElementById('count');
