@@ -296,9 +296,9 @@
   <section class="cmd" aria-label="Centro de mando">
     <div class="cmd-grid">
       <a class="cmd-next" href="lecturas_rivales.html">
-        <div class="cmd-next-tag" id="cmdNextTag">⚑ Próximo partido</div>
-        <div class="cmd-next-vs" id="cmdNextVs">Coquimbo Unido <span>vs</span> O'Higgins</div>
-        <div class="cmd-next-meta" id="cmdNextMeta">Sáb 14 nov · 18:30 · Estadio Santa Laura (neutral)</div>
+        <div class="cmd-next-tag" id="cmdNextTag">🏆 Campeones Copa de la Liga · ⚑ Próximo partido</div>
+        <div class="cmd-next-vs" id="cmdNextVs">Coquimbo Unido <span>vs</span> Everton</div>
+        <div class="cmd-next-meta" id="cmdNextMeta">Sáb 21 nov · 12:00 · Estadio Bicentenario F. Sánchez Rumoroso (local) · Everton PROPONE — primer rival propositivo de peso</div>
         <div class="cmd-next-cta">Ver lectura del rival →</div>
       </a>
       <div class="cmd-kpis" id="cmdKpis">
@@ -325,7 +325,7 @@
     <h3>Informe ejecutivo</h3>
     <div id="reporte"></div>
     <div class="glos" id="comoLeer"></div>
-    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). Liga 2026 reconciliada (CFDB al 11-11): <b>27 PJ · 11-5-11 · 38 pts · 6º</b> (GF 39 / GC 36, DG +3) — <b>racha de 2 victorias</b>; incluye el 1-0 a La Calera (fecha 26) y el <b>1-0 a Audax de visita (fecha 27, gol de Vadalá, 2,31 xG con 38% de balón)</b>. Próximo:<b>FINAL Copa de la Liga vs O'Higgins</b> (sáb 14-11, Santa Laura, neutral). Actualizado <span id="fecha"></span>.</p>
+    <p class="sub">Fuentes: FBref (detalle partido-a-partido) + CFDB (totales oficiales). 🏆 <b>CAMPEONES DE LA COPA DE LA LIGA</b> (final 3-0 a O'Higgins, 14-11: doblete de Riveros + Vadalá, 2,21 xG con 38% de balón). Liga 2026 reconciliada (CFDB): <b>27 PJ · 11-5-11 · 38 pts · 6º</b> (GF 39 / GC 36, DG +3) — <b>racha de 3 victorias</b> entre todas las competencias (La Calera 1-0, Audax 1-0, O'Higgins 3-0). Próximo (liga, fecha 28): <b>Everton de local</b> (sáb 21-11, Rumoroso). Actualizado <span id="fecha"></span>.</p>
   </section>
 
   <!-- ===== IDENTIDAD / ESTILO ===== -->
@@ -936,7 +936,7 @@ function drawFx(){
     const susp=x.res==='S';
     const rc=susp?'':x.res==='W'?'win':x.res==='D'?'draw':'loss';
     const marc=susp?`<span class="badge b-alerta">SUSP</span> ${x.gf}-${x.ga}`:`<span class="${rc}">${x.gf}-${x.ga}</span>`;
-    return `<tr><td>${x.date}</td><td>${x.time||''}</td><td>${x.comp}</td><td>${x.ven==='H'?'Local':'Visita'}</td>
+    return `<tr><td>${x.date}</td><td>${x.time||''}</td><td>${x.comp}</td><td>${x.ven==='H'?'Local':x.ven==='N'?'Neutral':'Visita'}</td>
       <td>${x.opp}</td><td>${marc}</td><td>${x.poss!=null?x.poss+'%':''}</td>
       <td>${x.form||''}</td><td class="sub">${x.ref||'—'}</td><td>${x.cy}</td><td>${x.cr?('<b class="loss">'+x.cr+'</b>'):0}</td></tr>`;
   }).join('');
