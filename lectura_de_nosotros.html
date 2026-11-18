@@ -381,7 +381,7 @@ function renderVdef(p,serie){
     if(!V.length)V.push('Rendimiento regular sin picos destacados en la muestra.');
     if(!D.length)D.push('Sin debilidades marcadas partido a partido en la muestra.');
     $('#pmVdef').innerHTML=V.slice(0,4).map(t=>`<div class="vd v"><span class="ic">✓</span><span>${esc(t)}</span></div>`).join('')
-      +D.slice(0,3).map(t=>`<div class="vd d"><span class="ic">▲</span><span>${esc(t)}</span></div>`).join('');
+      +'';
     return;
   }
   // virtudes/defectos segun grupo
@@ -409,13 +409,13 @@ function renderVdef(p,serie){
   if(!V.length)V.push('Rendimiento regular sin picos destacados en la muestra.');
   if(!D.length)D.push('Sin debilidades marcadas partido a partido en la muestra.');
   $('#pmVdef').innerHTML=V.slice(0,3).map(t=>`<div class="vd v"><span class="ic">✓</span><span>${esc(t)}</span></div>`).join('')
-    +D.slice(0,3).map(t=>`<div class="vd d"><span class="ic">▲</span><span>${esc(t)}</span></div>`).join('');
+    +'';
 }
 function insightsCard(key){
   const ins=N.insights&&N.insights[key]; if(!ins)return'';
   const sec=(title,arr,cls,ic)=>arr&&arr.length?`<div class="insub"><div class="inh ${cls}">${ic} ${title}</div>${arr.map(x=>`<div class="init ${cls}">${esc(x)}</div>`).join('')}</div>`:'';
   return `<div class="card insights"><h3 style="margin-top:0">Insights · lo que dice la muestra (6 partidos)</h3>
-    <div class="ingrid">${sec('Fortalezas',ins.f,'v','✓')}${sec('Debilidades',ins.d,'d','▲')}${sec('Mejoras / propuestas',ins.m,'m','→')}</div></div>`;
+    <div class="ingrid">${sec('Fortalezas',ins.f,'v','✓')}${sec('Mejoras / propuestas',ins.m,'m','→')}</div></div>`;
 }
 function renderGroup(g){
   const ps=N.players.filter(p=>p.grupo===g).sort((a,b)=>b.min-a.min);
@@ -522,16 +522,16 @@ const rcol=r=>r>=1?'#38d98a':r===0?'#f5a623':'#ff5f5f';
 function renderCampo(){const xi=pickXI();const W=340,H=490,mx=14,my=14,pw=W-2*mx,ph=H-2*my;
   const lines=`<rect x="${mx}" y="${my}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/><line x1="${mx}" y1="${my+ph/2}" x2="${mx+pw}" y2="${my+ph/2}" stroke="rgba(255,255,255,.16)"/><circle cx="${W/2}" cy="${my+ph/2}" r="36" fill="none" stroke="rgba(255,255,255,.16)"/><rect x="${W/2-54}" y="${my}" width="108" height="56" fill="none" stroke="rgba(255,255,255,.2)"/><rect x="${W/2-54}" y="${my+ph-56}" width="108" height="56" fill="none" stroke="rgba(255,255,255,.2)"/>`;
   const nodes=xi.map(({sl,p})=>{const f=ficha(p),c=rcol(f.rating),ln=esc(p.n.split(' ').slice(-1)[0]);
-    return `<g class="pnode" data-pm="${p.d}" style="cursor:pointer"><circle cx="${sl.x}" cy="${sl.y}" r="18" fill="${c}26" stroke="${c}" stroke-width="2.5"/><text x="${sl.x}" y="${sl.y+5}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="Barlow Condensed">${p.d}</text><text x="${sl.x}" y="${sl.y+31}" text-anchor="middle" font-size="9.5" fill="#dfe6ec" font-weight="700">${ln}</text>${f.F[0]?`<text x="${sl.x}" y="${sl.y-24}" text-anchor="middle" font-size="8" fill="#5fe0a0">✓ ${esc(f.F[0].split(' (')[0])}</text>`:''}${f.D[0]?`<text x="${sl.x}" y="${sl.y+43}" text-anchor="middle" font-size="8" fill="#ff7b7b">▲ ${esc(f.D[0].split(' (')[0])}</text>`:''}</g>`;}).join('');
+    return `<g class="pnode" data-pm="${p.d}" style="cursor:pointer"><circle cx="${sl.x}" cy="${sl.y}" r="18" fill="${c}26" stroke="${c}" stroke-width="2.5"/><text x="${sl.x}" y="${sl.y+5}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="Barlow Condensed">${p.d}</text><text x="${sl.x}" y="${sl.y+31}" text-anchor="middle" font-size="9.5" fill="#dfe6ec" font-weight="700">${ln}</text>${f.F[0]?`<text x="${sl.x}" y="${sl.y-24}" text-anchor="middle" font-size="8" fill="#5fe0a0">✓ ${esc(f.F[0].split(' (')[0])}</text>`:''}</g>`;}).join('');
   const svg=`<svg class="pitch" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:430px;background:linear-gradient(180deg,#123a1a,#0c2c13);border-radius:12px;border:1px solid var(--line-strong)">${lines}${nodes}<text x="${W-14}" y="22" font-size="9" fill="rgba(255,255,255,.6)" text-anchor="end">▲ ataque</text></svg>`;
-  const list=xi.map(({sl,p})=>{const f=ficha(p);const tags=f.F.map(x=>`<span class="tg f">✓ ${esc(x)}</span>`).join('')+f.D.map(x=>`<span class="tg d">▲ ${esc(x)}</span>`).join('');
+  const list=xi.map(({sl,p})=>{const f=ficha(p);const tags=f.F.map(x=>`<span class="tg f">✓ ${esc(x)}</span>`).join('');
     return `<div class="xirow pc clk" data-pm="${p.d}" style="cursor:pointer"><div class="xidor" style="border-color:${rcol(f.rating)}">${p.d}</div><div style="flex:1"><div class="xin">${esc(p.n)} <span class="sub" style="font-size:10px">${esc(p.pos)} · ${p.min}'</span></div>${tags||'<span class="sub" style="font-size:11px">sin señales marcadas en la muestra</span>'}</div></div>`;}).join('');
   const xiIds=new Set(xi.map(x=>x.p.d));
   const subs=N.players.filter(p=>!xiIds.has(p.d)&&p.min>0).sort((a,b)=>b.min-a.min).slice(0,8);
-  const bench=subs.map(p=>{const f=ficha(p);const t=(f.F[0]?`<span class="tg f">✓ ${esc(f.F[0])}</span>`:'')+(f.D[0]?`<span class="tg d">▲ ${esc(f.D[0])}</span>`:'');
+  const bench=subs.map(p=>{const f=ficha(p);const t=(f.F[0]?`<span class="tg f">✓ ${esc(f.F[0])}</span>`:'');
     return `<div class="bcard pc clk" data-pm="${p.d}"><div class="bhd"><span class="xidor" style="width:26px;height:26px;font-size:12px;border-color:${rcol(f.rating)}">${p.d}</span><span class="bn">${esc(p.n)}<span class="sub" style="font-size:9px;display:block;font-weight:400">${esc(p.pos)} · ${p.min}' · ${p.pj} PJ</span></span></div><div class="btg">${t||'<span class="sub" style="font-size:10px">muestra corta</span>'}</div></div>`;}).join('');
-  $('#v-campo').innerHTML=`<h2>Campo · fortalezas y debilidades</h2>
-    <p class="sub">Once tipo por posición (más minutos de la muestra) + banco con los suplentes clave. El color del dorsal resume el balance (verde = más fortalezas, ámbar = equilibrio, rojo = más debilidades). Toca cualquier jugador para ver su línea de 6 partidos. [DATO] volúmenes Hudl · [INFERENCIA] el umbral fuerte/flojo.</p>
+  $('#v-campo').innerHTML=`<h2>Campo · fortalezas del plantel</h2>
+    <p class="sub">Once tipo por posición (más minutos de la muestra) + banco con los suplentes clave. El color del dorsal resalta a los jugadores con más fortalezas marcadas (verde). Toca cualquier jugador para ver su línea de 6 partidos. [DATO] volúmenes Hudl · [INFERENCIA] el umbral de fortaleza.</p>
     <div class="callout warn" style="border-left:4px solid var(--amber);background:rgba(245,166,35,.08);padding:9px 13px;border-radius:0 9px 9px 0;font-size:13px;margin-bottom:10px">⚠ Bajas para el próximo partido (vs Ñublense, 25-10): <b>Nicolás Johansen</b> (goleador, golpes ante Colo-Colo) y <b>Elvis Hernández</b>. La referencia de área pasa a Riveros / Pratto.</div>
     <div class="grid g2" style="align-items:start"><div style="text-align:center">${svg}
       <div style="display:flex;gap:12px;justify-content:center;margin-top:8px;font-size:11px;flex-wrap:wrap"><span style="color:#38d98a">● fortalezas ></span><span style="color:#f5a623">● equilibrio</span><span style="color:#ff5f5f">● debilidades ></span></div></div>

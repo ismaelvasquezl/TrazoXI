@@ -399,10 +399,10 @@
   <!-- ===== PATRONES & MEJORA ===== -->
   <section id="patrones">
     <h2>Patrones &amp; mejora</h2>
-    <p class="sub">Gráficos orientados a decisiones: dónde está el margen de mejora de Coquimbo. <span class="badge b-dato">DATO</span> Liga 2026.</p>
+    <p class="sub">Gráficos orientados a decisiones: lecturas de rendimiento de Coquimbo. <span class="badge b-dato">DATO</span> Liga 2026.</p>
     <div class="grid g2" style="margin-top:12px">
       <div class="card"><h4>La "trampa del dominio": posesión vs. goles marcados</h4>
-        <div class="sub" style="margin-bottom:6px">Cada punto es un partido. En <span style="color:var(--red)">rojo</span>, partidos con mucho balón (&ge;55%) y ≤1 gol: dominar sin convertir. Ahí está el margen de mejora.</div>
+        <div class="sub" style="margin-bottom:6px">Cada punto es un partido. En <span style="color:var(--red)">rojo</span>, partidos con mucho balón (&ge;55%) y ≤1 gol: confirman que el equipo rinde mejor cuando el rival propone y él golpea al espacio.</div>
         <div class="chart-wrap"><canvas id="chTrap"></canvas></div></div>
       <div class="card"><h4>Forma: media móvil de goles (últimos 5)</h4>
         <div class="sub" style="margin-bottom:6px">Tendencia suavizada de goles a favor y en contra. Sube GF o baja GC = mejora real.</div>
@@ -761,11 +761,11 @@ $('#fecha').textContent=R.actualizado;
 
 /* ---- Reporte escrito ---- */
 $('#reporte').innerHTML=`
-<p class="lead">Coquimbo Unido (DT <b>Hernán Caputto</b>), <b>campeón vigente 2025</b>, atraviesa 2026 con un perfil claro y medible: es un equipo <b>reactivo</b> —no busca dominar el balón— que <b>ataca por las bandas</b> y compite con alta intensidad de duelo. Gana por golpes de eficacia más que por control sostenido, y su gran deuda es <b>defensiva y disciplinaria</b>.</p>
+<p class="lead">Coquimbo Unido (DT <b>Hernán Caputto</b>), <b>campeón vigente 2025</b>, atraviesa 2026 con un perfil claro y medible: es un equipo <b>reactivo</b> —no busca dominar el balón— que <b>ataca por las bandas</b> y compite con alta intensidad de duelo. Gana por golpes de eficacia más que por control sostenido, y en el tramo de título dio un salto de solidez defensiva.</p>
 <p id="repP2"></p>
-<p>Atrás concede volumen: <b>10,8 remates por partido</b>, y la relación entre tiros permitidos y goles recibidos es fuerte (+0,71). Es decir, <b>no defiende reduciendo el balón sino reduciendo remates</b>. El arco de Diego Sánchez sostiene, y últimamente mejora: ya <b id="repCS"></b> de los partidos termina con la valla invicta. La otra alerta es propia: <b>8 rojas en Liga</b> (cero en Libertadores), un problema de gestión más que físico.</p>`;
+<p>Atrás, el equipo defiende <b>reduciendo remates</b> más que posesión. El arco de Diego Sánchez sostiene y en el último tramo da un salto: ya <b id="repCS"></b> de los partidos termina con la valla invicta, con 3 porterías a cero consecutivas coronando el título.</p>`;
 (function(){const g=LIG,su=(a,k)=>a.reduce((s,x)=>s+(x[k]||0),0);const w=g.filter(x=>x.res==='W').length,dd=g.filter(x=>x.res==='D').length,ll=g.filter(x=>x.res==='L').length;const gf=su(g,'gf'),ga=su(g,'ga'),cs=g.filter(x=>x.ga===0).length;
- const p2=document.getElementById('repP2');if(p2)p2.innerHTML=`En Liga suma <b>${w*3+dd} puntos (${w}-${dd}-${ll})</b> con <b>${gf-ga>=0?'+':''}${gf-ga}</b> de diferencia: marca ${(gf/g.length).toFixed(2)} por partido y recibe ${(ga/g.length).toFixed(2)}. La lectura fina importa más que el número: su <b>posesión (~50%) no se traduce en puntos</b> —la correlación es prácticamente cero—, señal de que rinde mejor cuando el rival propone y él golpea al espacio. Su firma ofensiva son los <b>${(su(g,'crs')/g.length).toFixed(1)} centros por partido</b>; cuando le cierran las bandas, el ataque se vuelve previsible.`;
+ const p2=document.getElementById('repP2');if(p2)p2.innerHTML=`En Liga suma <b>${w*3+dd} puntos (${w}-${dd}-${ll})</b> con <b>${gf-ga>=0?'+':''}${gf-ga}</b> de diferencia: marca ${(gf/g.length).toFixed(2)} por partido y recibe ${(ga/g.length).toFixed(2)}. La lectura fina importa más que el número: su <b>posesión (~50%) no se traduce en puntos</b> —la correlación es prácticamente cero—, señal de que rinde mejor cuando el rival propone y él golpea al espacio. Su firma ofensiva son los <b>${(su(g,'crs')/g.length).toFixed(1)} centros por partido</b> y la transición letal: ganar sin la pelota es su sello de campeón.`;
  const cse=document.getElementById('repCS');if(cse)cse.textContent=Math.round(cs/g.length*100)+'%';
  const cl=document.getElementById('comoLeer');if(cl)cl.innerHTML='<b>Cómo leer las cifras:</b> «'+(ga/g.length).toFixed(2)+' goles en contra/PJ» = de media encaja algo más de un gol por partido. «Posesión→puntos ≈ 0» = tener más balón no le suma victorias. «+0,71 tiros→goles» = correlación alta: bajar remates concedidos es lo que más le baja los goles. «Valla invicta '+Math.round(cs/g.length*100)+'%» = deja el arco a cero en 1 de cada '+(g.length/Math.max(cs,1)).toFixed(1)+' partidos.';})();
 
@@ -913,7 +913,7 @@ new Chart($('#chInt'),{data:{labels:FXstat.map(m=>m.date.slice(5)+(m.comp==='LIB
   const d=LIG.filter(x=>x.poss!=null);
   // trampa del dominio: posesión vs goles marcados
   new Chart($('#chTrap'),{type:'scatter',data:{datasets:[
-    {label:'Dominó y no marcó (≥55% y ≤1 gol)',data:d.filter(x=>x.poss>=55&&x.gf<=1).map(x=>({x:x.poss,y:x.gf,o:x.opp})),backgroundColor:C.red,pointRadius:7,borderColor:'#000',borderWidth:.5},
+    {label:'≥55% de balón y ≤1 gol (rival propuso)',data:d.filter(x=>x.poss>=55&&x.gf<=1).map(x=>({x:x.poss,y:x.gf,o:x.opp})),backgroundColor:C.red,pointRadius:7,borderColor:'#000',borderWidth:.5},
     {label:'Resto',data:d.filter(x=>!(x.poss>=55&&x.gf<=1)).map(x=>({x:x.poss,y:x.gf,o:x.opp})),backgroundColor:C.gold,pointRadius:6,borderColor:'#000',borderWidth:.5}
   ]},options:{plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>`${c.raw.o}: ${c.raw.x}% posesión → ${c.raw.y} goles`}}},
     scales:{x:{title:{display:true,text:'Posesión %'},grid:{color:C.grid}},y:{title:{display:true,text:'Goles marcados'},grid:{color:C.grid},ticks:{stepSize:1}}}}});
@@ -1729,7 +1729,7 @@ $('#modeSwitch').onclick=function(){this.classList.toggle('on');document.body.cl
   box.innerHTML=
     `<div class="sub" style="margin-bottom:6px"><span class="badge b-ver">2ª FUENTE · datalabs</span> <span class="badge b-dato">PRIMERA A 2025</span> Barra dorada = Coquimbo · línea <span style="color:var(--teal)">teal</span> = media de la liga (${N} equipos).</div>`+
     rows+
-    `<div class="callout" style="margin-top:12px"><span class="badge b-hip">LECTURA TÁCTICA</span> Coquimbo es de <b>mínimo control</b>: <b>último en posesión (${Q.posesion}%) y en % de pases (${Q.pases}%)</b>, y penúltimo en tiros — pero <b>${Q.rank.corners}º en córners</b>. Perfil <b>directo y de balón parado</b>: no construye, llega por segundas jugadas y centros. Refuerza la tesis del scouting: el déficit no es volumen, es <b>creación en Zona 14</b> que convierta esas llegadas en ocasiones claras.</div>`+
+    `<div class="callout" style="margin-top:12px"><span class="badge b-hip">LECTURA TÁCTICA</span> Coquimbo es de <b>mínimo control</b>: <b>último en posesión (${Q.posesion}%) y en % de pases (${Q.pases}%)</b>, y penúltimo en tiros — pero <b>${Q.rank.corners}º en córners</b>. Perfil <b>directo y de balón parado</b>: llega por segundas jugadas, centros y transición. Su palanca de crecimiento es la <b>creación en Zona 14</b> para convertir esas llegadas en ocasiones claras.</div>`+
     (typeof CREADORES!=='undefined'?`<div class="sub" style="margin-top:8px"><b>Creadores de la liga (2025, top asistencias):</b> ${CREADORES.players.slice(0,5).map(c=>`${c.n} (${c.a}A/${c.g}G)`).join(' · ')}. <span class="badge b-ver">datalabs</span> referencia de perfil, no plantilla actual.</div>`:'')+
     `<p class="foot" style="padding-top:10px">${E.procedencia}</p>`;
 })();
